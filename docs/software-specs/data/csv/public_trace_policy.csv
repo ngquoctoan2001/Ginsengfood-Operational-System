@@ -1,0 +1,18 @@
+field_code,field_group,is_public,display_label_vi,policy_status,effective_from,source_document,notes
+product_name,PRODUCT,true,Ten san pham,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Public product display name
+batch_public_code,BATCH,true,Ma lo public,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Public-safe batch code only
+qr_status_public,QR,true,Trang thai QR,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose VOID/FAILED as successful trace
+source_zone_name,SOURCE,true,Ten vung trong,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Owner allows source zone display
+province,SOURCE,true,Tinh,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Owner allows province display
+ward,SOURCE,true,Xa,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Owner allows ward display
+address_detail,SOURCE,true,Dia chi chi tiet,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Owner allows free-form source address display
+release_public_status,RELEASE,true,Trang thai xuat xuong,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Public-safe release status
+supplier_id,SUPPLIER,false,Supplier ID,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose supplier/internal procurement identity
+supplier_name,SUPPLIER,false,Supplier name,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose supplier/internal procurement identity
+operator_user_id,PERSONNEL,false,Operator user id,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose personnel
+qc_defect_detail,QC,false,QC defect detail,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose QC defect/loss detail
+loss_quantity,INVENTORY,false,Loss quantity,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose loss data
+cost_amount,COSTING,false,Cost amount,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose costing
+misa_external_id,MISA,false,MISA external id,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose accounting integration data
+internal_batch_id,INTERNAL_ID,false,Internal batch id,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose internal database ids
+raw_material_lot_internal_code,RAW_MATERIAL,false,Raw material lot internal code,ACTIVE,2026-04-27T00:00:00+07:00,09_CONFLICT_AND_OWNER_DECISIONS.md,Do not expose internal raw lot code

@@ -1,0 +1,19 @@
+event_type,event_version,producer_module,schema_status,is_active,source_document,notes
+SOURCE_ORIGIN_VERIFIED,v1,M05,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Source origin approved for SELF_GROWN intake
+RAW_MATERIAL_RECEIVED,v1,M06,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Raw material receipt accepted
+RAW_QC_SIGNED,v1,M06,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Incoming QC result signed
+RAW_LOT_READY_FOR_PRODUCTION,v1,M06,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Raw lot marked READY_FOR_PRODUCTION after QC_PASS and readiness checks
+PRODUCTION_ORDER_APPROVED,v1,M07,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Production order approved with recipe snapshot
+MATERIAL_REQUEST_APPROVED,v1,M08,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Material request approved before issue
+MATERIAL_ISSUE_EXECUTED,v1,M08,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Raw inventory decrement point
+MATERIAL_RECEIPT_CONFIRMED,v1,M08,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Workshop receipt confirmation without second decrement
+PRODUCTION_PROCESS_EVENT_RECORDED,v1,M07,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,PREPROCESSING/FREEZING/FREEZE_DRYING event
+BATCH_PRODUCED,v1,M07,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Batch produced after packaging level 2
+QR_PRINTED,v1,M10,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,QR reached PRINTED lifecycle state
+QC_INSPECTION_SIGNED,v1,M09,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Finished QC result signed
+BATCH_RELEASED,v1,M09,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Release action creates op_batch_release
+FINISHED_GOODS_RECEIPT_CONFIRMED,v1,M11,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,FG receipt appends inventory ledger
+RECALL_CASE_OPENED,v1,M13,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Recall case opened
+RECALL_HOLD_APPLIED,v1,M13,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Recall hold applied to affected batch/object
+MISA_SYNC_REQUESTED,v1,M14,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Integration event queued through outbox
+MISA_RECONCILE_PENDING,v1,M14,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,Missing mapping/manual reconcile needed

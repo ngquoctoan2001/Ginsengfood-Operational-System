@@ -1,0 +1,148 @@
+﻿# 02 - Test Case Matrix
+
+## 1. Mục tiêu
+
+Ma trận này là danh sách test case trọng yếu có thể map ngược về [08_REQUIREMENTS_TRACEABILITY_MATRIX.md](../08_REQUIREMENTS_TRACEABILITY_MATRIX.md). Các file testing chuyên sâu 03-08 có thể mở rộng cùng `test_id`, nhưng không được làm lệch requirement anchor.
+
+## 2. Matrix Chuẩn
+
+| test_id | module | scenario | precondition | steps | expected result | data required | priority | requirement_id | business_rule | workflow |
+|---|---|---|---|---|---|---|---|---|---|---|
+| TC-M01-AUD-001 | M01 | Command nghiệp vụ tạo audit append-only | User có permission; object test tồn tại | Thực hiện một command state-changing; mở audit log | Có audit row với actor, action, object, timestamp, reason/correlation; không cho sửa/xóa audit | User QA, object test | P0 | REQ-M01-001 | BR-AUD-001 | Audit trail |
+| TC-M01-API-002 | M01 | Idempotency key chống submit trùng | Endpoint command yêu cầu idempotency | Gửi cùng payload và same key 2 lần; gửi payload khác với same key | Lần 2 trả replay/same result; payload khác trả conflict; không tạo duplicate side effect | `Idempotency-Key`, command payload | P0 | REQ-M01-002 | BR-API-001 | Command submit |
+| TC-M02-PERM-002 | M02 | Backend enforce permission, không chỉ ẩn UI | User thiếu permission action | Gọi protected endpoint trực tiếp; kiểm tra DB/audit | API trả `403`; không tạo side effect; UI action disabled/hidden | User without role | P0 | REQ-M02-002 | BR-AUTH-002 | Protected action |
+| TC-M02-APP-003 | M02 | Approval ghi submitter/approver/reject reason | Có object cần approval | Submit approval; approve; tạo case reject thiếu reason | Approve ghi actor/time/state; reject thiếu reason bị chặn | Approval request fixture | P0 | REQ-M02-003 | BR-APP-001 | Approval/rejection |
+| TC-M03-WH-002 | M03/M11 | Warehouse seed có raw và finished goods | Seed đã chạy | Query/list warehouse | Tối thiểu một `RAW_MATERIAL` và một `FINISHED_GOODS` active | Seed warehouse | P0 | REQ-M03-002 | BR-WH-001 | Warehouse setup |
+| TC-M04-SKU-001 | M04 | Seed baseline có đúng 20 SKU và không hard-code max 20 | Seed đã chạy | Count active baseline SKU; tạo SKU test sau go-live nếu permission cho phép | Count baseline = 20; API không reject vì vượt 20 nếu SKU mới hợp lệ | 20 SKU baseline | P0 | REQ-M04-001 | BR-SKU-001 | SKU setup |
+| TC-M04-ING-003 | M04 | Ingredient bắt buộc tồn tại | Seed đã chạy | Query ingredient codes bắt buộc | `HRB_SAM_SAVIGIN`, `ING_MI_CHINH`, `ING_THIT_HEO_NAC` active | Ingredient seed | P0 | REQ-M04-003 | BR-ING-002 | Ingredient validation |
+| TC-M04-REC-004 | M04 | Forbidden baseline token không được dùng vận hành | Có user recipe/production permission | Thử tạo/activate operational recipe hoặc PO dùng `formula_version='G0'` | API/seed validation reject; không có active/approved operational recipe với token này | Payload negative `formula_version='G0'` | P0 | REQ-M04-004, REQ-NFR-004 | BR-REC-001 | Recipe activation |
+| TC-M04-REC-005 | M04 | Recipe line chỉ dùng 4 group hợp lệ | Draft G1 recipe tồn tại | Upsert lines đủ 4 group; upsert group ngoài danh sách | 4 group pass; group ngoài enum trả `INVALID_RECIPE_GROUP` | `SPECIAL_SKU_COMPONENT`, `NUTRITION_BASE`, `BROTH_EXTRACT`, `SEASONING_FLAVOR` | P0 | REQ-M04-005 | BR-REC-002 | Recipe maintenance |
+| TC-M04-REC-006 | M04/M02 | Recipe version approve/activate/audit | G1 draft complete | Submit approval, approve, activate; thử activate pending | Approved recipe activate được; pending bị reject; audit/state log đầy đủ | G1 draft recipe | P0 | REQ-M04-006 | BR-REC-003 | Recipe approval |
+| TC-M04-REC-007 | M04/M07 | Production order snapshot G1 bất biến | Active G1 recipe cho SKU | Tạo PO; lưu snapshot; chỉnh recipe draft/future version; đọc lại PO | PO snapshot giữ formula/version/group/ingredient/qty/UOM/prep note/usage role ban đầu | SKU baseline, G1 recipe | P0 | REQ-M04-007, REQ-M07-001 | BR-REC-004, BR-PO-001 | PO snapshot |
+| TC-M05-PUB-003 | M05/M12 | Public trace không lộ field nội bộ | QR public-valid có đủ internal data | Gọi public trace; kiểm tra response keys | Không có supplier/personnel/cost/QC defect/loss/MISA/private fields | Printed QR, trace chain | P0 | REQ-M05-003, REQ-M12-002 | BR-PUB-001, BR-PTRACE-001 | Public trace |
+| TC-M06-RM-001 | M06 | Raw intake tạo receipt/item/lot pending QC | Ingredient/UOM/source/supplier hợp lệ | POST raw material intake | Tạo receipt, item, raw lot `PENDING_QC`, audit; không partial khi validation fail | Raw intake payload | P0 | REQ-M06-001 | BR-RM-001 | Intake |
+| TC-M06-RM-002 | M06/M05/M03 | Procurement type enforce source/supplier | Supplier và verified source origin có sẵn | Tạo `SELF_GROWN` với supplier-only; tạo `PURCHASED` không supplier | Field set sai bị reject; đúng type pass | Source origin, supplier | P0 | REQ-M06-002 | BR-RM-002 | Intake validation |
+| TC-M06-QC-003 | M06/M09 | Raw lot QC lifecycle | Raw lot `PENDING_QC` | Sign `QC_PASS`, `QC_HOLD`, `QC_REJECT`; thiếu reason cho hold/reject | State đúng; hold/reject thiếu reason bị reject; audit ghi inspector | Raw lot fixture | P0 | REQ-M06-003 | BR-RM-QC-001 | Raw QC |
+| TC-M06-RM-004 | M06/M08 | Lot readiness trước material issue | Raw lot có các trạng thái QC/balance/readiness khác nhau | Gọi readiness và thử allocate/issue | Chỉ lot `READY_FOR_PRODUCTION`, đủ balance, không hold/reject, source hợp lệ mới ready; lot `QC_PASS` chưa `mark_ready` phải bị reject | Raw lots `PENDING_QC`/`QC_HOLD`/`QC_PASS`/`READY_FOR_PRODUCTION` | P0 | REQ-M06-004 | BR-RM-003 | Lot readiness |
+| TC-M06-RM-005 | M06/M08 | Mark raw lot `READY_FOR_PRODUCTION` sau QC pass | Raw lot `QC_PASS`, đủ balance, source hợp lệ; user có permission `raw_lot.mark_ready` | POST `mark-ready` kèm reason; gọi readiness; thử allocate/issue với lot đã ready và lot `QC_PASS` chưa ready | Lot chuyển `READY_FOR_PRODUCTION`; có audit/state transition; lot `QC_PASS` chưa mark-ready bị reject khi allocate/issue | Raw lot QC_PASS fixture | P0 | REQ-M06-004 | BR-RM-003 | Lot readiness |
+| TC-M07-PO-001 | M07/M04 | Tạo PO chỉ khi có active G1 recipe | SKU có và không có active G1 | POST PO cho từng case | SKU có G1 tạo PO snapshot; SKU thiếu G1 trả `ACTIVE_RECIPE_NOT_FOUND` | SKU baseline, SKU missing recipe | P0 | REQ-M07-001 | BR-PO-001 | Production order |
+| TC-M07-BATCH-002 | M07/M12 | Batch là genealogy root | PO/work order approved | Tạo work order/batch; search trace root | Batch có PO/work order reference, không cho batch orphan | PO, work order payload | P0 | REQ-M07-002 | BR-BATCH-001 | Batch execution |
+| TC-M07-PROC-003 | M07/M09 | Process chain đúng thứ tự | Batch in progress | Record `FREEZE_DRYING` trước `PREPROCESSING`; chạy đúng thứ tự | Sai thứ tự reject; đúng thứ tự mở QC sau process complete | Batch fixture | P0 | REQ-M07-003 | BR-PROC-001 | Process completion |
+| TC-M08-MI-001 | M08/M11 | Material issue là điểm decrement duy nhất | Material request approved; raw lot `READY_FOR_PRODUCTION`, đủ balance | Execute issue; query ledger/balance | Có đúng một ledger debit raw inventory; balance giảm đúng qty | Material issue payload | P0 | REQ-M08-001 | BR-MI-001 | Material issue |
+| TC-M08-MR-002 | M08 | Material receipt không decrement lần hai | Issue đã executed | Confirm workshop receipt; query ledger | Receipt ghi nhận/variance; không tạo ledger debit raw lần hai | Material receipt payload | P0 | REQ-M08-002 | BR-MR-001 | Material receipt |
+| TC-M08-MI-003 | M08/M04 | Issue ngoài snapshot bị chặn | PO snapshot không chứa ingredient X | Tạo material request/issue có ingredient ngoài snapshot | Reject `OUTSIDE_SNAPSHOT_MATERIAL` nếu chưa có approved exception | PO snapshot, ingredient outside | P0 | REQ-M08-003 | BR-MI-002 | Issue approval |
+| TC-M08-MI-004 | M08/M12 | Issue ghi lot-level consumption | Issue executed | Query usage/trace link | Có link raw lot -> batch cho mỗi line; thiếu link block confirm | Raw lot, batch | P0 | REQ-M08-004 | BR-MI-003 | Material usage capture |
+| TC-M09-QC-001 | M09 | QC inspection có scope và sign/audit | Entity cần QC tồn tại | Tạo/sign QC incoming/batch; thử sửa record signed | QC record locked sau sign; correction là record mới; audit đầy đủ | QC payloads | P0 | REQ-M09-001 | BR-QC-001 | QC execution |
+| TC-M09-REL-002 | M09/M11 | `QC_PASS` không tự thành `RELEASED` | Batch đã QC_PASS, chưa release | Thử warehouse receipt; tạo release request | Warehouse receipt bị chặn trước release; release là record/action riêng | QC_PASS batch | P0 | REQ-M09-002, REQ-M11-001 | BR-REL-001, BR-WH-002 | Batch release |
+| TC-M09-REL-003 | M09/M10/M11 | Release gate kiểm hold/QC/print/package | Batch có hold hoặc thiếu gate | Submit/approve release | Hold active hoặc gate thiếu bị reject; pass khi đủ điều kiện | Batch gate fixtures | P0 | REQ-M09-003 | BR-REL-002 | Release approval |
+| TC-M10-QR-003 | M10/M12 | QR lifecycle hợp lệ | Packaging job tồn tại | Generate, queue, printed, failed, void, reprinted theo state machine; thử transition sai | State history append-only; transition sai reject | QR fixture | P0 | REQ-M10-003 | BR-QR-001 | QR lifecycle |
+| TC-M10-PRINT-004 | M10/M01 | Reprint link original, reason, audit | QR/print job printed | Reprint thiếu reason; reprint có reason | Thiếu reason reject; reprint tạo job/history mới, không mất original | Print job fixture | P0 | REQ-M10-004 | BR-PRINT-001 | Reprint |
+| TC-M11-WH-001 | M11/M09 | Warehouse receipt chỉ nhận batch `RELEASED` | Batch QC_PASS chưa release và batch released | POST warehouse receipt cho từng case | Chưa release reject; released pass và tạo FG ledger credit | Batch fixtures | P0 | REQ-M11-001 | BR-WH-002 | Finished goods receipt |
+| TC-M11-INV-002 | M11/M01 | Inventory ledger append-only | Ledger entry đã posted | Thử update/delete ledger; tạo correction/reversal | Direct mutate bị chặn; correction tạo ledger mới link original | Ledger fixture | P0 | REQ-M11-002 | BR-INV-001 | Ledger posting |
+| TC-M11-INV-003 | M11 | Lot balance derive từ ledger | Ledger movements có sẵn | Query/rebuild lot balance | Balance khớp tổng ledger theo warehouse/item/lot/status; không âm nếu policy không cho | Ledger fixture | P0 | REQ-M11-003 | BR-INV-002 | Balance query |
+| TC-M12-TRACE-001 | M12 | Internal trace full chain | Smoke flow đến warehouse receipt | Search theo raw lot/batch/QR | Chain có source/raw lot -> issue -> batch -> packaging/QR -> warehouse reference | Smoke dataset | P0 | REQ-M12-001 | BR-TRACE-001 | Internal trace |
+| TC-M12-PTRACE-002 | M12 | Public trace whitelist-only | QR `PRINTED` public-valid | GET `/api/public/trace/{qrCode}` | Response chỉ có field public policy cho phép | Public trace policy, QR | P0 | REQ-M12-002 | BR-PTRACE-001 | Public trace |
+| TC-M12-PTRACE-003 | M12/M10 | QR `FAILED`/`VOID` không resolve public trace | QR ở `FAILED` và `VOID` | Gọi public trace | Trả `QR_INVALID`/`QR_NOT_PUBLIC`/public-safe not found; không leak reason nội bộ | Failed/void QR | P0 | REQ-M12-003 | BR-PTRACE-002 | QR resolve |
+| TC-M13-RECALL-001 | M13 | Recall lifecycle đầy đủ | Incident linked batch/QR | Open recall, progress impact/hold/recovery/CAPA/close | Không close khi thiếu recovery/CAPA; close được khi đủ evidence | Recall fixture | P0 | REQ-M13-001 | BR-RECALL-001 | Recall lifecycle |
+| TC-M13-RECALL-002 | M13/M12 | Recall impact dùng snapshot | Trace chain có exposure | Run impact; re-run sau trace thay đổi | Mỗi lần tạo snapshot/version, không overwrite snapshot cũ | Trace exposure fixture | P0 | REQ-M13-002 | BR-RECALL-002 | Impact analysis |
+| TC-M13-RECALL-003 | M13/M11 | Recall hold/sale lock block downstream | Recall case open | Apply hold/sale lock; thử release/ship/allocation | Downstream bị block/cảnh báo theo policy; audit ghi reason | Recall hold payload | P0 | REQ-M13-003 | BR-RECALL-003 | Hold/lock |
+| TC-M14-MISA-001 | M14/M01 | Module nghiệp vụ không sync MISA trực tiếp | Business event phát sinh | Kiểm tra outbox/sync event sau transaction | Chỉ có event qua integration layer; không có direct module-to-MISA contract trong spec | Outbox event | P0 | REQ-M14-001 | BR-MISA-001 | MISA sync |
+| TC-M14-MISA-002 | M14 | Missing mapping chuyển reconcile pending | Sync event thiếu mapping | Dispatch/retry event | Event không drop; status `FAILED_NEEDS_REVIEW`/`RECONCILE_PENDING`; log lỗi và manual retry/reconcile visible | MISA event without mapping | P0 | REQ-M14-002 | BR-MISA-002 | Retry/reconcile |
+| TC-M16-UI-001 | M16/M02 | Menu/action theo permission | Users có role khác nhau | Login từng role; mở menu/action; gọi API trực tiếp | UI chỉ hiển thị action được phép; API vẫn enforce 403 khi thiếu quyền | Role fixtures | P1 | REQ-M16-001 | BR-UI-001 | Admin navigation |
+| TC-NFR-SEED-004 | NFR/M04 | Seed validation hard lock | Seed chain chạy xong | Chạy validation SV-001..SV-010 | Pass nếu đủ 20 SKU, G1 active, 4 groups, ingredients, no operational forbidden baseline, idempotent | Seed database | P0 | REQ-NFR-004 | BR-NFR-SEED-001 | Seed validation |
+| TC-NFR-SMOKE-005 | All | Full E2E smoke | QA environment seeded, user permissions đủ | Chạy E2E happy path và negative hard lock | Full chain pass; negative P0 reject đúng; evidence lưu theo entity id | Smoke dataset | P0 | REQ-NFR-005 | BR-NFR-SMOKE-001 | E2E smoke |
+
+## 3. Hard Lock Negative Cases
+
+| test_id | module | scenario | precondition | steps | expected result | data required | priority | requirement_id |
+|---|---|---|---|---|---|---|---|---|
+| TC-HL-G0-001 | M04/M07 | Payload operational dùng `formula_version='G0'` bị reject | User có quyền recipe/PO | POST recipe/PO với token forbidden | API trả validation/domain error; không tạo active operational record | Negative payload | P0 | REQ-M04-004 |
+| TC-HL-G1-SNAPSHOT-001 | M04/M07 | PO snapshot không đổi sau khi recipe version mới được tạo | PO đã tạo từ G1 | Tạo/activate future version; đọc PO cũ | Snapshot PO cũ giữ nguyên G1 data | PO snapshot, future recipe | P0 | REQ-M04-007 |
+| TC-HL-LOT-READY-001 | M06/M08 | Raw lot `QC_PASS` chưa đủ để material issue | Raw lot `QC_PASS` nhưng chưa `mark_ready` | Thử allocate/issue; sau đó `mark_ready` và thử lại | Lần đầu reject `LOT_NOT_READY_FOR_PRODUCTION`; sau `mark_ready` lot mới allocatable/issuable; audit/state transition tồn tại | Raw lot QC_PASS fixture | P0 | REQ-M06-004 |
+| TC-HL-DECREMENT-001 | M08/M11 | Receipt không được trừ kho thêm | Issue executed | Confirm receipt rồi query ledger movement raw | Chỉ issue có debit raw; receipt không debit raw | Material issue/receipt | P0 | REQ-M08-001, REQ-M08-002 |
+| TC-HL-QC-RELEASE-001 | M09/M11 | `QC_PASS` chưa đủ nhập kho | Batch QC_PASS chưa release | POST warehouse receipt | Reject `BATCH_NOT_RELEASED`; không có FG ledger credit | QC_PASS batch | P0 | REQ-M09-002, REQ-M11-001 |
+| TC-HL-PTRACE-001 | M12 | Public trace không trả private keys | QR printed | Assert response keys against denylist | Denylist absent; policy fail closed | Public QR | P0 | REQ-M12-002 |
+| TC-HL-QR-VOID-001 | M10/M12 | QR `VOID`/`FAILED` không trace public | QR VOID/FAILED | GET public trace | Public-safe invalid response; no internal reason leak | QR invalid states | P0 | REQ-M12-003 |
+| TC-HL-MISA-MAP-001 | M14 | MISA missing mapping không drop event | Sync event without mapping | Dispatch/retry | Pending/review status, error log, reconcile action | Missing mapping event | P0 | REQ-M14-002 |
+
+## 4. RTM Reverse Mapping
+
+Bảng này được đồng bộ từ `08_REQUIREMENTS_TRACEABILITY_MATRIX.md` trong Part 11 consistency QA. Nếu RTM đổi `test case`, bảng này phải cập nhật cùng lúc.
+
+| requirement_id | module | business_rule | primary_test_case | priority | status |
+|---|---|---|---|---|---|
+| REQ-M01-001 | M01 Foundation Core | BR-AUD-001 | TC-M01-AUD-001 | P0 | MANDATORY |
+| REQ-M01-002 | M01 Foundation Core | BR-API-001 | TC-M01-API-002 | P0 | MANDATORY |
+| REQ-M01-003 | M01 Foundation Core, M14 MISA Integration | BR-EVT-001 | TC-M01-EVT-003 | P1 | MANDATORY |
+| REQ-M01-004 | M01 Foundation Core | BR-API-002 | TC-M01-ERR-004 | P1 | MANDATORY |
+| REQ-M01-005 | M01 Foundation Core | BR-STATE-001 | TC-M01-STATE-005 | P0 | MANDATORY |
+| REQ-M02-001 | M02 Auth Permission | BR-AUTH-001 | TC-M02-RBAC-001 | P0 | MANDATORY |
+| REQ-M02-002 | M02 Auth Permission | BR-AUTH-002 | TC-M02-PERM-002 | P0 | MANDATORY |
+| REQ-M02-003 | M02 Auth Permission, M01 Foundation Core | BR-APP-001 | TC-M02-APP-003 | P0 | MANDATORY |
+| REQ-M03-001 | M03 Master Data | BR-MD-001 | TC-M03-MD-001 | P0 | MANDATORY |
+| REQ-M03-002 | M03 Master Data, M11 Warehouse Inventory | BR-WH-001 | TC-M03-WH-002 | P0 | MANDATORY |
+| REQ-M03-003 | M03 Master Data, M05 Source Origin | BR-SUP-001 | TC-M03-SUP-003 | P0 | MANDATORY |
+| REQ-M04-001 | M04 SKU Ingredient Recipe | BR-SKU-001 | TC-M04-SKU-001 | P0 | MANDATORY |
+| REQ-M04-002 | M04 SKU Ingredient Recipe | BR-ING-001 | TC-M04-ING-002 | P0 | MANDATORY |
+| REQ-M04-003 | M04 SKU Ingredient Recipe | BR-ING-002 | TC-M04-ING-003 | P0 | MANDATORY |
+| REQ-M04-004 | M04 SKU Ingredient Recipe | BR-REC-001 | TC-M04-REC-004 | P0 | MANDATORY |
+| REQ-M04-005 | M04 SKU Ingredient Recipe | BR-REC-002 | TC-M04-REC-005 | P0 | MANDATORY |
+| REQ-M04-006 | M04 SKU Ingredient Recipe, M02 Auth Permission | BR-REC-003 | TC-M04-REC-006 | P0 | MANDATORY |
+| REQ-M04-007 | M04 SKU Ingredient Recipe, M07 Production | BR-REC-004 | TC-M04-REC-007 | P0 | MANDATORY |
+| REQ-M05-001 | M05 Source Origin | BR-SRC-001 | TC-M05-SRC-001 | P0 | MANDATORY |
+| REQ-M05-002 | M05 Source Origin, M06 Raw Material | BR-SRC-002 | TC-M05-SRC-002 | P0 | MANDATORY |
+| REQ-M05-003 | M05 Source Origin, M12 Traceability | BR-PUB-001 | TC-M05-PUB-003 | P0 | MANDATORY |
+| REQ-M06-001 | M06 Raw Material | BR-RM-001 | TC-M06-RM-001 | P0 | MANDATORY |
+| REQ-M06-002 | M06 Raw Material, M05 Source Origin, M03 Master Data | BR-RM-002 | TC-M06-RM-002 | P0 | MANDATORY |
+| REQ-M06-003 | M06 Raw Material, M09 QC Release | BR-RM-QC-001 | TC-M06-QC-003 | P0 | MANDATORY |
+| REQ-M06-004 | M06 Raw Material, M08 Material Issue Receipt | BR-RM-003 | TC-M06-RM-004, TC-M06-RM-005, TC-HL-LOT-READY-001 | P0 | MANDATORY |
+| REQ-M07-001 | M07 Production, M04 SKU Ingredient Recipe | BR-PO-001 | TC-M07-PO-001 | P0 | MANDATORY |
+| REQ-M07-002 | M07 Production, M12 Traceability | BR-BATCH-001 | TC-M07-BATCH-002 | P0 | MANDATORY |
+| REQ-M07-003 | M07 Production, M09 QC Release | BR-PROC-001 | TC-M07-PROC-003 | P0 | MANDATORY |
+| REQ-M07-004 | M07 Production, M10 Packaging Printing | BR-PRINT-PO-001 | TC-M07-PRINT-004 | P0 | MANDATORY |
+| REQ-M08-001 | M08 Material Issue Receipt, M11 Warehouse Inventory | BR-MI-001 | TC-M08-MI-001 | P0 | MANDATORY |
+| REQ-M08-002 | M08 Material Issue Receipt | BR-MR-001 | TC-M08-MR-002 | P0 | MANDATORY |
+| REQ-M08-003 | M08 Material Issue Receipt, M04 SKU Ingredient Recipe | BR-MI-002 | TC-M08-MI-003 | P0 | MANDATORY |
+| REQ-M08-004 | M08 Material Issue Receipt, M12 Traceability | BR-MI-003 | TC-M08-MI-004 | P0 | MANDATORY |
+| REQ-M09-001 | M09 QC Release | BR-QC-001 | TC-M09-QC-001 | P0 | MANDATORY |
+| REQ-M09-002 | M09 QC Release | BR-REL-001 | TC-M09-REL-002 | P0 | MANDATORY |
+| REQ-M09-003 | M09 QC Release, M10 Packaging Printing, M11 Warehouse Inventory | BR-REL-002 | TC-M09-REL-003 | P0 | MANDATORY |
+| REQ-M10-001 | M10 Packaging Printing | BR-PKG-001 | TC-M10-PKG-001 | P0 | MANDATORY |
+| REQ-M10-002 | M10 Packaging Printing | BR-GTIN-001 | TC-M10-GTIN-002 | P0 | MANDATORY |
+| REQ-M10-003 | M10 Packaging Printing, M12 Traceability | BR-QR-001 | TC-M10-QR-003 | P0 | MANDATORY |
+| REQ-M10-004 | M10 Packaging Printing, M01 Foundation Core | BR-PRINT-001 | TC-M10-PRINT-004 | P0 | MANDATORY |
+| REQ-M10-005 | M10 Packaging Printing, M14 MISA Integration | BR-DEV-001 | TC-M10-DEV-005 | P1 | NEEDS_OWNER_DECISION |
+| REQ-M11-001 | M11 Warehouse Inventory, M09 QC Release | BR-WH-002 | TC-M11-WH-001 | P0 | MANDATORY |
+| REQ-M11-002 | M11 Warehouse Inventory, M01 Foundation Core | BR-INV-001 | TC-M11-INV-002 | P0 | MANDATORY |
+| REQ-M11-003 | M11 Warehouse Inventory | BR-INV-002 | TC-M11-INV-003 | P0 | MANDATORY |
+| REQ-M11-004 | M11 Warehouse Inventory, M02 Auth Permission | BR-INV-003 | TC-M11-INV-004 | P1 | MANDATORY |
+| REQ-M12-001 | M12 Traceability | BR-TRACE-001 | TC-M12-TRACE-001 | P0 | MANDATORY |
+| REQ-M12-002 | M12 Traceability | BR-PTRACE-001 | TC-M12-PTRACE-002 | P0 | MANDATORY |
+| REQ-M12-003 | M12 Traceability, M10 Packaging Printing | BR-PTRACE-002 | TC-M12-PTRACE-003 | P0 | MANDATORY |
+| REQ-M12-004 | M12 Traceability, M15 Reporting Dashboard | BR-NFR-TRACE-001 | TC-M12-PERF-004 | P1 | NEEDS_OWNER_DECISION |
+| REQ-M12-005 | M12 Traceability, M16 Admin UI | BR-PTRACE-003 | TC-M12-I18N-005 | P2 | NEEDS_OWNER_DECISION |
+| REQ-M13-001 | M13 Recall | BR-RECALL-001 | TC-M13-RECALL-001 | P0 | MANDATORY |
+| REQ-M13-002 | M13 Recall, M12 Traceability | BR-RECALL-002 | TC-M13-RECALL-002 | P0 | MANDATORY |
+| REQ-M13-003 | M13 Recall, M11 Warehouse Inventory | BR-RECALL-003 | TC-M13-RECALL-003 | P0 | MANDATORY |
+| REQ-M13-004 | M13 Recall, M15 Reporting Dashboard | BR-RECALL-004 | TC-M13-SLA-004 | P1 | MANDATORY |
+| REQ-M14-001 | M14 MISA Integration | BR-MISA-001 | TC-M14-MISA-001 | P0 | MANDATORY |
+| REQ-M14-002 | M14 MISA Integration, M01 Foundation Core | BR-MISA-002 | TC-M14-MISA-002 | P0 | MANDATORY |
+| REQ-M14-003 | M14 MISA Integration | BR-MISA-003 | TC-M14-CONFIG-003 | P1 | NEEDS_OWNER_DECISION |
+| REQ-M15-001 | M15 Reporting Dashboard | BR-DASH-001 | TC-M15-DASH-001 | P1 | MANDATORY |
+| REQ-M15-002 | M15 Reporting Dashboard, M01 Foundation Core | BR-ALERT-001 | TC-M15-ALERT-002 | P1 | MANDATORY |
+| REQ-M15-003 | M15 Reporting Dashboard | BR-NFR-OBS-001 | TC-M15-OBS-003 | P2 | NEEDS_OWNER_DECISION |
+| REQ-M16-001 | M16 Admin UI, M02 Auth Permission | BR-UI-001 | TC-M16-UI-001 | P1 | MANDATORY |
+| REQ-M16-002 | M16 Admin UI | BR-UI-002 | TC-M16-UI-002 | P1 | MANDATORY |
+| REQ-M16-003 | M16 Admin UI, M01 Foundation Core | BR-PWA-001 | TC-M16-PWA-003 | P1 | MANDATORY |
+| REQ-NFR-001 | M01 Foundation Core, M15 Reporting Dashboard | BR-NFR-BACKUP-001 | TC-NFR-BACKUP-001 | P2 | NEEDS_OWNER_DECISION |
+| REQ-NFR-002 | M01 Foundation Core, M11 Warehouse Inventory, M12 Traceability, M13 Recall, M14 MISA Integration | BR-NFR-RET-001 | TC-NFR-RET-002 | P2 | NEEDS_OWNER_DECISION |
+| REQ-NFR-003 | M02 Auth Permission, M01 Foundation Core | BR-NFR-SEC-001 | TC-NFR-SEC-003 | P0 | MANDATORY |
+| REQ-NFR-004 | M01 Foundation Core, M04 SKU Ingredient Recipe | BR-NFR-SEED-001 | TC-NFR-SEED-004 | P0 | MANDATORY |
+| REQ-NFR-005 | All modules | BR-NFR-SMOKE-001 | TC-NFR-SMOKE-005 | P0 | MANDATORY |
+## 5. Coverage Notes
+
+- `P0` là release-blocking nếu fail.
+- `P1` phải pass trước production readiness, trừ khi owner ký accepted risk.
+- Các requirement `NEEDS_OWNER_DECISION` vẫn có test placeholder nhưng threshold cuối cùng phụ thuộc owner decision.
+
+

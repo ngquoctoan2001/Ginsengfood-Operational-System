@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "repo: inspect scaffold",
+      "type": "shell",
+      "command": "Get-ChildItem -Force | Select-Object Mode,Length,LastWriteTime,Name",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "backend: build if scaffolded",
+      "type": "shell",
+      "command": "if (Test-Path apps/api) { Push-Location apps/api; dotnet build --no-incremental -warnaserror; Pop-Location } else { Write-Host 'N/A - apps/api not scaffolded yet' }",
+      "group": "build",
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "backend: test if scaffolded",
+      "type": "shell",
+      "command": "if (Test-Path apps/api) { Push-Location apps/api; dotnet test --no-build; Pop-Location } else { Write-Host 'N/A - apps/api not scaffolded yet' }",
+      "group": "test",
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "dependsOn": "backend: build if scaffolded"
+    },
+    {
+      "label": "frontend: type check if scaffolded",
+      "type": "shell",
+      "command": "if (Test-Path apps/admin-web) { Push-Location apps/admin-web; npx tsc -b --noEmit; Pop-Location } else { Write-Host 'N/A - apps/admin-web not scaffolded yet' }",
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "frontend: build if scaffolded",
+      "type": "shell",
+      "command": "if (Test-Path apps/admin-web) { Push-Location apps/admin-web; npm run build; Pop-Location } else { Write-Host 'N/A - apps/admin-web not scaffolded yet' }",
+      "group": "build",
+      "problemMatcher": "$tsc",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "ci: available gates",
+      "dependsOn": [
+        "backend: build if scaffolded",
+        "frontend: type check if scaffolded",
+        "frontend: build if scaffolded"
+      ],
+      "dependsOrder": "sequence",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "agent: stop owned processes",
+      "type": "shell",
+      "command": ".\\tools\\agent\\Stop-AgentOwnedProcesses.ps1 -IncludeDescendants",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+  ]
+}

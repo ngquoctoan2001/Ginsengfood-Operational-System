@@ -1,0 +1,6 @@
+internal_object_type,internal_object_key,misa_object_type,misa_external_id,mapping_status,is_test_fixture,sync_direction,notes
+WAREHOUSE,WH_RAW_MAIN,AMIS_WAREHOUSE,AMIS_DEV_WH_RAW_MAIN,ACTIVE_DEV_FIXTURE,true,OUTBOUND,Replace with production AMIS mapping before go-live
+WAREHOUSE,WH_FG_MAIN,AMIS_WAREHOUSE,AMIS_DEV_WH_FG_MAIN,ACTIVE_DEV_FIXTURE,true,OUTBOUND,Replace with production AMIS mapping before go-live
+DOCUMENT_TYPE,MATERIAL_ISSUE,AMIS_INVENTORY_ISSUE,AMIS_DEV_DOC_MI,ACTIVE_DEV_FIXTURE,true,OUTBOUND,Material issue sync through integration layer only
+DOCUMENT_TYPE,WAREHOUSE_RECEIPT,AMIS_INVENTORY_RECEIPT,AMIS_DEV_DOC_WR,ACTIVE_DEV_FIXTURE,true,OUTBOUND,Finished goods receipt sync through integration layer only
+NEGATIVE_TEST,MISSING_MAPPING_FIXTURE,AMIS_UNKNOWN,,MISSING_MAPPING_EXPECT_RECONCILE_PENDING,true,OUTBOUND,Used by seed/API test: missing mapping must log and remain reconcile pending

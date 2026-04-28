@@ -1,0 +1,36 @@
+{
+  "version": "2.0",
+  "technicalLevel": "technical",
+  "preferredStyle": {
+    "verbosity": "minimal",
+    "codeComments": true,
+    "explanations": true
+  },
+  "domains": [
+    "dotnet",
+    "postgresql",
+    "react",
+    "typescript",
+    "ginsengfood-operational-v2"
+  ],
+  "suggestedBy": "ecc-tools-repo-analysis",
+  "createdAt": "2026-03-20T12:07:57.119Z",
+  "sourceTruth": ["docs/software-specs"],
+  "phasePrompt": "docs/software-specs/ai-agent/01_AI_AGENT_WORKFLOW.md",
+  "processLifecycle": {
+    "preferFiniteForegroundCommands": true,
+    "trackLongLivedAgentProcesses": "tools/agent/Start-AgentOwnedProcess.ps1",
+    "stopTrackedAgentProcesses": "tools/agent/Stop-AgentOwnedProcesses.ps1 -IncludeDescendants",
+    "dotnetBuildServerCleanup": "dotnet build-server shutdown",
+    "neverKillBroadProcessNames": true,
+    "preserveUserOwnedTerminals": true
+  },
+  "ginsengfoodV2HardLocks": [
+    "G1 is the initial operational baseline for go-live schema, seed, production-order snapshot, material issue, trace, recall, and validation flows.",
+    "Future accepted formula versions such as G2/G3 must be approved, activated, snapshotted immutably, audited, and retired without rewriting production history.",
+    "G0 is research/baseline context only and must not be active in operational seed, production order, material issue, costing, trace, recall, or handoff.",
+    "Operational recipe display and material issue use SPECIAL_SKU_COMPONENT, NUTRITION_BASE, BROTH_EXTRACT, and SEASONING_FLAVOR.",
+    "Ingredient master must include ING_MI_CHINH and HRB_SAM_SAVIGIN.",
+    "Current code routes must be mapped before API route changes; do not create parallel route families from documents."
+  ]
+}

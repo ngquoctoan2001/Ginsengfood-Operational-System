@@ -1,0 +1,39 @@
+﻿-- Seed SKU metadata. The current schema stores this metadata on ref_sku;
+-- there is no separate ref_sku_metadata table.
+-- Requires: 06_ref_sku.sql.
+
+BEGIN;
+
+WITH seed(sku_code, vegan_classification, sku_group, protein_source) AS (
+    VALUES
+    ('A1/CS/DM/HS', 'VEGAN', 'A', 'Thuần chay'),
+    ('A2/CS/BASA', 'NON_VEGAN', 'A', 'Cá Basa'),
+    ('A3/CS/CAHOI', 'NON_VEGAN', 'A', 'Cá hồi'),
+    ('A4/CS/LUON', 'NON_VEGAN', 'A', 'Lươn đồng'),
+    ('A5/CS/CUU', 'NON_VEGAN', 'A', 'Thịt cừu'),
+    ('B1/CS/RM/ĐX', 'VEGAN', 'B', 'Thuần chay'),
+    ('B2/CS/DHA', 'NON_VEGAN', 'B', 'Cá hồi'),
+    ('B3/CS/CACOM', 'NON_VEGAN', 'B', 'Cá cơm'),
+    ('B4/CS/COLAGEN', 'NON_VEGAN', 'B', 'Thịt heo & Da heo'),
+    ('B5/CS/SINHLUC', 'NON_VEGAN', 'B', 'Hàu biển'),
+    ('B6/CS/GAAC', 'NON_VEGAN', 'B', 'Gà ác'),
+    ('C1/CS/BAONGU', 'NON_VEGAN', 'C', 'Bào ngư'),
+    ('C2/CS/DONGTRUNG', 'VEGAN', 'C', 'Đông trùng hạ thảo'),
+    ('C3/CS/NAMDONGCO', 'VEGAN', 'C', 'Nấm đông cô'),
+    ('C4/CS/CUABIEN', 'NON_VEGAN', 'C', 'Cua biển'),
+    ('C5/CS/CANGU', 'NON_VEGAN', 'C', 'Cá ngừ'),
+    ('C6/CS/TOM/RONGBIEN', 'NON_VEGAN', 'C', 'Tôm & Rong biển'),
+    ('C7/CS/THITGA', 'NON_VEGAN', 'C', 'Thịt gà'),
+    ('C8/CS/THITHEO', 'NON_VEGAN', 'C', 'Thịt heo'),
+    ('C9/CS/THITBO', 'NON_VEGAN', 'C', 'Thịt bò')
+)
+UPDATE ref_sku s
+SET vegan_classification = seed.vegan_classification,
+    sku_group = seed.sku_group,
+    protein_source = seed.protein_source,
+    updated_at = NOW()
+FROM seed
+WHERE s.sku_code = seed.sku_code
+  AND s.is_deleted = FALSE;
+
+COMMIT;

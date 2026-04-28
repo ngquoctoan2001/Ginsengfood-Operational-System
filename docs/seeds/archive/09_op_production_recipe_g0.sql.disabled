@@ -1,0 +1,81 @@
+﻿-- Seed G0 production recipe headers.
+-- Requires: 06_ref_sku.sql.
+
+BEGIN;
+
+WITH seed(recipe_code, recipe_name, sku_code, recipe_status, version_number, recipe_note, created_at) AS (
+    VALUES
+    ('FML-A1-G0', 'Cháo Sâm – Diêm mạch & Hạt sen (G0)', 'A1/CS/DM/HS', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A2-G0', 'Cháo Sâm – Cá Basa (G0)', 'A2/CS/BASA', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A3-G0', 'Cháo Sâm – Cá hồi (G0)', 'A3/CS/CAHOI', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A4-G0', 'Cháo Sâm – Lươn đồng (G0)', 'A4/CS/LUON', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A5-G0', 'Cháo Sâm – Thịt cừu & Táo tàu (G0)', 'A5/CS/CUU', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B1-G0', 'Cháo Sâm – Rau má & Đậu xanh (G0)', 'B1/CS/RM/ĐX', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B2-G0', 'Cháo Sâm – DHA Não bộ (G0)', 'B2/CS/DHA', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B3-G0', 'Cháo Sâm – Cá cơm & Vừng (G0)', 'B3/CS/CACOM', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B4-G0', 'Cháo Sâm – Thịt heo & Da heo (G0)', 'B4/CS/COLAGEN', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B5-G0', 'Cháo Sâm – Hàu biển (G0)', 'B5/CS/SINHLUC', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B6-G0', 'Cháo Sâm – Gà ác (G0)', 'B6/CS/GAAC', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C1-G0', 'Cháo Sâm – Bào ngư (G0)', 'C1/CS/BAONGU', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C2-G0', 'Cháo Sâm – Đông trùng hạ thảo (G0)', 'C2/CS/DONGTRUNG', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C3-G0', 'Cháo Sâm – Nấm đông cô (G0)', 'C3/CS/NAMDONGCO', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C4-G0', 'Cháo Sâm – Cua biển (G0)', 'C4/CS/CUABIEN', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C5-G0', 'Cháo Sâm – Cá ngừ (G0)', 'C5/CS/CANGU', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C6-G0', 'Cháo Sâm – Tôm & Rong biển (G0)', 'C6/CS/TOM/RONGBIEN', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C7-G0', 'Cháo Sâm – Thịt gà (G0)', 'C7/CS/THITGA', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C8-G0', 'Cháo Sâm – Thịt heo (G0)', 'C8/CS/THITHEO', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C9-G0', 'Cháo Sâm – Thịt bò (G0)', 'C9/CS/THITBO', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz)
+), resolved AS (
+    SELECT seed.recipe_code, seed.recipe_name, sku.id AS sku_id, seed.recipe_status,
+           seed.version_number, seed.recipe_note, seed.created_at
+    FROM seed
+    JOIN ref_sku sku ON sku.sku_code = seed.sku_code AND sku.is_deleted = FALSE
+)
+UPDATE op_production_recipe r
+SET recipe_name = resolved.recipe_name,
+    sku_id = resolved.sku_id,
+    recipe_status = resolved.recipe_status,
+    version_number = resolved.version_number,
+    recipe_note = resolved.recipe_note,
+    updated_at = NOW()
+FROM resolved
+WHERE r.recipe_code = resolved.recipe_code
+  AND r.is_deleted = FALSE;
+
+WITH seed(recipe_code, recipe_name, sku_code, recipe_status, version_number, recipe_note, created_at) AS (
+    VALUES
+    ('FML-A1-G0', 'Cháo Sâm – Diêm mạch & Hạt sen (G0)', 'A1/CS/DM/HS', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A2-G0', 'Cháo Sâm – Cá Basa (G0)', 'A2/CS/BASA', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A3-G0', 'Cháo Sâm – Cá hồi (G0)', 'A3/CS/CAHOI', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A4-G0', 'Cháo Sâm – Lươn đồng (G0)', 'A4/CS/LUON', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-A5-G0', 'Cháo Sâm – Thịt cừu & Táo tàu (G0)', 'A5/CS/CUU', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B1-G0', 'Cháo Sâm – Rau má & Đậu xanh (G0)', 'B1/CS/RM/ĐX', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B2-G0', 'Cháo Sâm – DHA Não bộ (G0)', 'B2/CS/DHA', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B3-G0', 'Cháo Sâm – Cá cơm & Vừng (G0)', 'B3/CS/CACOM', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B4-G0', 'Cháo Sâm – Thịt heo & Da heo (G0)', 'B4/CS/COLAGEN', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B5-G0', 'Cháo Sâm – Hàu biển (G0)', 'B5/CS/SINHLUC', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-B6-G0', 'Cháo Sâm – Gà ác (G0)', 'B6/CS/GAAC', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C1-G0', 'Cháo Sâm – Bào ngư (G0)', 'C1/CS/BAONGU', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C2-G0', 'Cháo Sâm – Đông trùng hạ thảo (G0)', 'C2/CS/DONGTRUNG', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C3-G0', 'Cháo Sâm – Nấm đông cô (G0)', 'C3/CS/NAMDONGCO', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C4-G0', 'Cháo Sâm – Cua biển (G0)', 'C4/CS/CUABIEN', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C5-G0', 'Cháo Sâm – Cá ngừ (G0)', 'C5/CS/CANGU', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C6-G0', 'Cháo Sâm – Tôm & Rong biển (G0)', 'C6/CS/TOM/RONGBIEN', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C7-G0', 'Cháo Sâm – Thịt gà (G0)', 'C7/CS/THITGA', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C8-G0', 'Cháo Sâm – Thịt heo (G0)', 'C8/CS/THITHEO', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz),
+    ('FML-C9-G0', 'Cháo Sâm – Thịt bò (G0)', 'C9/CS/THITBO', 'DEPRECATED', 0, 'Công thức gốc nghiên cứu / sản xuất mẫu', '2025-01-01T07:00:00+07:00'::timestamptz)
+), resolved AS (
+    SELECT seed.recipe_code, seed.recipe_name, sku.id AS sku_id, seed.recipe_status,
+           seed.version_number, seed.recipe_note, seed.created_at
+    FROM seed
+    JOIN ref_sku sku ON sku.sku_code = seed.sku_code AND sku.is_deleted = FALSE
+)
+INSERT INTO op_production_recipe (recipe_code, recipe_name, sku_id, recipe_status, version_number, recipe_note, created_at, is_deleted)
+SELECT resolved.recipe_code, resolved.recipe_name, resolved.sku_id, resolved.recipe_status,
+       resolved.version_number, resolved.recipe_note, resolved.created_at, FALSE
+FROM resolved
+WHERE NOT EXISTS (
+    SELECT 1 FROM op_production_recipe r WHERE r.recipe_code = resolved.recipe_code
+);
+
+COMMIT;

@@ -1,0 +1,17 @@
+screen_id,module_code,screen_name,route,required_permission,status,source_document,notes
+SCR-AUDIT-LOG,M01,Audit Log,/admin/system/audit,AUDIT_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-USERS-ROLES,M02,Users And Roles,/admin/system/users,USER_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-MASTER-DATA,M03,Master Data,/admin/master-data,MASTER_DATA_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-SKU-RECIPE,M04,SKU Ingredient Recipe,/admin/recipes,RECIPE_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-SOURCE-ORIGIN,M05,Source Origin,/admin/source-origins,SOURCE_ORIGIN_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-RAW-MATERIAL,M06,Raw Material,/admin/raw-material,RAW_LOT_VIEW;RAW_LOT_MARK_READY,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture with mark-ready action
+SCR-PRODUCTION,M07,Production Orders,/admin/production/orders,PRODUCTION_ORDER_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-MATERIAL,M08,Material Issue Receipt,/admin/production/materials,MATERIAL_REQUEST_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-QC-RELEASE,M09,QC Release,/admin/qc/releases,BATCH_RELEASE_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-PACKAGING-PRINT,M10,Packaging Printing,/admin/packaging,PACKAGING_JOB_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-WAREHOUSE,M11,Warehouse Inventory,/admin/warehouse,INVENTORY_LEDGER_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-TRACE,M12,Traceability,/admin/trace,TRACE_INTERNAL_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-RECALL,M13,Recall,/admin/recall,RECALL_CASE_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-MISA,M14,MISA Integration,/admin/integrations/misa,MISA_SYNC_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-DASHBOARD,M15,Operations Dashboard,/admin/dashboard,DASHBOARD_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture
+SCR-PWA-TASKS,M16,Shopfloor PWA Tasks,/admin/tasks/my,UI_MENU_VIEW,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Minimum UI registry fixture

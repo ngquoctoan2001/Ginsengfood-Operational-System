@@ -1,0 +1,27 @@
+{
+  "recommendations": [
+    "github.copilot",
+    "github.copilot-chat",
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "stylelint.vscode-stylelint",
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "editorconfig.editorconfig",
+    "streetsidesoftware.code-spell-checker",
+    "christian-kohler.path-intellisense",
+    "orta.vscode-jest",
+    "ms-playwright.playwright",
+    "humao.rest-client",
+    "42crunch.vscode-openapi",
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+    "ms-azuretools.vscode-docker",
+    "mikestead.dotenv"
+  ],
+  "unwantedRecommendations": []
+}

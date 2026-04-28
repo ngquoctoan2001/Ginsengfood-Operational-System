@@ -1,0 +1,104 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/bin": true,
+    "**/obj": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/bin/**": true,
+    "**/obj/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bin": true,
+    "**/obj": true,
+    "**/dist": true,
+    "**/.git": true
+  },
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "typescriptreact"
+  ],
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableRoslynAnalyzers": true,
+  "github.copilot.enable": {
+    "*": true
+  },
+  "github.copilot.chat.agent.runTasks": true,
+  "chat.agent.enabled": true,
+  "github.copilot.chat.generateTests.codeLens": true,
+  "github.copilot.chat.experimental.generateDocs": true,
+  "github.copilot.chat.scopeSelection": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "chat.mcp.access": "all",
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "AGENTS.md"
+    },
+    {
+      "file": "CLAUDE.md"
+    },
+    {
+      "text": "Ginsengfood V2 single source of truth is docs/software-specs/. The repo is greenfield; missing app layers are NOT_SCAFFOLDED, not stale code. For broad scaffold/schema/seed/workflow/form/trace/recall/MISA/QR/production/route work, read relevant Markdown files in docs/software-specs/ before planning changes. G1 is the initial operational baseline; schema/flows must support future approved G2/G3 versions with immutable snapshots. G0 is research/baseline only and never active in operational flows."
+    },
+    {
+      "text": "Agent process lifecycle: prefer finite foreground commands; if an agent starts dotnet run/watch, npm run dev, Vite/Next, Playwright, Docker, Start-Process, Start-Job, or another long-lived process, record the PID and stop only that agent-owned PID before final response with tools/agent/Stop-AgentOwnedProcesses.ps1 -IncludeDescendants. After agent-run .NET build/test/EF commands, run dotnet build-server shutdown. Never kill broad dotnet/node/npm process names."
+    }
+  ],
+  "github.copilot.chat.testGeneration.instructions": [
+    {
+      "file": "AGENTS.md"
+    },
+    {
+      "file": "CLAUDE.md"
+    },
+    {
+      "text": "Generate tests from docs/software-specs/ acceptance criteria. If backend/frontend/test infrastructure is not scaffolded yet, propose the first test files and mark executable gates as N/A - not scaffolded yet."
+    }
+  ],
+  "github.copilot.chat.reviewSelection.instructions": [
+    {
+      "file": "AGENTS.md"
+    },
+    {
+      "file": "CLAUDE.md"
+    },
+    {
+      "text": "Review against docs/software-specs/ and greenfield phase scope. Do not block unrelated future layers that are intentionally NOT_SCAFFOLDED, but block claims of completion when required layer validation is missing."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+uom_code,display_name,uom_type,status,source_document,notes
+kg,kg,MASS,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+g,g,MASS,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+lít,lít,VOLUME,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+ml,ml,VOLUME,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+khay,khay,PACKAGING,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+gói,gói,PACKAGING,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+lọ,lọ,PACKAGING,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+hũ,hũ,PACKAGING,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+hộp,hộp,PACKAGING,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+thùng,thùng,PACKAGING,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM
+%,%,RATIO,ACTIVE,database/07_SEED_DATA_SPECIFICATION.md,Required UOM

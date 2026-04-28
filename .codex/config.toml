@@ -1,0 +1,118 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Project-local Codex configuration for ginsengfood-operational-system.
+# Target surface: Codex in VS Code IDE.
+# Operating mode: greenfield Ginsengfood V2 Operational implementation from docs/software-specs/.
+
+model = "gpt-5.5"
+review_model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+model_verbosity = "medium"
+personality = "pragmatic"
+
+file_opener = "vscode"
+
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+[sandbox_workspace_write]
+network_access = true
+
+project_doc_max_bytes = 65536
+project_root_markers = [".git", "AGENTS.md", "docs/software-specs/01_SOURCE_INDEX.md"]
+
+developer_instructions = """
+Follow the repository root AGENTS.md first.
+
+Current priority workstream:
+- Greenfield Ginsengfood Operational build.
+- The application codebase is not scaffolded yet.
+- The single accepted source of truth is docs/software-specs/.
+- Do not treat the empty repo as a failed migration.
+- Do not require current-code route maps, historical migration comparison, seed-delta analysis, or GitNexus graph exploration before initial code exists.
+- Map canonical requirements to intended project structure, modules, migrations, entities, DTOs, API routes, admin UI, workers, seeds, and tests before creating files.
+- Use docs/v2-plan/, docs/v2-handoff/, docs/v2-smoke/, and docs/v2-audit/ only when they exist or a phase creates them.
+- Do not silently merge old extracted documents with docs/software-specs/.
+"""
+
+[mcp_servers.gitnexus]
+enabled = true
+required = false
+command = "gitnexus"
+args = ["mcp"]
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+enabled_tools = [
+  "list_repos",
+  "query",
+  "route_map",
+  "context",
+  "api_impact"
+]
+
+[mcp_servers.gitnexus.tools.list_repos]
+approval_mode = "approve"
+
+[mcp_servers.gitnexus.tools.query]
+approval_mode = "approve"
+
+[mcp_servers.gitnexus.tools.context]
+approval_mode = "approve"
+
+[mcp_servers.gitnexus.tools.api_impact]
+approval_mode = "approve"
+
+[mcp_servers.gitnexus.tools.route_map]
+approval_mode = "approve"
+
+[features]
+multi_agent = true
+web_search_request = true
+
+[agents]
+max_threads = 6
+max_depth = 1
+job_max_runtime_seconds = 1800
+
+[profiles.strict]
+model = "gpt-5.5"
+review_model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+web_search = "cached"
+file_opener = "vscode"
+
+[profiles.auto_dev]
+model = "gpt-5.5"
+review_model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+web_search = "live"
+file_opener = "vscode"
+
+[profiles.vscode_operational_v2]
+model = "gpt-5.5"
+review_model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+plan_mode_reasoning_effort = "xhigh"
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+web_search = "live"
+file_opener = "vscode"
+developer_instructions = """
+Operate in greenfield Ginsengfood V2 Operational build mode.
+
+Read in order:
+1. AGENTS.md
+2. docs/software-specs/01_SOURCE_INDEX.md
+3. relevant files from docs/software-specs/
+4. generated phase artifacts under docs/v2-plan/, docs/v2-handoff/, docs/v2-smoke/, or docs/v2-audit/ only when they exist or are explicitly referenced.
+
+Do not require current-code impact analysis before code exists. After scaffold, use normal impact analysis.
+"""

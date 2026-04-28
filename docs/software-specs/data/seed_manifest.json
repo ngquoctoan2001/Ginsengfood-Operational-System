@@ -1,0 +1,35 @@
+{
+  "source": ".tmp-docx-extract\\CÔNG THỨC 20 SKU MỚI.txt",
+  "generated_at": "2026-04-27T10:00:28.750Z",
+  "repaired_at": "2026-04-28T00:00:00+07:00",
+  "encoding": "UTF-8",
+  "counts": {
+    "uom": 11,
+    "skus": 20,
+    "recipe_headers": 20,
+    "recipe_lines": 433,
+    "ingredients": 52,
+    "recipe_groups": 4,
+    "roles_permissions": 66,
+    "warehouses_locations": 4,
+    "source_origin_fixture": 2,
+    "gtin_fixture": 40,
+    "event_schema_registry": 18,
+    "ui_registry_fixture": 16,
+    "misa_mapping_fixture": 5,
+    "public_trace_policy": 17
+  },
+  "recipe_line_group_counts": {
+    "SPECIAL_SKU_COMPONENT": 114,
+    "NUTRITION_BASE": 99,
+    "BROTH_EXTRACT": 100,
+    "SEASONING_FLAVOR": 120
+  },
+  "notes": [
+    "Ingredient codes not explicitly locked by source are generated from Vietnamese ingredient names and require owner/code review before production seed.",
+    "effective_from is a technical seed date for dev/QA; production go-live effective date remains owner-controlled.",
+    "UOM, source/procurement, GTIN, event schema, and UI registry fixtures were added to cover required seed groups from database/07_SEED_DATA_SPECIFICATION.md.",
+    "RAW_LOT_READY_FOR_PRODUCTION and RAW_LOT_MARK_READY are included so QC_PASS remains distinct from READY_FOR_PRODUCTION before material issue.",
+    "GTIN and MISA rows are dev/test fixtures only and must be replaced/configured before production go-live."
+  ]
+}

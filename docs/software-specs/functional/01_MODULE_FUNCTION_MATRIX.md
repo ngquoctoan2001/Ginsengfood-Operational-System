@@ -1,0 +1,63 @@
+# Module Function Matrix
+
+> Mục đích: map từng module chuẩn M01-M16 sang function, input/output, API, UI, workflow và test anchor.
+
+## 1. Function Matrix
+
+| function_id | Module | Function | Primary actor | Input | Output | API endpoint | UI screen | Workflow | Test anchor |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| FN-M01-001 | M01 | Audit log viewer/query | `R-AUDITOR`, `R-OPS-MGR` | Object/action filters | Audit events | `/api/admin/audit/logs` | Audit Log Viewer | Audit trail | TC-M01-AUD-001 |
+| FN-M01-002 | M01 | Idempotent command registry | System/PWA | Idempotency key + payload | Deduplicated result | All command endpoints | Shared API client/PWA | Command submit | TC-M01-API-002 |
+| FN-M01-003 | M01 | Event/outbox monitor | `R-DEVOPS`, `R-ACC-INT` | Event filters/status | Event/outbox status | `/api/admin/events/outbox` | Event/Outbox Monitor | Outbox dispatch | TC-M01-EVT-003 |
+| FN-M02-001 | M02 | User/role management | `R-ADMIN` | User/role/permission data | Active users/roles | `/api/admin/auth/*`, `/api/admin/roles/*` | User/Role Management | RBAC setup | TC-M02-RBAC-001 |
+| FN-M02-002 | M02 | Approval queue | Approvers by policy | Approval request | Approved/rejected state | `/api/admin/approvals/*` | Approval Queue | Approval/rejection | TC-M02-APP-003 |
+| FN-M03-001 | M03 | Master data registry | `R-ADMIN`, `R-OPS-MGR` | UOM/supplier/warehouse/reason | Active reference data | `/api/admin/master-data/*` | Master Data Registry | Master data maintenance | TC-M03-MD-001 |
+| FN-M03-002 | M03 | Warehouse setup | `R-ADMIN`, `R-OPS-MGR` | Warehouse/location/type | Active warehouses | `/api/admin/warehouses/*` | Warehouse Management | Warehouse setup | TC-M03-WH-002 |
+| FN-M03-003 | M03 | Supplier management | `R-ADMIN`, `R-OPS-MGR` | Supplier code/name/status/tax refs if available | Active supplier master | `/api/admin/suppliers/*` | Supplier Management | Supplier setup | TC-M03-SUP-003 |
+| FN-M04-001 | M04 | SKU management | `R-ADMIN`, `R-OPS-MGR` | SKU code/name/config | SKU baseline/config | `/api/admin/skus/*` | SKU Management | SKU setup | TC-M04-SKU-001 |
+| FN-M04-002 | M04 | Ingredient management | `R-ADMIN`, `R-OPS-MGR` | Ingredient code/name/UOM/alias | Ingredient master | `/api/admin/ingredients/*` | Ingredient Management | Ingredient setup | TC-M04-ING-002 |
+| FN-M04-003 | M04 | Recipe version management | Data steward, `R-QA-REL` | Recipe header/lines/version | Approved/active recipe | `/api/admin/recipes/*` | Recipe Version Management | Recipe approval | TC-M04-REC-004 |
+| FN-M04-004 | M04 | Recipe line editor | Data steward | 4 group recipe lines | Valid recipe lines | `/api/admin/recipes/{id}/lines` | Recipe Line Editor | Recipe maintenance | TC-M04-REC-005 |
+| FN-M05-001 | M05 | Source zone management | `R-WH-RAW`, `R-OPS-MGR` | Source zone info | Source zone master | `/api/admin/source-zones/*` | Source Zone Management | Source setup | TC-M05-SRC-001 |
+| FN-M05-002 | M05 | Source origin verification | `R-WH-RAW`, `R-QA-REL` | Evidence/source origin | `VERIFIED`/`REJECTED` source origin | `/api/admin/source-origins/{id}/verify` | Source Origin Verification | Source verification | TC-M05-SRC-002 |
+| FN-M06-001 | M06 | Raw material intake | `R-WH-RAW` | Ingredient, quantity, UOM, procurement type, source/supplier | Raw receipt + lot `PENDING_QC` | `/api/admin/raw-material/intakes` | Raw Material Intake | Intake | TC-M06-RM-001 |
+| FN-M06-002 | M06 | Raw material lot readiness query | `R-WH-RAW`, `R-PROD-MGR`, `R-QA-REL` | Lot id | Ready/not ready result with blocking reasons | `/api/admin/raw-material/lots/{id}/readiness` | Raw Lot Detail | Lot readiness | TC-M06-RM-004 |
+| FN-M06-003 | M06 | Raw material lot mark-ready transition | `R-QA-REL`, `R-OPS-MGR` | Lot id, reason, readiness evidence | Lot `READY_FOR_PRODUCTION` + audit/state transition | `/api/admin/raw-material/lots/{id}/mark-ready` | Raw Lot Detail | Lot readiness transition | TC-M06-RM-005 |
+| FN-M09-001 | M09 | Incoming QC inspection | `R-QC-RAW` | Lot/checklist/result | `QC_PASS`/`QC_HOLD`/`QC_REJECT` | `/api/admin/raw-material/qc/*` | Incoming QC | Raw QC | TC-M06-QC-003 |
+| FN-M07-001 | M07 | Production order create/approve | `R-PROD-MGR` | SKU, batch count/date | PO with immutable snapshot | `/api/admin/production/orders` | Production Order Create | PO snapshot | TC-M07-PO-001 |
+| FN-M07-002 | M07 | Work order/batch execution | `R-PROD-MGR`, `R-PROD-OP` | PO/work order | Batch + process state | `/api/admin/work-orders/*`, `/api/admin/batches/*` | Work Order, Batch Detail | Batch execution | TC-M07-BATCH-002 |
+| FN-M07-003 | M07 | Production process events | `R-PROD-OP`, `R-QC-PROD` | Process step event | Step state transition | `/api/admin/production/process-events` | Process Execution | Process completion | TC-M07-PROC-003 |
+| FN-M07-004 | M07 | Workforce check-in/check-out | `R-PROD-OP`, `R-PROD-MGR` | Work order, operator, timestamp, action | Attendance/labor event `CHECKED_IN`, `CHECKED_OUT`, `CONFIRMED` | `/api/admin/production/workforce-events` | Workforce Check-in/out | Workforce attendance | TC-M07-WORKFORCE-001 |
+| FN-M08-001 | M08 | Material request/approval | `R-PROD-OP`, `R-PROD-MGR` | Snapshot lines/quantity | Approved material request | `/api/admin/production/material-requests/*` | Material Request/Approval | Request approval | TC-M08-MI-003 |
+| FN-M08-002 | M08 | Material issue execution | `R-WH-RAW` | Approved request, raw lots `READY_FOR_PRODUCTION` | Issue executed + ledger decrement | `/api/admin/production/material-issues/{id}/execute` | Material Issue Execution | Material issue | TC-M08-MI-001 |
+| FN-M08-003 | M08 | Material receipt confirmation | `R-PROD-OP` | Issue lines, received qty | Receipt/variance record | `/api/admin/production/material-receipts` | Material Receipt Confirmation | Material receipt | TC-M08-MR-002 |
+| FN-M10-001 | M10 | Packaging job | `R-PACK-OP` | Batch, level, quantity | Packaging units | `/api/admin/packaging/*` | Packaging Job | Packaging execution | TC-M10-PKG-001 |
+| FN-M10-002 | M10 | Trade item/GTIN config | `R-ADMIN`, `R-OPS-MGR` | SKU/level/GTIN | Trade item identity | `/api/admin/trade-items/*` | Trade Item GTIN Config | GTIN setup | TC-M10-GTIN-002 |
+| FN-M10-003 | M10 | QR lifecycle and print queue | `R-PRINT-OP` | Packaging unit/print command | QR/print states | `/api/admin/qr/*`, `/api/admin/printing/*` | QR Registry, Print Queue | QR lifecycle | TC-M10-QR-003 |
+| FN-M09-002 | M09 | Finished QC inspection | `R-QC-PROD` | Batch/checklist/result | QC result | `/api/admin/qc/inspections/*` | QC Inspection | QC execution | TC-M09-QC-001 |
+| FN-M09-003 | M09 | Batch release | `R-QA-REL` | Batch, QC, hold status | Release record/state | `/api/admin/qc/releases/*` | Batch Release Queue/Detail | Batch release | TC-M09-REL-002 |
+| FN-M11-001 | M11 | Warehouse receipt FG | `R-WH-FG` | Released batch/packaging qty | Warehouse receipt + ledger credit | `/api/admin/warehouse/receipts` | Warehouse Receipt | Finished goods receipt | TC-M11-WH-001 |
+| FN-M11-002 | M11 | Inventory ledger/balance query | Warehouse/ops/audit | Warehouse/item/lot filters | Ledger/balance | `/api/admin/inventory/ledger`, `/balances` | Inventory Ledger, Lot Balance | Balance query | TC-M11-INV-002 |
+| FN-M11-003 | M11 | Inventory adjustment submit | `R-WH-RAW`, `R-WH-FG` | Reason/quantity/object | Pending adjustment request | `/api/admin/inventory/adjustments` | Inventory Adjustment | Adjustment submit | TC-M11-INV-004 |
+| FN-M11-004 | M11 | Inventory adjustment approve/post | `R-OPS-MGR` | Pending adjustment, approval decision | Adjustment/reversal ledger posted | `/api/admin/inventory/adjustments/{id}/approve` | Inventory Adjustment | Adjustment approval | TC-M11-INV-004 |
+| FN-M12-001 | M12 | Internal trace search | `R-TRACE`, `R-RECALL-MGR` | QR/batch/lot/source filters | Genealogy chain | `/api/admin/trace/search` | Trace Search, Genealogy Tree | Internal trace | TC-M12-TRACE-001 |
+| FN-M12-002 | M12 | Public trace resolve | Public user/system | QR code | Public trace response | `/api/public/trace/{qrCode}` | Public Trace | Public trace | TC-M12-PTRACE-002 |
+| FN-M13-001 | M13 | Incident management | `R-RECALL-MGR`, `R-OPS-MGR` | Incident/risk report, severity, evidence | Incident case | `/api/admin/incidents/*` | Incident Management | Incident intake | TC-M13-INCIDENT-001 |
+| FN-M13-002 | M13 | Recall impact/hold/sale lock | `R-RECALL-MGR`, `R-OPS-MGR` | Trace snapshot, affected batches | Hold/sale lock/recovery plan | `/api/admin/recall/{id}/impact-analysis`, `/hold`, `/sale-lock` | Recall Impact, Hold/Sale Lock | Recall action | TC-M13-RECALL-002 |
+| FN-M13-003 | M13 | Recall case management and close | `R-RECALL-MGR`, `R-OPS-MGR` | Incident, severity, scope, residual risk note if any | Recall case `CLOSED` or `CLOSED_WITH_RESIDUAL_RISK` | `/api/admin/recall/*` | Recall Case Management | Recall lifecycle | TC-M13-RECALL-001 |
+| FN-M13-004 | M13 | CAPA tracking | `R-RECALL-MGR`, `R-OPS-MGR` | Root cause, corrective/preventive actions, owner, due date | CAPA records and closure evidence | `/api/admin/recall/{id}/capa` | Recall CAPA | CAPA workflow | TC-M13-CAPA-001 |
+| FN-M14-001 | M14 | MISA mapping/sync/retry | `R-ACC-INT` | Event/mapping | Sync status/retry/reconcile | `/api/admin/integrations/misa/*` | MISA Sync Monitor/Reconcile | MISA sync | TC-M14-MISA-001 |
+| FN-M14-002 | M14 | Accounting document posting | System/outbox, `R-ACC-INT` | Material issue accounting payload | Accounting document `GENERATED`, `POSTED`, `SYNC_PENDING`, `SYNC_SUCCESS`, `SYNC_ERROR` | `/api/admin/accounting/documents/*` | Accounting Document | Accounting handoff | TC-M14-ACC-001 |
+| FN-M15-001 | M15 | Dashboard/alert | `R-OPS-MGR`, `R-DEVOPS` | Operational metrics/events | Health/alerts | `/api/admin/dashboard/*`, `/api/admin/alerts/*` | Operations Dashboard, Alert Center | Monitoring | TC-M15-DASH-001 |
+| FN-M15-002 | M15 | Manual override / break-glass | Requesting role, `R-OPS-MGR` | Override request, scope, reason, approvers | Time-bound override decision/audit | `/api/admin/overrides/*` | Override Console | Break-glass workflow | TC-APP-OVR-001 |
+| FN-M16-001 | M16 | Screen/action registry | `R-ADMIN` | Screen/action/permission config | Menu/sidebar/action registry | `/api/admin/ui/*` | Menu/Sidebar, Screen Registry | Admin navigation | TC-M16-UI-001 |
+| FN-M16-002 | M16 | Shopfloor PWA offline submit | Operators | Offline command/idempotency/device metadata | Queued/submitted result | `/api/mobile/*` hoặc internal endpoints | Shopfloor PWA | Offline submit | TC-M16-PWA-003 |
+
+## 2. CRUD vs Workflow Functions
+
+| type | Functions |
+| --- | --- |
+| Master/config CRUD | FN-M02-001, FN-M03-001, FN-M03-002, FN-M03-003, FN-M04-001, FN-M04-002, FN-M04-003, FN-M04-004, FN-M05-001, FN-M10-002, FN-M16-001 |
+| Transaction workflow | FN-M06-001, FN-M06-003, FN-M09-001, FN-M07-001, FN-M07-002, FN-M07-003, FN-M07-004, FN-M08-001, FN-M08-002, FN-M08-003, FN-M10-001, FN-M10-003, FN-M09-002, FN-M09-003, FN-M11-001, FN-M11-003, FN-M11-004, FN-M13-001, FN-M13-002, FN-M13-003, FN-M13-004, FN-M15-002 |
+| Query/report | FN-M01-001, FN-M06-002, FN-M11-002, FN-M12-001, FN-M12-002, FN-M15-001 |
+| Integration/system | FN-M01-002, FN-M01-003, FN-M14-001, FN-M14-002, FN-M16-002 |

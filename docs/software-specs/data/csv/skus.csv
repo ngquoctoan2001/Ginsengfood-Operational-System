@@ -1,0 +1,21 @@
+sku_code,sku_name_vi,sku_group_code,sku_group_name,sku_type,is_sellable,is_producible,is_trace_public_enabled,is_advisory_enabled,status,formula_code,formula_version,source_document
+A1/CS/DM/HS,Cháo Sâm – Diêm mạch & Hạt sen,SEASONAL,Cháo sâm theo mùa,VEGAN,true,true,true,false,ACTIVE_BASELINE,FML-A1-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+A2/CS/BASA,Cháo Sâm – Cá Basa,SEASONAL,Cháo sâm theo mùa,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-A2-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+A3/CS/CAHOI,Cháo Sâm – Cá hồi,SEASONAL,Cháo sâm theo mùa,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-A3-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+A4/CS/LUON,Cháo Sâm – Lươn đồng,SEASONAL,Cháo sâm theo mùa,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-A4-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+A5/CS/CUU,Cháo Sâm – Thịt cừu & Táo tàu,SEASONAL,Cháo sâm theo mùa,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-A5-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+B1/CS/RM/ĐX,Cháo Sâm – Rau má & Đậu xanh,FUNCTIONAL,Cháo sâm chức năng,VEGAN,true,true,true,false,ACTIVE_BASELINE,FML-B1-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+B2/CS/DHA,Cháo Sâm – DHA Não bộ,FUNCTIONAL,Cháo sâm chức năng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-B2-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+B3/CS/CACOM,Cháo Sâm – Cá cơm & Vừng,FUNCTIONAL,Cháo sâm chức năng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-B3-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+B4/CS/COLAGEN,Cháo Sâm – Thịt heo & Da heo,FUNCTIONAL,Cháo sâm chức năng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-B4-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+B5/CS/SINHLUC,Cháo Sâm – Hàu biển,FUNCTIONAL,Cháo sâm chức năng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-B5-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+B6/CS/GAAC,Cháo Sâm – Gà ác,FUNCTIONAL,Cháo sâm chức năng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-B6-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C1/CS/BAONGU,Cháo Sâm – Bào ngư,NUTRITIOUS,Cháo sâm bổ dưỡng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-C1-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C2/CS/DONGTRUNG,Cháo Sâm – Đông trùng hạ thảo,NUTRITIOUS,Cháo sâm bổ dưỡng,VEGAN,true,true,true,false,ACTIVE_BASELINE,FML-C2-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C3/CS/NAMDONGCO,Cháo Sâm – Nấm đông cô,NUTRITIOUS,Cháo sâm bổ dưỡng,VEGAN,true,true,true,false,ACTIVE_BASELINE,FML-C3-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C4/CS/CUABIEN,Cháo Sâm – Cua biển,NUTRITIOUS,Cháo sâm bổ dưỡng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-C4-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C5/CS/CANGU,Cháo Sâm – Cá ngừ,NUTRITIOUS,Cháo sâm bổ dưỡng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-C5-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C6/CS/TOM/RONGBIEN,Cháo Sâm – Tôm & Rong biển,NUTRITIOUS,Cháo sâm bổ dưỡng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-C6-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C7/CS/THITGA,Cháo Sâm – Thịt gà,NUTRITIOUS,Cháo sâm bổ dưỡng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-C7-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C8/CS/THITHEO,Cháo Sâm – Thịt heo,NUTRITIOUS,Cháo sâm bổ dưỡng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-C8-G1,G1,CÔNG THỨC 20 SKU MỚI.txt
+C9/CS/THITBO,Cháo Sâm – Thịt bò,NUTRITIOUS,Cháo sâm bổ dưỡng,SAVORY,true,true,true,false,ACTIVE_BASELINE,FML-C9-G1,G1,CÔNG THỨC 20 SKU MỚI.txt

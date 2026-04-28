@@ -1,0 +1,5 @@
+warehouse_code,warehouse_name,warehouse_type,warehouse_status,location_code,location_name,location_status,is_go_live_minimum,source_document
+WH_RAW_MAIN,Raw Material Main Warehouse,RAW_MATERIAL,ACTIVE,RAW-STAGE-01,Raw material receiving/staging,ACTIVE,true,09_CONFLICT_AND_OWNER_DECISIONS.md
+WH_RAW_MAIN,Raw Material Main Warehouse,RAW_MATERIAL,ACTIVE,RAW-QC-HOLD-01,Raw material QC hold,ACTIVE,true,09_CONFLICT_AND_OWNER_DECISIONS.md
+WH_FG_MAIN,Finished Goods Main Warehouse,FINISHED_GOODS,ACTIVE,FG-RELEASED-01,Released finished goods,ACTIVE,true,09_CONFLICT_AND_OWNER_DECISIONS.md
+WH_FG_MAIN,Finished Goods Main Warehouse,FINISHED_GOODS,ACTIVE,FG-HOLD-01,Finished goods hold/recall lock,ACTIVE,true,09_CONFLICT_AND_OWNER_DECISIONS.md

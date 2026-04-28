@@ -1,0 +1,92 @@
+﻿# Business Requirements
+
+> Mục đích: chuyển yêu cầu nghiệp vụ thành danh mục requirement có mã, module, nguồn, priority và acceptance target. File này không mô tả implementation hiện hữu và không dùng source code làm evidence.
+
+## 1. Source Policy
+
+- File này kế thừa source policy từ [../01_SOURCE_INDEX.md](../01_SOURCE_INDEX.md) và các owner decisions đã ghi trong [../09_CONFLICT_AND_OWNER_DECISIONS.md](../09_CONFLICT_AND_OWNER_DECISIONS.md).
+- Trong phạm vi biên soạn `docs/software-specs/`, source chính là các nguồn được `01_SOURCE_INDEX.md` cho phép; `specs.docx` chỉ là fallback lịch sử khi nguồn mới thiếu và không mâu thuẫn.
+- Business requirements không được dùng để phủ quyết instruction vận hành repo ở `AGENTS.md`. Nếu implementation phase có source precedence mới hơn hoặc xung đột với file này, phải ghi conflict/owner decision trước khi sửa tiếp.
+
+## 2. Business Capability Map
+
+| capability_id | Capability | Mục tiêu nghiệp vụ | Module chính | Phase |
+| --- | --- | --- | --- | --- |
+| CAP-01 | Source Origin Governance | Quản lý vùng/nguyên gốc nguyên liệu đủ điều kiện truy xuất và public trace. | M05 | CODE01 |
+| CAP-02 | Raw Material Intake, QC & Readiness | Nhập nguyên liệu, tạo lot, kiểm QC đầu vào, mark-ready lot đủ điều kiện sản xuất, khóa lot chưa đạt. | M06, M09 | CODE02 |
+| CAP-03 | SKU / Ingredient / Recipe G1 | Quản lý 20 SKU baseline, ingredient master, G1 recipe và versioning tương lai. | M04 | MX-GATE-G1, CODE03 |
+| CAP-04 | Production Execution | Mở production order, snapshot G1, tạo work order/batch và ghi công đoạn sản xuất. | M07 | CODE03 |
+| CAP-05 | Material Issue & Receipt | Cấp phát nguyên liệu theo snapshot, decrement inventory và xác nhận xưởng nhận. | M08, M11 | CODE03 |
+| CAP-06 | Packaging / Printing / QR | Đóng gói, in, QR lifecycle, GTIN/trade item, reprint audit. | M10 | CODE04 |
+| CAP-07 | QC & Batch Release | Kiểm QC và release batch thành action riêng trước nhập kho thành phẩm. | M09 | CODE05 |
+| CAP-08 | Warehouse & Inventory | Nhập kho thành phẩm, ledger append-only, balance theo lot/warehouse. | M11 | CODE06 |
+| CAP-09 | Traceability | Truy vết nội bộ 2 chiều và public trace theo field policy. | M12 | CODE07 |
+| CAP-10 | Recall & Recovery | Sự cố, impact analysis, hold, sale lock, recovery, disposition, CAPA. | M13 | CODE08 |
+| CAP-11 | MISA Integration | Đồng bộ kế toán qua integration layer có mapping/retry/reconcile/audit. | M14 | CODE13 |
+| CAP-12 | Governance UI & Monitoring | RBAC, approval, audit, dashboard, alert, override, retention. | M01, M02, M15, M16 | CODE09-CODE17 |
+
+## 3. Requirement Catalog
+
+| requirement_id | Requirement | Business value | Module | Source | Priority | Acceptance reference |
+| --- | --- | --- | --- | --- | --- | --- |
+| BRQ-001 | Hệ thống phải quản lý source zone và source origin tách supplier, có evidence và verification. | Truy xuất nguồn gốc và kiểm soát nguyên liệu tự trồng. | M05 | `SRC-FILE01`, `SRC-FILE02`, `SRC-FORM-AUTO` | P0 | AC-SRC-001, AC-SRC-002 |
+| BRQ-002 | Lot `SELF_GROWN` chỉ được intake khi source origin bắt buộc đã `VERIFIED`. | Ngăn nguyên liệu chưa xác minh đi vào sản xuất. | M05, M06 | owner decision, `SRC-FILE01` | P0 | AC-RM-002 |
+| BRQ-003 | Lot `PURCHASED` phải gắn supplier và không gắn source zone/source origin nội bộ. | Tách rõ nguồn mua ngoài với vùng trồng tự quản. | M03, M06 | owner decision, `SRC-FILE02` | P0 | AC-RM-003 |
+| BRQ-004 | Raw material intake phải tạo receipt, receipt item, lot, audit và trạng thái `PENDING_QC`. | Tạo evidence đầu vào cho QC, inventory, trace. | M06 | `SRC-FILE03`, `SRC-FORM-AUTO` | P0 | AC-RM-001 |
+| BRQ-005 | Raw material lot phải qua QC đầu vào và mark-ready trước khi cấp phát. | Ngăn nguyên liệu lỗi hoặc chưa được xác nhận readiness đi vào sản xuất. | M06, M09 | `SRC-FILE03`, `SRC-FORM-AUTO` | P0 | AC-QC-001, AC-RM-004 |
+| BRQ-006 | SKU baseline go-live gồm 20 SKU, nhưng hệ thống không được hard-code thành giới hạn vĩnh viễn. | Vận hành được G1 và vẫn mở rộng sản phẩm về sau. | M04 | `SRC-RECIPE-NEW`, `SRC-FILE02`, owner OD-19 | P0 | AC-REC-001 |
+| BRQ-007 | Ingredient master phải có `HRB_SAM_SAVIGIN`, `ING_MI_CHINH`, `ING_THIT_HEO_NAC` và dùng `HRB_*`/`ING_*` làm business key. | Đảm bảo recipe G1 và material issue có mã thống nhất. | M04 | `SRC-RECIPE-NEW`, owner OD-01 | P0 | AC-REC-002 |
+| BRQ-008 | G1 là initial operational baseline; research/baseline token lịch sử không xuất hiện trong vận hành. | Loại bỏ drift công thức và seed sai. | M04 | `OWNER-PROMPT-INITIAL`, `SRC-LOCK5` | P0 | AC-REC-003 |
+| BRQ-009 | Recipe phải dùng đúng 4 group: `SPECIAL_SKU_COMPONENT`, `NUTRITION_BASE`, `BROTH_EXTRACT`, `SEASONING_FLAVOR`. | UI, issue, snapshot, trace thống nhất. | M04 | `OWNER-PROMPT-INITIAL`, `SRC-RECIPE-NEW` | P0 | AC-REC-004 |
+| BRQ-010 | Recipe versioning phải hỗ trợ approve, activate, effective date, retire, audit và G2/G3/G4 tương lai. | Không rewrite lịch sử khi công thức thay đổi. | M04, M02 | `SRC-FILE02`, `SRC-FORM-AUTO` | P0 | AC-REC-005 |
+| BRQ-011 | Production order phải snapshot immutable full công thức active tại thời điểm mở. | Đảm bảo sản xuất cũ không bị thay đổi bởi recipe mới. | M04, M07 | `SRC-LOCK5`, `SRC-RECIPE-NEW` | P0 | AC-PO-001 |
+| BRQ-012 | Production flow bắt buộc gồm `PREPROCESSING -> FREEZING -> FREEZE_DRYING`. | Không bỏ qua công đoạn cấp đông và sấy thăng hoa. | M07 | `SRC-FILE03`, owner OD-18 | P0 | AC-PROC-001 |
+| BRQ-013 | Material Issue Execution là điểm decrement raw-material inventory thật sự. | Tồn kho nguyên liệu chính xác theo điểm cấp phát. | M08, M11 | `OWNER-PROMPT-INITIAL`, `SRC-FILE01` | P0 | AC-MI-001 |
+| BRQ-014 | Material Receipt Confirmation tách khỏi material issue, ghi xưởng nhận và variance, không decrement lần hai. | Có đối soát cấp phát/nhận mà không sai tồn kho. | M08 | `SRC-FILE03`, `SRC-FORM-AUTO` | P0 | AC-MR-001 |
+| BRQ-015 | Material issue chỉ cấp nguyên liệu thuộc production snapshot; ngoài snapshot phải exception/approval. | Tránh sản xuất sai công thức. | M08, M04 | `SRC-FILE03`, `SRC-FORM-AUTO` | P0 | AC-MI-002 |
+| BRQ-016 | Packaging phải tách BOX/CARTON, trade item/GTIN tách SKU, QR có lifecycle đầy đủ: `GENERATED`, `QUEUED`, `PRINTED`, `FAILED`, `VOID`, `REPRINTED`. | In/đóng gói thương mại có kiểm soát. | M10 | `SRC-FILE01`, `SRC-FORM-AUTO` | P0 | AC-PKG-001, AC-QR-001 |
+| BRQ-017 | Reprint phải có reason, link bản gốc, actor và audit. | Ngăn in lại QR/nhãn không kiểm soát. | M10, M01 | `SRC-FORM-AUTO` | P0 | AC-PRINT-001 |
+| BRQ-018 | `QC_PASS` không đồng nghĩa `RELEASED`; batch release là record/action riêng. | Tách kết quả kiểm nghiệm với quyết định cho nhập kho/bán. | M09 | `OWNER-PROMPT-INITIAL`, `SRC-LOCK5` | P0 | AC-REL-001 |
+| BRQ-019 | Warehouse receipt thành phẩm chỉ nhận batch `RELEASED` và tạo ledger/balance. | Không nhập kho thành phẩm chưa được release. | M11, M09 | `OWNER-PROMPT-INITIAL`, `SRC-FILE01` | P0 | AC-WH-001 |
+| BRQ-020 | Inventory ledger append-only là nguồn tính balance projection. | Lịch sử tồn kho có thể audit. | M11, M01 | `SRC-FILE01`, `SRC-FILE05` | P0 | AC-INV-001 |
+| BRQ-021 | Internal trace phải truy ngược/truy xuôi đầy đủ từ source/raw lot đến batch, QR, warehouse, shipment/customer reference. | Truy vết sự cố và chứng minh nguồn gốc. | M12 | `SRC-FILE01`, `OWNER-PROMPT-INITIAL` | P0 | AC-TRACE-001 |
+| BRQ-022 | Public trace chỉ expose field đã duyệt, không expose supplier nội bộ, nhân sự, costing, QC defect/loss, MISA/private data. | Minh bạch với khách hàng nhưng giữ bí mật vận hành. | M12, M05 | `OWNER-PROMPT-INITIAL`, `SRC-FILE01` | P0 | AC-PTRACE-001 |
+| BRQ-023 | QR `FAILED` hoặc `VOID` không resolve public trace hợp lệ. | Tránh truy xuất nhầm mã hỏng/hủy. | M10, M12 | `SRC-FORM-AUTO` | P0 | AC-PTRACE-002 |
+| BRQ-024 | Recall phải có incident, impact analysis, hold, sale lock, notification reference, recovery, disposition, CAPA, close. | Có khả năng thu hồi có kiểm soát. | M13 | `SRC-FILE01`, `OWNER-PROMPT-INITIAL` | P0 | AC-RECALL-001 |
+| BRQ-025 | Recall impact analysis phải dùng trace snapshot, không phụ thuộc query động làm thay đổi lịch sử exposure. | Evidence thu hồi không bị drift. | M13, M12 | `SRC-FILE01` | P0 | AC-RECALL-002 |
+| BRQ-026 | MISA sync phải đi qua integration layer chung với mapping, retry, reconcile, error log, manual retry, audit. | Không để kế toán điều khiển trực tiếp nghiệp vụ. | M14 | `SRC-FILE01`, `SRC-FORM-AUTO` | P0 | AC-MISA-001 |
+| BRQ-027 | Mỗi hành động nhạy cảm phải kiểm permission ở backend và ghi audit. | Giảm rủi ro thao tác sai/không có quyền. | M02, M01 | `SRC-FILE03`, `SRC-FILE05` | P0 | AC-RBAC-001 |
+| BRQ-028 | Approval phải ghi submitter, approver/rejector, reason, timestamp, state transition và audit. | Duyệt nghiệp vụ minh bạch. | M02, M01 | `SRC-FORM-AUTO` | P0 | AC-APP-001 |
+| BRQ-029 | Hold, halt, cancel, reject, correction, rollback phải là luồng có state/reason/audit, không xóa dữ liệu lịch sử. | Xử lý exception không phá trace/audit. | All workflow modules | `OWNER-PROMPT-INITIAL`, `SRC-FILE05` | P0 | AC-EXC-001 |
+| BRQ-030 | Full smoke phải bao phủ intake -> QC -> production snapshot -> issue -> receipt -> process -> packaging/QR -> release -> warehouse -> trace -> recall -> MISA dry-run. | Đảm bảo toàn bộ operational chain chạy được. | All | `SRC-FILE04-1`, `SRC-DEV-ORDER` | P0 | AC-SMOKE-001 |
+| BRQ-031 | `QC_PASS` không tự đồng nghĩa raw lot đã `READY_FOR_PRODUCTION`; action `RAW_LOT_MARK_READY` là gate riêng trước material issue. | Tách kết quả QC khỏi quyết định cho phép cấp phát sản xuất. | M06, M08, M11 | `SRC-FILE03`, `SRC-FORM-AUTO`, owner repair decision | P0 | AC-RM-004, AC-MI-001 |
+| BRQ-032 | Warehouse/production operation có rủi ro phải scan QR/barcode/batch trước khi xác nhận; thiếu scan trả `BATCH_SCAN_REQUIRED`. | Giảm nhầm batch/lot khi nhập kho, xuất cấp phát hoặc recall. | M08, M10, M11, M13 | `SRC-FORM-AUTO`, `SRC-FILE05` | P0 | AC-SCAN-001 |
+| BRQ-033 | Level 3 break-glass override phải có dual approval, reason, scope, audit và tự expire sau 15 phút. | Cho phép xử lý khẩn cấp nhưng không mở quyền kéo dài. | M01, M02, M15 | `SRC-FILE05`, professional control policy | P0 | AC-OVR-001 |
+| BRQ-034 | Một trade item/package level chỉ có một active barcode/GTIN; conflict trả `PRINT_TRADE_ITEM_BARCODE_CONFLICT`. | Tránh in/trace nhầm barcode thương mại. | M10, M12 | `SRC-FILE01`, `SRC-FORM-AUTO` | P0 | AC-GTIN-001 |
+
+## 4. Non-Goals Nghiệp Vụ
+
+| Non-goal | Lý do |
+| --- | --- |
+| CRM/customer profile ownership | Operational chỉ giữ reference key để trace/recall. |
+| Cart/checkout/payment/pricing | Thuộc commerce domain, không phải owner của Operational. |
+| HR/payroll/personnel master | Role/user chỉ phục vụ permission vận hành. |
+| AI recommendation/decisioning | Không có nguồn được phép dùng trong batch này. |
+| Direct MISA sync trong từng module | Trái MISA boundary; bắt buộc dùng integration layer. |
+| Research baseline vận hành | Trái hard lock G1-only operational baseline. |
+
+## 5. Owner Decision Còn Mở
+
+| decision_id | Nội dung | Business impact |
+| --- | --- | --- |
+| OD-TRACE-SLA | SLA/volume truy vấn trace | Ảnh hưởng index/cache/reporting và test performance. |
+| OD-PUBLIC-I18N | Public trace có đa ngôn ngữ không | Ảnh hưởng public trace UI/API và nội dung marketing. |
+| OD-RECALL-SLA | SLA recall chính thức | Ảnh hưởng alert, dashboard, test và SOP vận hành. |
+| OD-MISA-CREDENTIAL | Credential/tenant/endpoint MISA thật | Ảnh hưởng dry-run vs production sync. |
+| OD-PRINTER | Printer model/driver/protocol | Ảnh hưởng print adapter và factory smoke. |
+| OD-BACKUP-RTO | RPO/RTO/backup frequency | Ảnh hưởng release readiness. |
+| OD-RETENTION | Retention theo data class | Ảnh hưởng compliance, archive, audit storage. |
+| OD-APP-THRESHOLD | Threshold dual approval cho inventory adjustment/reprint/override ngoài Level 3 | Level 3 break-glass đã bắt buộc dual approval; các threshold còn lại cần owner chốt. |
+
+
+
