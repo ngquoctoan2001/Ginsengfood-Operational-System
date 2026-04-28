@@ -9,23 +9,26 @@
 | Project | Ginsengfood Operational V2 |
 | Reporting date | 2026-04-28 |
 | Overall status | TODO |
-| Current phase | PROJECT-LIFECYCLE-PROMPTS |
-| Current bounded gap | PROJECT-LIFECYCLE-PROMPT-PACK |
+| Current phase | PROJECT-INITIATION |
+| Current bounded gap | PROMPT-RUN-ORDER |
 | P0 phases done | 0/9 |
 | P1 phases done | 0/5 |
 | P2 phases done | 0/3 |
 | Open owner blockers | OD-11, OD-12, OD-13, OD-14, OD-17 |
-| Main risk | Implementation has not started; current code gap map still required. |
-| Next action | Run `04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md`, then CODE01 audit when project bootstrap is accepted. |
+| Main risk | Implementation has not started; app layers are still `NOT_SCAFFOLDED`. |
+| Next action | Run prompts in order: `04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md` -> `02_REPO_AND_LOCAL_ENV_PROMPTS.md` -> `03_ARCHITECTURE_FOUNDATION_PROMPTS.md` -> `02_AGENT_PROMPT_SEQUENCE.md` Prompt 00. |
 
 ## 2. Phase Dashboard
 
 | Phase | Goal | Status | Last update | Evidence / result | Blocker | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
+| PROJECT-INITIATION | Scope, success criteria, owner decisions, governance | TODO | 2026-04-28 | Prompt order clarified | None | Run lifecycle prompt 01 |
+| REPO-LOCAL-ENV | Scaffold repo and local dev baseline | TODO | 2026-04-28 | Not started | Depends project initiation | Run lifecycle prompt 02 |
+| ARCHITECTURE-FOUNDATION | Architecture, conventions, skeleton, ADR | TODO | 2026-04-28 | Not started | Depends repo/local env | Run lifecycle prompt 03 |
 | PROJECT-BOOTSTRAP | Confirm readiness and first bounded gap | TODO | 2026-04-28 | Phase-project docs created | None | Run bootstrap prompt |
 | CODE01 | Foundation + Source Origin | TODO | 2026-04-28 | Not started | None known | Audit CODE01 |
 | CODE02 | Raw Material Intake + Lot + Incoming QC | TODO | 2026-04-28 | Not started | Depends CODE01 | Audit after CODE01 |
-| MX-GATE-G1 | SKU/Ingredient/Recipe readiness | TODO | 2026-04-28 | Data docs repaired | Needs current implementation audit | Audit seed/schema/API |
+| MX-GATE-G1 | SKU/Ingredient/Recipe readiness | TODO | 2026-04-28 | Data docs repaired | Needs scaffold or implementation audit after CODE02 | Audit seed/schema/API |
 | CODE03 | Manufacturing + Batch + Material Issue/Receipt | TODO | 2026-04-28 | Not started | Depends CODE02 + MX-GATE-G1 | Audit CODE03 |
 | CODE04 | Packaging + Printing + QR | TODO | 2026-04-28 | Not started | GTIN production data later | Audit CODE04 |
 | CODE05 | QC + Batch Release | TODO | 2026-04-28 | Not started | Depends CODE04 | Audit CODE05 |
@@ -49,6 +52,7 @@
 | RUN-000 | 2026-04-28 | Codex documentation agent | PROJECT-BOOTSTRAP | PHASE-PROJECT-DOCS | DONE | `phase-project/*`, `00_README.md`, `ai-agent/00_README.md` | Markdown/JSON/link checks only | Docs-only; no build required | Created phase project docs, prompts and tracker. |
 | RUN-001 | 2026-04-28 | Codex documentation agent | PROJECT-LIFECYCLE-PROMPTS | PROJECT-LIFECYCLE-PROMPT-PACK | DONE | `phase-project/04_PROJECT_LIFECYCLE_PROMPTS/*`, `phase-project/00_README.md`, `phase-project/03_PROGRESS_REPORT.md` | Markdown/path checks only | Docs-only; no build required | Added numbered prompt pack from project inception to go-live and post-go-live operations. |
 | RUN-002 | 2026-04-28 | Codex documentation agent | DETAILED-PHASE-PROMPTS | DETAILED-PHASE-PROMPT-PACK | DONE | `phase-project/05_DETAILED_PHASE_PROMPTS/*`, `phase-project/00_README.md`, `phase-project/03_PROGRESS_REPORT.md` | Markdown/path checks only | Docs-only; no build required | Added detailed copy-paste prompts for MX-GATE-G1 and CODE01-CODE17. |
+| RUN-003 | 2026-04-28 | Codex documentation agent | PROJECT-INITIATION | PROMPT-RUN-ORDER | DONE | `phase-project/00_README.md`, `01_PHASE_PROJECT_TODO.md`, `02_AGENT_PROMPT_SEQUENCE.md`, `03_PROGRESS_REPORT.md`, `05_DETAILED_PHASE_PROMPTS/00_README.md` | Markdown/path checks only | Docs-only; no build required | Reordered prompt guidance for greenfield sequential execution from lifecycle prompts through CODE01-CODE17 and go-live prompts. |
 
 ## 4. Owner Decision Tracker
 
@@ -64,7 +68,7 @@
 
 | Risk ID | Risk | Severity | Owner | Mitigation | Status |
 | --- | --- | --- | --- | --- | --- |
-| R-PROJ-001 | Current implementation may drift from repaired specs. | High | Tech Lead | Run phase audit before every implementation. | OPEN |
+| R-PROJ-001 | App layers are not scaffolded yet, so implementation gates may be reported as N/A until scaffold exists. | High | Tech Lead | Run lifecycle prompts 01-03 before CODE prompts; mark absent layers `NOT_SCAFFOLDED`. | OPEN |
 | R-PROJ-002 | P0 phases may be too large if implemented in one patch. | High | PM | Split into bounded gaps with explicit write scope. | OPEN |
 | R-PROJ-003 | API/backend changes may miss frontend sync. | High | Tech Lead | Require API/FE sync evidence in every implementation handoff. | OPEN |
 | R-PROJ-004 | Seed fixtures may be mistaken for production data. | Medium | Data Owner | Keep `is_test_fixture` and production-data owner decisions explicit. | OPEN |

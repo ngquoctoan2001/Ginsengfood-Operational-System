@@ -1,6 +1,23 @@
 # 02 - Agent Prompt Sequence
 
-> Muc tieu: cung cap prompt copy/paste theo thu tu cho AI agents. Moi prompt duoi day la standalone, nhung nen chay theo sequence: Bootstrap -> Phase Audit -> Phase Plan -> Implementation -> Review -> Validation -> Handoff/Progress Update.
+> Muc tieu: cung cap prompt copy/paste theo thu tu cho AI agents. Moi prompt duoi day la standalone, nhung nen chay theo sequence: Project lifecycle kickoff -> Bootstrap -> Phase Audit -> Phase Plan -> Implementation -> Review -> Validation -> Handoff/Progress Update.
+
+## 0. Thu Tu Chay Tong The
+
+Neu bat dau tu repo rong/greenfield, khong copy thang CODE prompt. Chay theo thu tu:
+
+1. `04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md`
+2. `04_PROJECT_LIFECYCLE_PROMPTS/02_REPO_AND_LOCAL_ENV_PROMPTS.md`
+3. `04_PROJECT_LIFECYCLE_PROMPTS/03_ARCHITECTURE_FOUNDATION_PROMPTS.md`
+4. Prompt 00 trong file nay - Project Bootstrap.
+5. `05_DETAILED_PHASE_PROMPTS/01_CODE01_FOUNDATION_SOURCE_ORIGIN_PROMPTS.md`
+6. `05_DETAILED_PHASE_PROMPTS/02_CODE02_RAW_MATERIAL_PROMPTS.md`
+7. `05_DETAILED_PHASE_PROMPTS/03_MX_GATE_G1_MASTER_DATA_RECIPE_PROMPTS.md`
+8. `05_DETAILED_PHASE_PROMPTS/04_CODE03_PRODUCTION_MATERIAL_BATCH_PROMPTS.md`
+9. Tiep tuc `05_DETAILED_PHASE_PROMPTS/05_...` den `18_CODE17_FINAL_CLOSEOUT_PROMPTS.md`.
+10. Quay lai lifecycle prompts `06_QA_UAT...`, `07_CICD...`, `08_PRODUCTION_READINESS...`, `09_POST_GO_LIVE...`, `10_MANAGEMENT_REPORTING...` cho release/go-live/bao cao.
+
+`04_PROJECT_LIFECYCLE_PROMPTS/04_IMPLEMENTATION_PHASE_PROMPTS.md` va `05_DATA_MIGRATION_SEED_PROMPTS.md` la prompt ho tro dung trong tung CODE/MX phase khi can kickoff implementation hoac lam DB/seed.
 
 ## 1. Prompt Structure Standard
 
@@ -30,7 +47,8 @@ Khởi động project implementation từ docs/software-specs. Không implement
 Source discipline:
 - Requirement source-of-truth: docs/software-specs/.
 - AGENTS.md chỉ là operating rule, không phải requirement source.
-- Current code chỉ là implementation baseline/gap evidence, không được dùng để override spec.
+- Neu repo/app chua scaffold, layer vang mat la `NOT_SCAFFOLDED`, khong phai gap implementation cu.
+- Current code, khi da ton tai, chi la implementation baseline/gap evidence, khong duoc dung de override spec.
 - Không dùng docs/ginsengfood_* hoặc legacy extract để ghi đè docs/software-specs.
 
 Read first:
@@ -54,7 +72,7 @@ Non-goals:
 
 Workflow:
 1. Confirm phase order and current blockers.
-2. Identify first bounded gap for CODE01.
+2. Identify first bounded gap for CODE01, sau khi lifecycle prompt 01-03 da chot scope/repo/architecture.
 3. Produce a gap card with goal, scope, non-goals, affected layers, source files, validation gate, and risk.
 4. Update phase-project/03_PROGRESS_REPORT.md with project bootstrap result.
 
@@ -83,7 +101,8 @@ Audit phase {CODE} / module {Mxx list} để tạo gap map trước khi implemen
 
 Source discipline:
 - Requirement source-of-truth: docs/software-specs/.
-- Current code chỉ là baseline để so sánh implementation.
+- Neu phase chua scaffold, ghi `NOT_SCAFFOLDED` va map target architecture truoc.
+- Current code, khi da ton tai, chi la baseline de so sanh implementation.
 - Không dùng code để thay đổi requirement.
 
 Read first:
@@ -111,8 +130,8 @@ Non-goals:
 
 Workflow:
 1. Extract requirements, rules, workflows, endpoints, tables, screens, tests for this phase.
-2. Inspect current code only after reading specs.
-3. Map target vs current by DB/backend/API/frontend/seed/tests/docs.
+2. Inspect current code only after reading specs, neu code da ton tai.
+3. Map target vs current scaffold/code by DB/backend/API/frontend/seed/tests/docs.
 4. Classify each gap: MISSING, PARTIAL, CONFLICT, WRONG_IMPLEMENTATION, LEGACY_REDUNDANT, MATCH, UNKNOWN.
 5. Pick one safest bounded gap to implement next.
 
@@ -145,7 +164,7 @@ Chuyển gap {gap_id} thành implementation plan đủ chi tiết để giao cho
 
 Source discipline:
 - Requirement source-of-truth: docs/software-specs/.
-- Current code là baseline để xác định write scope.
+- Current scaffold/code la baseline de xac dinh write scope; neu chua co code, mark `NOT_SCAFFOLDED`.
 
 Read first:
 1. Gap audit output for {gap_id}.
@@ -194,7 +213,7 @@ Implement gap {gap_id} trong phase {CODE}. Làm đủ DB/backend/API/frontend/se
 
 Source discipline:
 - Requirement source-of-truth: docs/software-specs/.
-- Current code chỉ là baseline để audit và sửa.
+- Current scaffold/code chi la baseline de audit va sua; neu chua co code, scaffold dung phase scope.
 - Không tạo parallel route/table/enum/business truth.
 
 Read first:
@@ -203,7 +222,7 @@ Read first:
 3. docs/software-specs/07_PHASE_PLAN.md
 4. docs/software-specs/08_REQUIREMENTS_TRACEABILITY_MATRIX.md
 5. Relevant module/workflow/database/api/ui/testing/data specs.
-6. Current code files identified by audit.
+6. Current code files identified by audit, or intended target files when layer is `NOT_SCAFFOLDED`.
 
 Scope:
 - Gap: {gap_id}

@@ -20,6 +20,8 @@ Khac voi `../02_AGENT_PROMPT_SEQUENCE.md` chi la khung phase-level, moi file o d
 
 ## 2. Thu Tu Doc
 
+Thu tu nay phu hop dependency trong `docs/software-specs/07_PHASE_PLAN.md`: `CODE01 -> CODE02 -> MX-GATE-G1 -> CODE03 -> ... -> CODE17`.
+
 | Thu tu | File | Phase |
 | --- | --- | --- |
 | 00 | `00_README.md` | Huong dan dung detailed prompt pack |
@@ -44,19 +46,24 @@ Khac voi `../02_AGENT_PROMPT_SEQUENCE.md` chi la khung phase-level, moi file o d
 
 ## 3. Cach Dung
 
-1. Dung `../04_PROJECT_LIFECYCLE_PROMPTS/01_...` den `03_...` neu bat dau tu zero.
-2. Khi vao implementation, doc `../02_AGENT_PROMPT_SEQUENCE.md` de hieu workflow chung.
-3. Chon file chi tiet trong thu muc nay theo phase.
+1. Neu bat dau tu zero, chay truoc:
+   - `../04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md`
+   - `../04_PROJECT_LIFECYCLE_PROMPTS/02_REPO_AND_LOCAL_ENV_PROMPTS.md`
+   - `../04_PROJECT_LIFECYCLE_PROMPTS/03_ARCHITECTURE_FOUNDATION_PROMPTS.md`
+2. Chay `../02_AGENT_PROMPT_SEQUENCE.md` Prompt 00 de bootstrap implementation queue.
+3. Khi vao implementation, chon file chi tiet theo thu tu trong bang muc 2.
 4. Copy prompt dau tien cua phase de audit.
 5. Chi copy prompt implement sau khi audit/plan da chon `gap_id` va write scope.
 6. Sau moi run, bat agent cap nhat `../03_PROGRESS_REPORT.md`.
+7. Khi CODE17 xong, quay lai lifecycle prompts `06_...` den `10_...` cho UAT/CI-CD/go-live/post-go-live/bao cao.
 
 ## 4. Prompt Contract Bat Buoc
 
 Moi prompt implement/review/validate trong thu muc nay mac dinh ap dung:
 
 - Requirement source-of-truth: `docs/software-specs/`.
-- Current code chi la implementation baseline/gap evidence.
+- Neu repo/app chua scaffold, layer vang mat phai duoc ghi `NOT_SCAFFOLDED`.
+- Current code, khi da ton tai, chi la implementation baseline/gap evidence.
 - Khong tao route/table/enum/business truth song song.
 - Khong sua lan ngoai bounded gap.
 - Neu backend contract thay doi, phai update frontend client/types/screens/tests hoac co no-impact evidence.
@@ -83,4 +90,3 @@ Moi agent run phai tra ve:
 - Progress report update.
 - Remaining risks.
 - Next recommended prompt.
-
