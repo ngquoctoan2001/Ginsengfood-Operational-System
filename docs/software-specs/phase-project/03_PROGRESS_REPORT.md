@@ -8,21 +8,21 @@
 | --- | --- |
 | Project | Ginsengfood Operational V2 |
 | Reporting date | 2026-04-28 |
-| Overall status | TODO |
+| Overall status | INCEPTION_DONE |
 | Current phase | PROJECT-INITIATION |
-| Current bounded gap | PROMPT-RUN-ORDER |
+| Current bounded gap | OWNER-BRIEF-SUCCESS-CRITERIA |
 | P0 phases done | 0/9 |
 | P1 phases done | 0/5 |
 | P2 phases done | 0/3 |
-| Open owner blockers | OD-11, OD-12, OD-13, OD-14, OD-17 |
-| Main risk | Implementation has not started; app layers are still `NOT_SCAFFOLDED`. |
-| Next action | Run prompts in order: `04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md` -> `02_REPO_AND_LOCAL_ENV_PROMPTS.md` -> `03_ARCHITECTURE_FOUNDATION_PROMPTS.md` -> `02_AGENT_PROMPT_SEQUENCE.md` Prompt 00. |
+| Open owner blockers | OD-11, OD-12, OD-13, OD-14, OD-17, OD-20, OD-21, OD-22 |
+| Main risk | Project brief is complete, but implementation has not started; app layers are still `NOT_SCAFFOLDED` and open owner decisions can block phase-specific gates. |
+| Next action | Run `04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md` Prompt 01.02, then Prompt 01.03, before repo/local-env and architecture prompts. |
 
 ## 2. Phase Dashboard
 
 | Phase | Goal | Status | Last update | Evidence / result | Blocker | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
-| PROJECT-INITIATION | Scope, success criteria, owner decisions, governance | TODO | 2026-04-28 | Prompt order clarified | None | Run lifecycle prompt 01 |
+| PROJECT-INITIATION | Scope, success criteria, owner decisions, governance | DONE | 2026-04-28 | Project brief created; P0 CODE01-CODE08/CODE17 goals and done gates checked; owner blockers synced | None | Run lifecycle prompt 01.02, then 01.03 |
 | REPO-LOCAL-ENV | Scaffold repo and local dev baseline | TODO | 2026-04-28 | Not started | Depends project initiation | Run lifecycle prompt 02 |
 | ARCHITECTURE-FOUNDATION | Architecture, conventions, skeleton, ADR | TODO | 2026-04-28 | Not started | Depends repo/local env | Run lifecycle prompt 03 |
 | PROJECT-BOOTSTRAP | Confirm readiness and first bounded gap | TODO | 2026-04-28 | Phase-project docs created | None | Run bootstrap prompt |
@@ -35,15 +35,15 @@
 | CODE06 | Warehouse + Inventory Ledger | TODO | 2026-04-28 | Not started | Depends CODE05 | Audit CODE06 |
 | CODE07 | Traceability | TODO | 2026-04-28 | Not started | OD-11, OD-14 | Prepare owner decision or defer |
 | CODE08 | Recall + Recovery | TODO | 2026-04-28 | Not started | Depends CODE07 | Audit CODE08 |
-| CODE09 | Admin UI/RBAC registry | TODO | 2026-04-28 | Not started | Depends CODE01 | Audit CODE09 |
-| CODE10 | API contract convention | TODO | 2026-04-28 | Not started | Depends CODE01 | Audit CODE10 |
-| CODE11 | PWA/Internal app contract | TODO | 2026-04-28 | Not started | Depends CODE10 | Audit CODE11 |
+| CODE09 | Admin UI/RBAC registry | TODO | 2026-04-28 | Not started | OD-22; depends CODE01 | Audit CODE09 |
+| CODE10 | API contract convention | TODO | 2026-04-28 | Not started | OD-22; depends CODE01 | Audit CODE10 |
+| CODE11 | PWA/Internal app contract | TODO | 2026-04-28 | Not started | OD-21, OD-22; depends CODE10 | Audit CODE11 |
 | CODE12 | Device/Printer boundary | TODO | 2026-04-28 | Not started | OD-17 | Prepare owner decision or defer |
-| CODE13 | Event/Outbox/MISA adapter | TODO | 2026-04-28 | Not started | Depends producers CODE03-CODE08 | Audit CODE13 |
+| CODE13 | Event/Outbox/MISA adapter | TODO | 2026-04-28 | Not started | OD-20 for production sync; depends producers CODE03-CODE08 | Audit CODE13 |
 | CODE14 | Monitoring/Alert/Dashboard | TODO | 2026-04-28 | Not started | Depends CODE13 | Audit CODE14 |
 | CODE15 | Override governance | TODO | 2026-04-28 | Not started | Needs security policy details if expanded | Audit CODE15 |
 | CODE16 | Retention/Archive/Restore | NEEDS_OWNER | 2026-04-28 | Not started | OD-12, OD-13 | Get owner decisions |
-| CODE17 | Final close-out | TODO | 2026-04-28 | Not started | Depends all prior phases | Run after prior gates |
+| CODE17 | Final close-out | TODO | 2026-04-28 | Not started | OD-20 for real MISA enablement; depends all prior phases | Run after prior gates |
 
 ## 3. Agent Run Log
 
@@ -53,6 +53,7 @@
 | RUN-001 | 2026-04-28 | Codex documentation agent | PROJECT-LIFECYCLE-PROMPTS | PROJECT-LIFECYCLE-PROMPT-PACK | DONE | `phase-project/04_PROJECT_LIFECYCLE_PROMPTS/*`, `phase-project/00_README.md`, `phase-project/03_PROGRESS_REPORT.md` | Markdown/path checks only | Docs-only; no build required | Added numbered prompt pack from project inception to go-live and post-go-live operations. |
 | RUN-002 | 2026-04-28 | Codex documentation agent | DETAILED-PHASE-PROMPTS | DETAILED-PHASE-PROMPT-PACK | DONE | `phase-project/05_DETAILED_PHASE_PROMPTS/*`, `phase-project/00_README.md`, `phase-project/03_PROGRESS_REPORT.md` | Markdown/path checks only | Docs-only; no build required | Added detailed copy-paste prompts for MX-GATE-G1 and CODE01-CODE17. |
 | RUN-003 | 2026-04-28 | Codex documentation agent | PROJECT-INITIATION | PROMPT-RUN-ORDER | DONE | `phase-project/00_README.md`, `01_PHASE_PROJECT_TODO.md`, `02_AGENT_PROMPT_SEQUENCE.md`, `03_PROGRESS_REPORT.md`, `05_DETAILED_PHASE_PROMPTS/00_README.md` | Markdown/path checks only | Docs-only; no build required | Reordered prompt guidance for greenfield sequential execution from lifecycle prompts through CODE01-CODE17 and go-live prompts. |
+| RUN-004 | 2026-04-28 | Codex Product Owner Analyst + Delivery Lead | PROJECT-INITIATION | OWNER-BRIEF-SUCCESS-CRITERIA | DONE | `phase-project/03_PROGRESS_REPORT.md` | Read source docs; `rg` owner-blocker check | Docs-only; P0 goals/done gates and owner blocker report coverage checked | Created inception project brief, confirmed no stop-scope conflict, and synced open blockers OD-20/21/22 into report. |
 
 ## 4. Owner Decision Tracker
 
@@ -63,6 +64,9 @@
 | OD-13 | Audit/ledger/trace/recall retention duration | CODE16 | OPEN | TBD | Cannot implement destructive/archive retention safely. |
 | OD-14 | Public trace multi-language policy | CODE07 | OPEN | TBD | Public trace i18n may be deferred or single-language. |
 | OD-17 | Printer model/driver | CODE12 | OPEN | TBD | Printer integration remains adapter/mock until chosen. |
+| OD-20 | MISA AMIS tenant/credential/endpoint thật cho production | CODE13/CODE17 | OPEN | TBD | Real production MISA sync cannot be enabled; dry-run/fake credential only. |
+| OD-21 | PWA task taxonomy and endpoint inbox `/api/admin/tasks/my` | CODE11 | OPEN | TBD | PWA shopfloor task routing cannot be frozen. |
+| OD-22 | UI mutation route taxonomy for UOM write, raw lot hold/release, process command, screen registry write | CODE09/CODE10/CODE11 | OPEN | TBD | UI/API route contract freeze may be blocked or require explicit deferral. |
 
 ## 5. Risk Register
 
@@ -73,6 +77,8 @@
 | R-PROJ-003 | API/backend changes may miss frontend sync. | High | Tech Lead | Require API/FE sync evidence in every implementation handoff. | OPEN |
 | R-PROJ-004 | Seed fixtures may be mistaken for production data. | Medium | Data Owner | Keep `is_test_fixture` and production-data owner decisions explicit. | OPEN |
 | R-PROJ-005 | Open OD-12/OD-13 can block CODE16. | High | Owner | Close decisions before retention/archive implementation. | OPEN |
+| R-PROJ-006 | Open OD-20 can block real MISA production enablement at CODE13/CODE17. | High | Owner / Integration Lead | Build dry-run/fake credential mode first; require real tenant/credential/endpoint before production sync. | OPEN |
+| R-PROJ-007 | Open OD-21/OD-22 can delay PWA and UI/API route contract freeze. | Medium | Owner / PM / Tech Lead | Keep placeholder decisions explicit and avoid creating parallel route families before owner closure. | OPEN |
 
 ## 6. Management Weekly Report Template
 

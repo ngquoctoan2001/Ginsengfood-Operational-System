@@ -1,6 +1,6 @@
 ---
-name: operational-v2-update
-description: Use this skill when building ginsengfood-operational-system from docs/software-specs/, planning greenfield scaffold phases, implementing bounded Ginsengfood V2 Operational requirements, or later auditing implementation drift.
+name: ginsengfood-greenfield-build
+description: Use this skill when building ginsengfood-operational-system from scratch using docs/software-specs/, planning greenfield scaffold phases, implementing bounded Ginsengfood V2 Operational requirements, or later auditing implementation drift.
 ---
 
 # Skill: Ginsengfood V2 Operational Greenfield Build

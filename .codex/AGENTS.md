@@ -10,7 +10,7 @@ The repository root `AGENTS.md` remains the primary project instruction file.
   - Sets GPT-5.5, xhigh reasoning, VS Code file opener, sandbox/approval behavior, web search, GitNexus MCP, and multi-agent runtime.
 - `.codex/agents/*.toml`
   - Custom subagents for greenfield source mapping, scaffold planning, implementation, testing, and review.
-- `.agents/skills/operational-v2-update/SKILL.md`
+- `.agents/skills/ginsengfood-greenfield-build/SKILL.md`
   - Reusable workflow for building Ginsengfood Operational from `docs/software-specs/`.
 
 ## Current Repository State
@@ -23,7 +23,7 @@ After code exists, use normal impact mapping and GitNexus before broad repositor
 
 ## Skill Routing
 
-`operational-v2-update` is the primary skill for Ginsengfood V2 work.
+`ginsengfood-greenfield-build` is the primary skill for Ginsengfood V2 greenfield work.
 
 Codex may also use companion skills when the current bounded task crosses a specialized area:
 
