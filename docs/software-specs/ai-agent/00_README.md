@@ -12,7 +12,7 @@ Thư mục này chứa prompt pack active cho AI coding agent triển khai từn
 | `02_CODEX_PROMPT_PACK.md`          | Base prompt, anti-scope prompt, phase/module prompts                      |
 | `03_GAP_IMPLEMENTATION_PROMPTS.md` | Gap audit, planning, backend, DB, FE, seed, test prompts                  |
 | `04_REVIEW_PROMPTS.md`             | Review prompts cho security/public trace/MISA/inventory/audit/API-FE sync |
-| `05_VALIDATION_PROMPTS.md`         | Validation prompts cho build/test/migration/seed/smoke                    |
+| `05_VALIDATION_PROMPTS.md`         | Prompt kiểm chứng cho build/test/migration/seed/smoke                    |
 | `06_HANDOFF_PROMPTS.md`            | Handoff, release, owner decision, deferred work prompts                   |
 
 ## 2.1. Phase Project Pack

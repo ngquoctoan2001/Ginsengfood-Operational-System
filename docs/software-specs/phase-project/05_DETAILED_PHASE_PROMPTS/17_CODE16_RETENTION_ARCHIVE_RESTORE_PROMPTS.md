@@ -12,7 +12,7 @@ Mission: Check whether CODE16 can start.
 Read first: non-functional/05_BACKUP_RETENTION_REQUIREMENTS.md, non-functional/07_SCALABILITY_AVAILABILITY_REQUIREMENTS.md, business/06_COMPLIANCE_AND_DATA_POLICY.md, phase-project/03_PROGRESS_REPORT.md.
 Owner blockers: OD-12 backup/DR RPO/RTO; OD-13 audit/ledger/trace/recall retention duration.
 Rule: do not implement destructive retention/archive without owner-approved policy.
-Output: GO / NEEDS_OWNER / DEFER, decision questions, progress update.
+Đầu ra: GO / NEEDS_OWNER / DEFER, decision questions, cập nhật tiến độ.
 ```
 
 ## Prompt 17.02 - Retention Policy Plan
@@ -21,7 +21,7 @@ Output: GO / NEEDS_OWNER / DEFER, decision questions, progress update.
 Role: Retention Planner.
 Mission: Plan retention/archive only after OD-12/OD-13 are closed or formally deferred.
 Workflow: classify data, retention duration, archive boundary, restore drill, audit requirements, tests.
-Output: retention matrix, DB/API/UI/test plan, progress update.
+Đầu ra: retention matrix, DB/API/UI/test plan, cập nhật tiến độ.
 ```
 
 ## Prompt 17.03 - Archive/Restore Implementation
@@ -30,7 +30,7 @@ Output: retention matrix, DB/API/UI/test plan, progress update.
 Role: Archive/Restore Agent.
 Mission: Implement approved archive/restore gap.
 Rules: no silent delete; archive action audited; restore drill documented; archive search must respect privacy/security.
-Output: implementation, validation, restore drill result, progress update.
+Đầu ra: implementation, validation, restore drill result, cập nhật tiến độ.
 ```
 
 ## Prompt 17.04 - CODE16 Review/Validate/Handoff
@@ -39,6 +39,6 @@ Output: implementation, validation, restore drill result, progress update.
 Role: Compliance/DR Reviewer.
 Mission: Validate CODE16.
 Tests: retention policy applied; archive/export audited; restore drill documented; no production-destructive behavior without approval.
-Output: verdict, OD status, progress update.
+Đầu ra: verdict, OD status, cập nhật tiến độ.
 ```
 

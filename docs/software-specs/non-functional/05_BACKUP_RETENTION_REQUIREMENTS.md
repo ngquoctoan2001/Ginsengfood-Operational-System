@@ -10,7 +10,7 @@
 |---|---|---|---|---|---|
 | BCK-001 | Database backup schedule must be defined before release readiness. | M01, M15 | P2 | Backup job evidence and restore drill log | OWNER DECISION NEEDED |
 | BCK-002 | RPO/RTO must be approved by owner/DevOps. | M01, M15 | P2 | RPO/RTO documented and tested | OWNER DECISION NEEDED |
-| BCK-003 | Backup must include operational transaction, ledger, audit, QR/print history, device registry/history, trace, recall and MISA sync data. | M01, M10, M11, M12, M13, M14, M15 | P0 | Restore drill validates trace/recall/ledger/QR-print/device continuity | OWNER DECISION NEEDED |
+| BCK-003 | Backup must include operational transaction, ledger, audit, QR/print history, device registry/history, trace, recall, evidence metadata and MISA sync data. Binary evidence backup uses the configured storage server path, not DB blob backup. | M01, M05, M10, M11, M12, M13, M14, M15 | P0 | Restore drill validates trace/recall/ledger/QR-print/device/evidence continuity | OWNER DECISION NEEDED |
 | BCK-004 | Backup secrets/credentials must not be exposed in logs/artifacts. | M14, M15 | P0 | Secret scan/review | OWNER DECISION NEEDED |
 | BCK-005 | Restore drill must be executed before production readiness. | M01, M15 | P1 | Restore drill record with timestamp/result | OWNER DECISION NEEDED |
 
@@ -22,7 +22,7 @@
 | Transaction data | PO, issue, receipt, QC, release, warehouse receipt | Retain for trace/recall/legal period; food-safety compliance defines the minimum floor, owner only decides retention beyond that floor | OWNER DECISION NEEDED |
 | Ledger data | Inventory ledger, balance rebuild evidence | Append-only; no destructive deletion in active retention | OWNER DECISION NEEDED |
 | Audit/history | Audit log, state transition, QR history | Append-only; archive after approved duration | OWNER DECISION NEEDED |
-| Trace/recall | Trace link, public trace projection, recall snapshot, CAPA | Retain enough for recall/legal exposure | OWNER DECISION NEEDED |
+| Trace/recall | Trace link, public trace projection, recall snapshot, CAPA, CAPA evidence metadata and binary refs | Retain enough for recall/legal exposure; binary files backed up from storage adapter/company storage server | OWNER DECISION NEEDED |
 | Integration logs | MISA sync event/log/reconcile | Retain enough for accounting/reconcile audit | OWNER DECISION NEEDED |
 | Public data | Public trace response/projection | Retain by product/QR lifecycle policy | OWNER DECISION NEEDED |
 | Sensitive/private data | Personnel, supplier, cost, QC defect/loss, internal notes | Restricted access, archive/search by permission | OWNER DECISION NEEDED |
@@ -46,7 +46,7 @@ Minimum restore drill before release readiness:
 4. Validate inventory ledger and balance projection for sample lot.
 5. Validate QR/print history and device registry/history for sample packaging unit.
 6. Validate internal trace chain for sample batch/QR.
-7. Validate recall impact snapshot can be read.
+7. Validate recall impact snapshot and CAPA evidence metadata can be read; validate referenced evidence file exists in configured storage backup/restore target.
 8. Validate public trace denylist.
 9. Validate MISA sync/reconcile log continuity.
 

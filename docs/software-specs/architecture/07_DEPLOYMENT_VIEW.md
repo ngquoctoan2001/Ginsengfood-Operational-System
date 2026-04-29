@@ -24,6 +24,8 @@ flowchart LR
   Api --> Health[Health Endpoint]
   Worker --> Health
 
+  Api --> EvidenceStore[Evidence Storage Adapter]
+  EvidenceStore --> EvidenceFiles[(Local Dev/Test Files or Company Storage Server)]
   Api --> Log[Central Logs/Metrics]
   Worker --> Log
   PrinterAgent --> Log
@@ -41,6 +43,7 @@ flowchart LR
 | Background Worker | Outbox dispatch, MISA sync, alerts, projections, printer/device callback consumption | Horizontal worker uses `SELECT FOR UPDATE SKIP LOCKED` or an approved equivalent locking decision before parallel dispatch. |
 | PostgreSQL | Source of truth operational DB | Needs indexes, FK/check constraints, backup/restore. |
 | Printer/Device Adapter | Local/edge integration to printer/scanner and callback forwarding | Must not direct DB access; all callbacks go through API/worker boundary. |
+| Evidence Storage Adapter | Store source-origin and CAPA evidence binaries by reference; DB stores metadata only | Dev/test uses local filesystem storage. Production uses company storage server configured by DevOps without changing domain/API contracts. |
 | Health Endpoint | Runtime health for app, DB, outbox/queue, MISA adapter, printer/device registry | Must be visible to monitoring/dashboard. |
 | Observability | Logs, metrics, alerts | Tooling owner decision remains open. |
 
@@ -48,10 +51,10 @@ flowchart LR
 
 | environment | Purpose | Data policy |
 | --- | --- | --- |
-| `local` | Developer docs/migration/unit validation | Fake GTIN/MISA credentials allowed, clearly marked. |
-| `dev` | Integration development | Seed baseline + fixtures; no production secrets. |
-| `staging` | Smoke and release rehearsal | Production-like schema; masked/safe data. |
-| `production` | Factory operation | Real secrets, backup, monitoring, owner-approved retention. |
+| `local` | Developer docs/migration/unit validation | Fake GTIN/MISA credentials allowed, clearly marked; evidence binary storage uses local filesystem path. |
+| `dev` | Integration development | Seed baseline + fixtures; no production secrets; evidence binary storage can use local/dev server path. |
+| `staging` | Smoke and release rehearsal | Production-like schema; masked/safe data; evidence storage points to staging company/server path. |
+| `production` | Factory operation | Real secrets, backup, monitoring, owner-approved retention; evidence storage points to company production storage server configured by DevOps. |
 
 ## 4. Deployment Gates
 

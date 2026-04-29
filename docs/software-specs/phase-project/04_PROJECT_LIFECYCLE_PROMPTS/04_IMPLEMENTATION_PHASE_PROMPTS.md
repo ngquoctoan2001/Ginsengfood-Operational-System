@@ -26,19 +26,19 @@ Scope:
 
 Workflow:
 1. Confirm phase goal and dependencies.
-2. Confirm open owner decisions.
+2. Confirm open quyết định owner.
 3. Audit current implementation at high level.
 4. Split phase into bounded gaps.
 5. Select first gap and write implementation prompt.
 6. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Phase kickoff summary.
 - Gap list.
 - First gap recommendation.
 - Blockers.
 - Next implementation prompt.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 04.02 - Bounded Gap Implementation
@@ -76,23 +76,23 @@ Workflow:
 6. Run validation.
 7. Stop all agent-owned long-running processes.
 
-Validation:
+Kiểm chứng:
 - Backend: {backend_commands}
 - Frontend: {frontend_commands}
 - DB/migration: {db_commands_or_NA}
 - Seed: {seed_commands_or_NA}
 - Smoke: {smoke_commands_or_NA}
 
-Required output:
-- Summary.
-- Files changed.
-- Requirement source.
-- Evidence used.
-- Commands run.
-- Test/build/migration/seed/smoke result.
-- Process cleanup result.
-- Progress update.
-- Remaining risks.
+Đầu ra bắt buộc:
+- Tóm tắt.
+- File đã sửa.
+- Nguồn yêu cầu.
+- Evidence đã dùng.
+- Lệnh đã chạy.
+- Kết quả test/build/migration/seed/smoke.
+- Kết quả cleanup process.
+- Cập nhật tiến độ.
+- Rủi ro còn lại.
 ```
 
 ## Prompt 04.03 - Scope Creep Guard
@@ -113,7 +113,7 @@ Check:
 6. Does it affect MISA/inventory/audit/ledger?
 7. Does it refactor unrelated code?
 
-Output:
+Đầu ra:
 - APPROVE_TO_EDIT / NEEDS_SPLIT / STOP_OWNER_DECISION.
 - Reason.
 - Reduced write scope if needed.
@@ -137,17 +137,17 @@ Read first:
 Workflow:
 1. Check all phase gaps status.
 2. Check build/test/migration/seed/smoke evidence.
-3. Check owner decisions and accepted risks.
+3. Check quyết định owner and accepted risks.
 4. Check docs/handoff updated.
 5. Produce phase closeout verdict.
 6. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Phase verdict: DONE / PARTIAL / FAILED.
 - Evidence table.
 - Deferred work.
 - Accepted risks.
 - Next phase recommendation.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 

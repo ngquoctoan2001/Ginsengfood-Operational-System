@@ -31,12 +31,12 @@ Workflow:
 6. Identify decisions that need owner/tech lead approval.
 7. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Architecture baseline.
 - ADR table.
 - Module/layer map.
 - Risks and open decisions.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 03.02 - Coding Convention And Guardrail Prompt
@@ -63,11 +63,11 @@ Workflow:
 6. Define forbidden patterns.
 7. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Coding convention checklist.
 - Forbidden pattern list.
 - Agent pre-edit checklist.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 03.03 - Module Skeleton And Boundary Audit
@@ -100,12 +100,12 @@ Stop conditions:
 - Stop if skeleton change would move large code without refactor approval.
 - Stop if two modules would own the same business truth.
 
-Required output:
+Đầu ra bắt buộc:
 - Module boundary map.
 - Missing/duplicate boundary report.
 - Skeleton plan or patch.
-- Validation result.
-- Progress update.
+- Kết quả kiểm chứng.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 03.04 - Foundation Technical Spike
@@ -132,11 +132,11 @@ Workflow:
 5. Validate with finite commands.
 6. Record lessons and blockers.
 
-Required output:
+Đầu ra bắt buộc:
 - Spike result.
 - Capability matrix.
-- Commands run.
+- Lệnh đã chạy.
 - Risks.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 

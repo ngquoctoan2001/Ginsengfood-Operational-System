@@ -21,6 +21,7 @@
 | SEC-GTIN-001 | Commercial barcode integrity must enforce GTIN/trade item uniqueness. | M10 | Trade item config, print payload, packaging UI | One active commercial barcode/GTIN per trade item/package level; no fallback to SKU code or user-entered second barcode. | P0 | TC-M10-GTIN-002 |
 | SEC-RATE-001 | Public trace endpoint must have mandatory abuse/rate-limit protection. | M12 | `/api/public/trace/{qrCode}` | Exact threshold is owner decision, but absence of rate limiting blocks public release. | P0 | TC-M12-PTRACE-RATE |
 | SEC-DEVICE-001 | Device/printer callbacks must authenticate device identity and never bypass business approval. | M10, M15 | Device registry, print callback, heartbeat/error ingest | Unregistered/inactive device or invalid token is rejected; callback cannot directly mark inventory, QC or release. | P0 | TC-M10-DEVICE-SEC |
+| SEC-EVIDENCE-001 | Evidence upload must use allowlist MIME/size validation, storage adapter indirection and malware scan before the file can satisfy verify/close gates. | M05, M13 | Source origin evidence, CAPA evidence, storage adapter | Dev/test stores binary on local filesystem; production stores binary on company storage server by configuration; DB stores metadata only. `PENDING_SCAN`, `SCAN_FAILED` and `INFECTED` evidence cannot verify source origin or close CAPA/recall. | P0 | TC-NFR-SEC-EVIDENCE |
 
 ## 3. Public/Internal Field Policy
 
@@ -47,6 +48,7 @@
 - Public trace has rate limiting before public release.
 - GTIN/trade item uniqueness is enforced before commercial print.
 - Device/printer callbacks require registered device credentials and cannot bypass service validation.
+- Evidence uploads validate MIME/size, never accept binary inline into DB, and require clean malware scan before source verification or CAPA/recall close.
 - Audit/state logs exist for approval, release, hold, recall, MISA retry/reconcile and override.
 - Append-only tables cannot be edited through normal UI/API.
 
@@ -58,4 +60,5 @@
 | Rate limit thresholds | Exact thresholds for public trace, admin command, login, MISA callback; rate limiting itself is mandatory |
 | Secret manager/tooling | Production secret storage and rotation |
 | Security scan/SBOM process | Dependency and CVE governance |
+| Evidence scan engine | AV/malware scanner implementation and production storage server connection details |
 | Device onboarding/credential rotation | Printer/device registration, token rotation and callback trust boundary |

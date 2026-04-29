@@ -5,6 +5,10 @@ applyTo: "**/*.cs"
 
 # PostgreSQL + EF Core Guidelines
 
+## Response Language
+
+Respond in Vietnamese for explanations, plans, reviews, and validation notes. Keep PostgreSQL/EF Core terms, table/column names, SQL snippets, migration names, commands, package names, and exact errors in English.
+
 ## Greenfield Note
 
 The backend/database layer may not exist yet. If EF infrastructure is absent, do not assume project paths. Use the active scaffold phase and `docs/software-specs/database/` to create the first database structure.

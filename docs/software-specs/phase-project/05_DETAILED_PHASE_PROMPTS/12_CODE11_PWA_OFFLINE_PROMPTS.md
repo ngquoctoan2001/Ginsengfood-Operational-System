@@ -11,7 +11,7 @@ Role: PWA/Offline Audit Agent.
 Mission: Audit PWA/offline readiness. Do not edit files.
 Read first: ui/, api/, non-functional/, modules/16_ADMIN_UI.md, modules/01_FOUNDATION_CORE.md.
 Rules: PWA-first is mandatory; offline replay must be idempotent.
-Output: offline gap map, first gap, progress update.
+Đầu ra: offline gap map, first gap, cập nhật tiến độ.
 ```
 
 ## Prompt 12.02 - Offline Command Contract Plan
@@ -19,7 +19,7 @@ Output: offline gap map, first gap, progress update.
 ```text
 Role: Offline Contract Planner.
 Mission: Plan offline command envelope, device/session headers, conflict behavior and replay rules.
-Output: API/FE/storage/test plan, non-goals, progress update.
+Đầu ra: API/FE/storage/test plan, non-goals, cập nhật tiến độ.
 ```
 
 ## Prompt 12.03 - Offline API/Backend Support
@@ -28,7 +28,7 @@ Output: API/FE/storage/test plan, non-goals, progress update.
 Role: Offline Backend Agent.
 Mission: Implement backend support for offline command replay.
 Rules: idempotency key required; stale/duplicate commands handled predictably; audit records device/session where specified.
-Output: middleware/API/tests, progress update.
+Đầu ra: middleware/API/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 12.04 - PWA Frontend Implementation
@@ -37,7 +37,7 @@ Output: middleware/API/tests, progress update.
 Role: PWA Frontend Agent.
 Mission: Implement PWA/offline UX for approved shopfloor workflows.
 Rules: show pending/synced/failed states; no duplicate submit; recoverable errors visible.
-Output: frontend files, tests, build result, progress update.
+Đầu ra: frontend files, tests, build result, cập nhật tiến độ.
 ```
 
 ## Prompt 12.05 - CODE11 Review/Validate/Handoff
@@ -46,6 +46,6 @@ Output: frontend files, tests, build result, progress update.
 Role: QA Agent.
 Mission: Validate offline/PWA.
 Tests: duplicate replay idempotent; offline queue survives refresh if required; failed command retry; permission/auth handling.
-Output: verdict, commands, progress update.
+Đầu ra: verdict, commands, cập nhật tiến độ.
 ```
 

@@ -24,6 +24,12 @@ project_doc_max_bytes = 65536
 project_root_markers = [".git", "AGENTS.md", "docs/software-specs/01_SOURCE_INDEX.md"]
 
 developer_instructions = """
+## Ngôn ngữ phản hồi
+
+Tất cả kế hoạch, ghi chú tiến độ, kết quả review, validation, handoff, blocker, rủi ro và phản hồi cuối phải viết bằng tiếng Việt.
+Giữ nguyên tiếng Anh cho: tên file/folder, code identifier, route path, API method, DTO/table/column/enum, câu lệnh, tên package, JSON/YAML/TOML key, HTTP status code, tên framework/tool và nội dung log/error gốc.
+Không dịch code fence, command, schema name, route name hoặc error message.
+
 Follow the repository root AGENTS.md first.
 
 Current priority workstream:

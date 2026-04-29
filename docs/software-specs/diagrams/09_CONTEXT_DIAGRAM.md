@@ -94,7 +94,7 @@ flowchart LR
 | Source origin, raw lot, batch, genealogy | Owned by M05/M06/M07/M12 | External farm/customer CRM details not in sources |
 | Inventory ledger and lot balance | Owned by M11 | Accounting ledger in MISA |
 | QR registry and public trace projection | Owned by M10/M12 | Public web marketing pages |
-| Recall case, hold, recovery, CAPA | Owned by M13 | Notification delivery engine detail |
+| Recall case, hold, recovery, CAPA, CAPA evidence metadata | Owned by M13 | Notification delivery engine detail; binary evidence storage server operation |
 | MISA mapping/sync/reconcile | Owned by M14 integration layer | MISA itself |
 | Customer/order/shipment exposure | Reference keys only | Customer/order domain ownership |
 
@@ -104,13 +104,13 @@ flowchart LR
 |---|---|---|---|---|
 | Core | M01/M02/M16 | WF-M01-AUDIT, WF-M02-PERM, WF-M16-MENU | `/api/admin/audit/logs`, `/api/admin/ui/menu` | `audit_log`, `auth_user`, `ui_screen_registry` |
 | Catalog | M04 | WF-M04-RECIPE | `/api/admin/skus`, `/api/admin/recipes` | `ref_sku`, `op_production_recipe` |
-| SourceRaw | M05/M06 | WF-M05-VERIFY, WF-M06-INTAKE | `/api/admin/source-origins`, `/api/admin/raw-material/intakes` | `op_source_origin`, `op_raw_material_lot` |
+| SourceRaw | M05/M06 | WF-M05-VERIFY, WF-M06-INTAKE | `/api/admin/source-origins`, `/api/admin/source-origins/{id}/evidence`, `/api/admin/raw-material/intakes` | `op_source_origin`, `op_source_origin_evidence`, `op_source_origin_verification`, `op_raw_material_lot` |
 | Manufacturing | M07/M08 | WF-M07-PO, WF-M08-ISSUE | `/api/admin/production/orders`, `/api/admin/production/material-*` | `op_production_order`, `op_material_issue` |
 | PackagingQr | M10 | WF-M10-PACK, WF-M10-QR | `/api/admin/packaging/jobs`, `/api/admin/qr/generate` | `op_packaging_job`, `op_qr_registry` |
 | Quality | M09 | WF-M09-QC, WF-M09-RELEASE | `/api/admin/qc/inspections`, `/api/admin/qc/releases` | `op_qc_inspection`, `op_batch_release` |
 | Inventory | M11 | WF-M11-WH, WF-M11-LEDGER | `/api/admin/warehouse/receipts`, `/api/admin/inventory/ledger` | `op_warehouse_receipt`, `op_inventory_ledger` |
 | Trace | M12 | WF-M12-INTERNAL, WF-M12-PUBLIC | `/api/admin/trace/search`, `/api/public/trace/{qrCode}` | `op_trace_link`, `vw_public_traceability` |
-| Recall | M13 | WF-M13-RECALL | `/api/admin/recall/cases/*` | `op_recall_case`, `op_recall_capa` |
+| Recall | M13 | WF-M13-RECALL | `/api/admin/recall/cases/*`, `/api/admin/recall/capas/{capaId}/evidence` | `op_recall_case`, `op_recall_exposure_snapshot`, `op_batch_hold_registry`, `op_recall_capa`, `op_recall_capa_evidence` |
 | Integration | M14 | WF-M14-SYNC | `/api/admin/integrations/misa/*` | `misa_sync_event`, `misa_mapping` |
 | Reporting | M15 | WF-M15-METRIC, WF-M15-ALERT | `/api/admin/dashboard/operations`, `/api/admin/alerts` | `op_dashboard_metric`, `op_alert_event` |
 

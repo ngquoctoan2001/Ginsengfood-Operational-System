@@ -4,6 +4,10 @@ description: "Use when implementing Ginsengfood V2 scaffold phases or bounded fe
 
 # Ginsengfood V2 Greenfield Rules
 
+## Response Language
+
+All responses must be Vietnamese by default. Keep English for standard technical terms and exact identifiers such as file paths, code symbols, route paths, API methods, DTO/table/column/enum names, commands, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names, and original log/error text.
+
 ## Required Reading Before Starting
 
 1. `AGENTS.md`
@@ -85,20 +89,20 @@ If a gate cannot run, report the exact command attempted, blocker, and residual 
 ## Response Format
 
 ```markdown
-## Summary
-## Requirement Source
-## Files Changed
-## Evidence Used
-## Commands Run
-## Test Result
-## Backend Build Result
-## Frontend Build Result
-## Process Cleanup Result
-## Database Migration/Update Result
-## Seed Validation Result
-## Smoke/E2E Result
-## Markdown/Handoff Update
-## Files Blocked By Permissions
-## Remaining Risks
-## Next Phase Prompt
+## Tom tat
+## Nguon yeu cau
+## File da sua
+## Evidence da dung
+## Lenh da chay
+## Ket qua test
+## Ket qua backend build
+## Ket qua frontend build
+## Ket qua cleanup process
+## Ket qua database migration/update
+## Ket qua seed validation
+## Ket qua smoke/e2e
+## Cap nhat Markdown/handoff
+## File bi chan boi quyen
+## Rui ro con lai
+## Prompt phase tiep theo
 ```

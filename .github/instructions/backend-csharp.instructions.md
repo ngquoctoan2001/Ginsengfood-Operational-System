@@ -5,6 +5,10 @@ applyTo: "**/*.cs"
 
 # Backend C# / .NET Guidelines
 
+## Response Language
+
+Respond in Vietnamese for explanations, plans, reviews, and validation notes. Keep C#/.NET terms, code symbols, file paths, commands, package names, migration names, table/column names, and exact errors in English.
+
 ## Greenfield Note
 
 The backend may not exist yet. If backend code is absent, first follow the active scaffold phase and `docs/software-specs/` before assuming solution paths, module names, EF project paths, or test folders.

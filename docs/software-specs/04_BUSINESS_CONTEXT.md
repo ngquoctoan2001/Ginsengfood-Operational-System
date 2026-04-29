@@ -57,7 +57,7 @@ Nguồn chính: `SRC-FILE01`, `SRC-FILE02`, `SRC-FILE03`, `SRC-RECIPE-NEW`, `SRC
 | QC/release | QC inspection, disposition, batch release. | M09 |
 | Warehouse/inventory | Warehouse receipt, ledger, lot balance, allocation reference. | M11 |
 | Traceability | Internal trace, public trace, genealogy. | M12 |
-| Recall | Incident, hold, sale lock, notification, recovery, CAPA. | M13 |
+| Recall | Incident, hold, sale lock, notification, recovery, CAPA, CAPA evidence. | M13 |
 | Integration/accounting | MISA mapping, sync, retry, reconcile. | M14 |
 | Governance/admin | RBAC, audit, UI, dashboard, override, monitoring. | M01, M02, M15, M16 |
 
@@ -116,4 +116,3 @@ Các quyết định owner đã được ghi ở [09_CONFLICT_AND_OWNER_DECISION
 - `SELF_GROWN` vs `PURCHASED`.
 - Sản xuất bắt buộc `PREPROCESSING → FREEZING → FREEZE_DRYING`.
 - 20 SKU/G1 là baseline, không phải giới hạn vĩnh viễn.
-

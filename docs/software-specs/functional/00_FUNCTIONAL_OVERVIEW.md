@@ -96,7 +96,7 @@ Foundation/RBAC/Audit
 | 12 | QC and release | `QC_PASS` then separate release action. |
 | 13 | Warehouse receipt | Batch must be `RELEASED`; ledger credit created. |
 | 14 | Trace | Internal/public trace from source to finished goods. |
-| 15 | Recall if needed | Impact snapshot, hold, sale lock, recovery, CAPA. |
+| 15 | Recall if needed | Impact snapshot, hold, sale lock, recovery, CAPA, clean CAPA evidence. |
 | 16 | MISA sync | Integration layer maps/retries/reconciles. |
 
 

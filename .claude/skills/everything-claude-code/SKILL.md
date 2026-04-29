@@ -11,6 +11,10 @@ This skill records the local repository posture for agent work. The repository i
 
 Use `AGENTS.md` as the primary instruction file and `docs/software-specs/` as the single accepted source of truth.
 
+## Response Language
+
+Tra loi bang tieng Viet cho planning, progress, review, validation, handoff, blockers, risks va final response. Giu nguyen tieng Anh cho technical terms va exact identifiers: file paths, code symbols, route paths, API methods, DTO/table/column/enum names, command lines, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names va original log/error text.
+
 ## Repository Process Lifecycle
 
 - Prefer finite foreground validation commands.

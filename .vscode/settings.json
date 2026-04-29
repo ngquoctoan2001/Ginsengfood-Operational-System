@@ -77,6 +77,9 @@
     },
     {
       "text": "Agent process lifecycle: prefer finite foreground commands; if an agent starts dotnet run/watch, npm run dev, Vite/Next, Playwright, Docker, Start-Process, Start-Job, or another long-lived process, record the PID and stop only that agent-owned PID before final response with tools/agent/Stop-AgentOwnedProcesses.ps1 -IncludeDescendants. After agent-run .NET build/test/EF commands, run dotnet build-server shutdown. Never kill broad dotnet/node/npm process names."
+    },
+    {
+      "text": "Response language: write planning, progress, review, validation, handoff, blockers, risks, and final answers in Vietnamese. Keep English for standard technical terms and exact identifiers such as file paths, code symbols, route paths, API methods, DTO/table/column/enum names, commands, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names, and original log/error text."
     }
   ],
   "github.copilot.chat.testGeneration.instructions": [
@@ -88,6 +91,9 @@
     },
     {
       "text": "Generate tests from docs/software-specs/ acceptance criteria. If backend/frontend/test infrastructure is not scaffolded yet, propose the first test files and mark executable gates as N/A - not scaffolded yet."
+    },
+    {
+      "text": "Response language: Vietnamese by default. Keep English for technical terms, exact identifiers, commands, paths, and original errors."
     }
   ],
   "github.copilot.chat.reviewSelection.instructions": [
@@ -99,6 +105,9 @@
     },
     {
       "text": "Review against docs/software-specs/ and greenfield phase scope. Do not block unrelated future layers that are intentionally NOT_SCAFFOLDED, but block claims of completion when required layer validation is missing."
+    },
+    {
+      "text": "Response language: Vietnamese by default. Keep English for technical terms, exact identifiers, commands, paths, and original errors."
     }
   ]
 }

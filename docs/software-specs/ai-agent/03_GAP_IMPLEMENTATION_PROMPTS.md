@@ -27,7 +27,7 @@ Do not propose code changes yet.
 ```text
 Turn gap {gap_id} into a bounded implementation plan.
 
-Output:
+Đầu ra:
 - Goal
 - Scope and non-goals
 - Files/layers likely affected
@@ -36,9 +36,9 @@ Output:
 - Frontend client/screen changes
 - Seed changes
 - Tests to add/update
-- Validation commands
+- Lệnh kiểm chứng
 - Rollback/forward-fix notes
-- Risks and owner decisions
+- Risks and quyết định owner
 ```
 
 ## 3. Backend Implementation Prompt
@@ -56,11 +56,11 @@ Rules:
 - For warehouse receipt, enforce approved batch release; `QC_PASS` alone is not released.
 - Do not change API contract without updating API docs and FE impact.
 
-Required output:
+Đầu ra bắt buộc:
 - Services/routes/DTOs changed.
 - DB impact.
 - Tests.
-- Commands run.
+- Lệnh đã chạy.
 ```
 
 ## 4. Database Implementation Prompt

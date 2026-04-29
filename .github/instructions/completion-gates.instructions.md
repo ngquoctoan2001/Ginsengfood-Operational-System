@@ -9,6 +9,10 @@ Never mark a task done without reporting every applicable gate.
 
 For Ginsengfood V2 work, the accepted source truth is exactly `docs/software-specs/`. The repo is currently greenfield, so gates for non-scaffolded layers are reported as `N/A - not scaffolded yet`.
 
+## Response Language
+
+Write gate results, blockers, residual risks, and final reports in Vietnamese. Keep command lines, file paths, package/script names, status codes, and original build/test/error output in English.
+
 ## Gate 1 - Update Attached .md File
 
 If the user referenced, attached, or opened a `.md` file related to this task:
@@ -77,20 +81,20 @@ Trigger: any local command execution, especially .NET, frontend, Playwright, Doc
 - After agent-run .NET build/test/EF commands, run `dotnet build-server shutdown`.
 - Never kill every `dotnet`, `node`, `npm`, `testhost`, or `VBCSCompiler` process by name.
 
-## Final Response Format
+## Format phan hoi cuoi
 
 ```markdown
-## Summary
-## Files Changed
-## Commands Run
-## Test Result
-## Backend Build Result
-## Frontend Build Result
-## Process Cleanup Result
-## Database Migration/Update Result
-## Seed Validation Result
-## Smoke/E2E Result
-## .md File Updated
-## Files Blocked By Permissions
-## Remaining Risks
+## Tom tat
+## File da sua
+## Lenh da chay
+## Ket qua test
+## Ket qua backend build
+## Ket qua frontend build
+## Ket qua cleanup process
+## Ket qua database migration/update
+## Ket qua seed validation
+## Ket qua smoke/e2e
+## File .md da cap nhat
+## File bi chan boi quyen
+## Rui ro con lai
 ```

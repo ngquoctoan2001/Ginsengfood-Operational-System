@@ -18,7 +18,7 @@
 | M10 Packaging Printing | Trade item, GTIN, packaging unit, print, QR | SKU, batch | Public trace policy |
 | M11 Warehouse Inventory | Warehouse receipt, inventory ledger, lot balance, allocation, adjustment | Batch release, recall hold | QC decision |
 | M12 Traceability | Trace links, genealogy links, trace index/views, public trace policy | Source, lot, issue, batch, QR, warehouse, external shipment/customer refs | Recall disposition |
-| M13 Recall | Incident, recall case states (`OPEN`, impact/hold/recovery/CAPA, `CLOSED`, `CLOSED_WITH_RESIDUAL_RISK`), exposure snapshot, hold, sale lock, recovery, CAPA | Trace result, inventory, external notification/customer refs | Trace source data |
+| M13 Recall | Incident, recall case states (`OPEN`, impact/hold/recovery/CAPA, `CLOSED`, `CLOSED_WITH_RESIDUAL_RISK`), exposure snapshot, hold, sale lock, recovery, CAPA, CAPA evidence metadata | Trace result, inventory, external notification/customer refs, configured evidence storage server refs | Trace source data; binary evidence storage server operation |
 | M14 MISA Integration | MISA mapping, sync event/log, reconcile | Outbox business events | Business transaction truth |
 | M15 Reporting Dashboard | Metrics, alerts, health snapshots | Read models/events | Source of truth transaction tables |
 | M16 Admin UI | Screen/action/menu/form/table configuration | Module APIs, permissions | Business state |

@@ -84,7 +84,10 @@ sequenceDiagram
         RecallAPI->>TraceAPI: build exposure from genealogy
         TraceAPI-->>RecallAPI: exposure snapshot inputs
         RecallAPI-->>AdminUI: impact snapshot
-        AdminUI->>RecallAPI: POST hold / sale-lock / close
+        AdminUI->>RecallAPI: POST hold / sale-lock / recovery / CAPA
+        AdminUI->>RecallAPI: POST /api/admin/recall/capas/{capaId}/evidence
+        RecallAPI-->>AdminUI: CAPA evidence scan status
+        AdminUI->>RecallAPI: POST close after clean evidence
         RecallAPI-->>AdminUI: recall lifecycle updated
     end
 
@@ -96,7 +99,7 @@ sequenceDiagram
 
 | Sequence segment | Module | Workflow | API | Tables |
 |---|---|---|---|---|
-| Source verify | M05 | WF-M05-VERIFY | `/api/admin/source-origins`, `/api/admin/source-origins/{id}/verify` | `op_source_origin`, `op_source_origin_verification` |
+| Source verify | M05 | WF-M05-VERIFY | `/api/admin/source-origins`, `/api/admin/source-origins/{id}/evidence`, `/api/admin/source-origins/{id}/verify` | `op_source_origin`, `op_source_origin_evidence`, `op_source_origin_verification` |
 | Raw intake/QC/readiness | M06/M09 | WF-M06-INTAKE, WF-M06-QC, WF-M06-READINESS | `/api/admin/raw-material/intakes`, `/api/admin/raw-material/lots/{lotId}/qc-inspections`, `/api/admin/raw-material/lots/{lotId}/readiness` | `op_raw_material_lot`, `op_raw_material_qc_inspection`, `state_transition_log` |
 | Recipe snapshot | M04/M07 | WF-M04-SNAPSHOT, WF-M07-PO | `/api/admin/recipes`, `/api/admin/production/orders` | `op_production_recipe`, `op_production_order_item` |
 | Material issue decrement | M08/M11 | WF-M08-ISSUE, WF-M11-LEDGER | `/api/admin/production/material-issues/{id}/execute` | `op_material_issue`, `op_inventory_ledger` |
@@ -104,7 +107,7 @@ sequenceDiagram
 | Packaging/QR/print | M10 | WF-M10-PACK, WF-M10-QR | `/api/admin/packaging/jobs`, `/api/admin/qr/generate`, `/api/admin/printing/jobs` | `op_packaging_job`, `op_qr_registry`, `op_print_job` |
 | QC/release/warehouse | M09/M11 | WF-M09-RELEASE, WF-M11-WH | `/api/admin/qc/releases`, `/api/admin/warehouse/receipts` | `op_batch_release`, `op_warehouse_receipt` |
 | Trace/public trace | M12 | WF-M12-INTERNAL, WF-M12-PUBLIC | `/api/admin/trace/search`, `/api/public/trace/{qrCode}` | `op_trace_link`, `vw_public_traceability` |
-| Recall extension | M13 | WF-M13-RECALL | `/api/admin/incidents`, `/api/admin/recall/cases/*` | `op_recall_case`, `op_recall_exposure_snapshot` |
+| Recall extension | M13 | WF-M13-RECALL | `/api/admin/incidents`, `/api/admin/recall/cases/*`, `/api/admin/recall/capas/{capaId}/evidence` | `op_recall_case`, `op_recall_exposure_snapshot`, `op_recall_capa`, `op_recall_capa_evidence` |
 | MISA status | M14 | WF-M14-SYNC | `/api/admin/integrations/misa/sync-events` | `misa_sync_event`, `misa_sync_log` |
 
 ## 4. Test mapping

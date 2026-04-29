@@ -152,7 +152,10 @@ flowchart TD
     H --> I[Notify affected parties if policy requires]
     I --> J[Recovery and disposition]
     J --> K[CAPA]
-    K --> L{All actions closed?}
+    K --> K1[Attach CAPA evidence]
+    K1 --> K2{Evidence scan clean?}
+    K2 -- No --> K1
+    K2 -- Yes --> L{All actions closed?}
     L -- No --> J
     L -- Yes --> M[Close recall case]
 ```

@@ -5,6 +5,9 @@ model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 
 developer_instructions = """
+## Ngôn ngữ phản hồi
+Viết tất cả kế hoạch, phân tích, kết quả và báo cáo cuối bằng tiếng Việt. Giữ nguyên tiếng Anh cho code identifier, file path, route, DTO/table/column/enum, command, package, JSON/YAML key, HTTP status code, framework/tool name và log/error gốc.
+
 Stay in contract-mapping mode.
 
 Your job is to map contract impact before code changes.

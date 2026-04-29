@@ -39,12 +39,12 @@ Stop conditions:
 - Public trace leakage not verified.
 - No rollback plan.
 
-Required output:
+Đầu ra bắt buộc:
 - Production readiness verdict: READY / READY_WITH_ACCEPTED_RISK / NOT_READY.
 - Evidence table.
 - Blockers.
 - Accepted risks requiring owner sign-off.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 08.02 - Security And Privacy Go-Live Gate
@@ -70,14 +70,14 @@ Check:
 5. Error responses do not leak internals.
 6. Audit/ledger/history append-only.
 7. Break-glass/override audited.
-8. Backup/retention owner decisions handled.
+8. Backup/retention quyết định owner handled.
 
-Required output:
+Đầu ra bắt buộc:
 - Security verdict.
 - Findings by severity.
 - Required fixes.
 - Accepted risks.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 08.03 - Go/No-Go Meeting Pack
@@ -97,19 +97,19 @@ Read first:
 
 Workflow:
 1. Summarize release scope.
-2. Summarize validation evidence.
-3. List open risks and owner decisions.
+2. Summarize evidence kiểm chứng.
+3. List open risks and quyết định owner.
 4. List accepted deferrals.
 5. Present go/no-go recommendation.
 6. Prepare exact owner sign-off wording.
 7. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Go/no-go deck text.
 - Decision recommendation.
 - Sign-off wording.
 - Risk acceptance table.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 08.04 - Production Deployment And Day-1 Operations
@@ -145,13 +145,13 @@ Stop conditions:
 - Critical smoke failure.
 - Public trace/security failure.
 
-Required output:
+Đầu ra bắt buộc:
 - Deployment status: SUCCESS / ROLLED_BACK / FAILED.
 - Commands/actions performed.
-- Smoke result.
+- Kết quả smoke.
 - Incidents.
 - Rollback/forward-fix status.
 - Day-1 watch items.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 

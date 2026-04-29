@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\services\operational-api\src\Ginsengfood.Operational.Api\Ginsengfood.Operational.Api.csproj" />
+    <ProjectReference Include="..\..\..\services\operational-api\src\Ginsengfood.Operational.Domain\Ginsengfood.Operational.Domain.csproj" />
+    <ProjectReference Include="..\..\..\packages\api-contracts\src\Ginsengfood.Operational.Contracts\Ginsengfood.Operational.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\packages\shared-kernel\src\Ginsengfood.Operational.SharedKernel\Ginsengfood.Operational.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

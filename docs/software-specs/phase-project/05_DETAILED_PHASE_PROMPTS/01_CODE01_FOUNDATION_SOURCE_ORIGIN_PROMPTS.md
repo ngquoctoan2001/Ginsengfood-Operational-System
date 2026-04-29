@@ -27,7 +27,7 @@ Workflow:
 2. Inspect current DB/models/migrations, backend services/routes/DTOs, frontend screens, seed and tests.
 3. Classify gaps as MISSING/PARTIAL/CONFLICT/WRONG_IMPLEMENTATION/MATCH.
 4. Identify first safest bounded gap.
-Output: gap table, recommended first gap, affected layers, source evidence, owner blockers, next prompt to run, progress update.
+Đầu ra: gap table, recommended first gap, affected layers, source evidence, owner blockers, next prompt to run, cập nhật tiến độ.
 ```
 
 ## Prompt 01.02 - Foundation DB And Event Base Plan
@@ -43,7 +43,7 @@ Workflow:
 4. Define validation queries.
 5. Define backend/API/FE impact.
 Stop if migration would mutate append-only history or duplicate existing foundation truth.
-Output: migration plan, table contract, validation query plan, write scope, non-goals, progress update.
+Đầu ra: migration plan, table contract, validation query plan, write scope, non-goals, cập nhật tiến độ.
 ```
 
 ## Prompt 01.03 - Foundation Backend Implementation
@@ -57,7 +57,7 @@ Rules:
 - Sensitive actions must write audit/state transition.
 - Outbox/event records must not call external systems directly.
 Workflow: implement minimal service/middleware/DTO/routes, add tests, update docs/handoff/progress, run backend validation.
-Output: files changed, behavior implemented, tests, commands, API/FE impact, cleanup, progress update.
+Đầu ra: file đã sửa, behavior implemented, tests, commands, API/FE impact, cleanup, cập nhật tiến độ.
 ```
 
 ## Prompt 01.04 - Auth/RBAC Baseline Implementation
@@ -70,7 +70,7 @@ Rules:
 - UI permission is not security; backend must enforce permission.
 - If one user has multiple duties, assign multiple roles; do not merge role logic silently.
 Workflow: audit current auth, implement role/action checks, seed/update permissions if needed, update API errors, update frontend visibility only after backend gate, add tests.
-Output: RBAC changes, permission matrix evidence, tests, progress update.
+Đầu ra: RBAC changes, permission matrix evidence, tests, cập nhật tiến độ.
 ```
 
 ## Prompt 01.05 - Source Zone API/Backend Implementation
@@ -83,7 +83,7 @@ Rules:
 - Source zone is required for SELF_GROWN path.
 - Public fields must not expose internal supplier/personnel/costing/private notes.
 Workflow: implement DB/backend/API/DTO/permission/idempotency, update OpenAPI/API docs if present, add tests.
-Output: route/DTO/service changes, validation, FE impact, progress update.
+Đầu ra: route/DTO/service changes, validation, FE impact, cập nhật tiến độ.
 ```
 
 ## Prompt 01.06 - Source Origin Evidence Verification Implementation
@@ -101,7 +101,7 @@ Workflow:
 3. Add idempotency/audit/state transition.
 4. Add API tests for verified/unverified paths.
 5. Update progress report.
-Output: lifecycle implemented, negative tests, commands run, blockers.
+Đầu ra: lifecycle implemented, negative tests, lệnh đã chạy, blockers.
 ```
 
 ## Prompt 01.07 - Source Origin Admin UI
@@ -115,7 +115,7 @@ Rules:
 - Verification action must require reason/evidence where API requires.
 - UI must not show forbidden private fields in public preview.
 Workflow: update API client/types/hooks, screens/forms/tables/actions, permission-aware buttons, tests.
-Output: UI files changed, API sync evidence, frontend validation, progress update.
+Đầu ra: UI file đã sửa, API sync evidence, frontend validation, cập nhật tiến độ.
 ```
 
 ## Prompt 01.08 - CODE01 Test, Review, Validate, Handoff
@@ -125,6 +125,6 @@ Role: QA + Reviewer + Handoff Agent.
 Mission: Validate CODE01 gap/phase completion.
 Check: migration, seed, backend tests, frontend tests, API/FE sync, RBAC, idempotency, audit, source verification negative cases.
 Required negative cases: unverified SELF_GROWN blocked; unauthorized verify blocked; duplicate command idempotent; audit/state transition written.
-Output: ACCEPT/NEEDS_FIX/REJECT, validation commands, missing tests, remaining risks, progress report update.
+Đầu ra: ACCEPT/NEEDS_FIX/REJECT, lệnh kiểm chứng, missing tests, rủi ro còn lại, cập nhật báo cáo tiến độ.
 ```
 

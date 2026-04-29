@@ -100,7 +100,7 @@ flowchart TB
 | Projection Worker | M12, M15 | trace/dashboard rebuild | `op_trace_search_index`, `vw_internal_traceability`, `op_dashboard_metric` | WF-M12-INTERNAL, WF-M15-METRIC |
 | Print / Device Worker | M10 | print queue/callback | `op_print_job`, `op_print_log`, `op_qr_state_history` | WF-M10-QR |
 | PostgreSQL Operational DB | All modules | transactional persistence | all tables in database spec | all workflows |
-| Object Storage | M05, M13 if evidence used | evidence/attachment refs | evidence files by reference | WF-M05-VERIFY, WF-M13-RECALL |
+| Evidence Storage Adapter | M05, M13 if evidence used | evidence/attachment refs, scan status | dev/test local filesystem evidence; production company storage server files by reference | WF-M05-VERIFY, WF-M13-RECALL |
 | Backup / Archive Store | M01, M11, M12, M13, M14, M15 | backup/archive jobs | backups, archive indexes | CODE16 |
 
 ## 4. Deployment Rules
@@ -112,7 +112,7 @@ flowchart TB
 | Public Trace API is anonymous read-only and must use public projection. | Public Trace API Runtime |
 | External integrations cannot access DB directly. | MISA, printer/device adapter |
 | Outbox workers retry asynchronously and preserve idempotency/correlation. | Worker Runtime |
-| Evidence/attachments stored by reference; DB stores metadata. | Object Storage |
+| Evidence/attachments stored by reference; DB stores metadata only. Dev/test uses local filesystem storage; production uses company storage server configured by DevOps. | Evidence Storage Adapter |
 | Backup/restore policy requires owner RPO/RTO decision. | Backup / Archive Store |
 
 ## 5. Done Gate

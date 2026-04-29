@@ -15,14 +15,14 @@ Các payload dưới đây là ví dụ triển khai theo API catalog, không th
 
 ## 2. Quy Ước
 
-| item | rule |
-|---|---|
-| Auth | Admin command endpoint cần bearer token và permission tương ứng. |
-| Idempotency | Mọi command tạo giao dịch hoặc đổi state phải gửi `Idempotency-Key`. |
-| Reference key | Dùng business code trong fixture; implementation có thể resolve sang UUID nội bộ. |
-| Formula | Smoke baseline dùng `formula_version = G1`; API/schema vẫn phải hỗ trợ active approved recipe version tương lai. |
-| Batch size | `planned_batch_size = 400` là quantity-per-batch basis theo recipe, không mặc định là 400 kg thành phẩm. |
-| Route source | Route examples follow `docs/software-specs/api/02_API_ENDPOINT_CATALOG.md`; không tạo adapter route song song từ tài liệu cũ. |
+| item          | rule                                                                                                                                                                                                                                                                                             |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Auth          | Admin command endpoint cần bearer token và permission tương ứng.                                                                                                                                                                                                                                 |
+| Idempotency   | Mọi command tạo giao dịch hoặc đổi state phải gửi `Idempotency-Key`.                                                                                                                                                                                                                             |
+| Reference key | Dùng business code trong fixture; implementation có thể resolve sang UUID nội bộ.                                                                                                                                                                                                                |
+| Formula       | Smoke baseline dùng `formula_version = G1` với `formula_kind = PILOT_PERCENT_BASED` (anchor + ratio %); API/schema vẫn phải hỗ trợ active approved recipe version tương lai (G2 FIXED_QUANTITY_BATCH, G3, G4) coexist per `(sku_id, formula_kind)`.                                              |
+| Batch size    | PILOT PO dùng `anchor_quantity_input` (đơn vị = `recipe.anchor_uom_code`) và tự tính `total_batch_quantity = anchor_quantity_input × 100 / anchor_ratio_percent`. FIXED PO dùng `planned_batch_size` (default 400) là quantity-per-batch basis theo recipe, không mặc định là 400 kg thành phẩm. |
+| Route source  | Route examples follow `docs/software-specs/api/02_API_ENDPOINT_CATALOG.md`; không tạo adapter route song song từ tài liệu cũ.                                                                                                                                                                    |
 
 ## 3. Command Examples
 
@@ -44,7 +44,7 @@ Các payload dưới đây là ví dụ triển khai theo API catalog, không th
       "lines": [
         {
           "ingredient_code": "HRB_SAM_SAVIGIN",
-          "quantity": 9.00,
+          "quantity": 9.0,
           "uom_code": "kg"
         }
       ]
@@ -71,7 +71,7 @@ Các payload dưới đây là ví dụ triển khai theo API catalog, không th
       "lines": [
         {
           "ingredient_code": "ING_GAO",
-          "quantity": 195.00,
+          "quantity": 195.0,
           "uom_code": "kg"
         }
       ]

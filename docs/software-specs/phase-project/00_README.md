@@ -29,7 +29,7 @@ Neu bat dau tu repo rong/greenfield, chay prompt theo dung thu tu nay:
 | --- | --- | --- | --- |
 | 00 | `00_README.md` | Hieu bo dieu phoi phase-project. | Nam duoc source discipline va done rule. |
 | 01 | `04_PROJECT_LIFECYCLE_PROMPTS/00_README.md` | Hieu vong doi prompt tu project inception den go-live. | Biet dung bo lifecycle prompt. |
-| 02 | `04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md` | Chot scope, success criteria, owner decisions, governance. | Project charter/decision tracker ro rang. |
+| 02 | `04_PROJECT_LIFECYCLE_PROMPTS/01_PROJECT_INITIATION_PROMPTS.md` | Chot scope, success criteria, quyết định owner, governance. | Project charter/decision tracker ro rang. |
 | 03 | `04_PROJECT_LIFECYCLE_PROMPTS/02_REPO_AND_LOCAL_ENV_PROMPTS.md` | Scaffold repo/local env/secrets/branch strategy. | Repo scaffold va local env baseline san sang. |
 | 04 | `04_PROJECT_LIFECYCLE_PROMPTS/03_ARCHITECTURE_FOUNDATION_PROMPTS.md` | Khoa architecture, coding conventions, module skeleton, ADR. | Architecture foundation duoc chap nhan. |
 | 05 | `02_AGENT_PROMPT_SEQUENCE.md` - Prompt 00 | Bootstrap implementation queue. | First bounded gap duoc chon va progress report cap nhat. |
@@ -92,11 +92,11 @@ Khi dung prompt trong thu muc nay:
 
 Moi agent run phai ket thuc bang:
 
-- files changed;
+- file đã sửa;
 - requirement source;
 - evidence used;
-- commands run;
+- lệnh đã chạy;
 - build/test/migration/seed/smoke result hoac blocker;
 - process cleanup result;
-- progress update vao `03_PROGRESS_REPORT.md`;
-- remaining risks va next recommended action.
+- cập nhật tiến độ vao `03_PROGRESS_REPORT.md`;
+- rủi ro còn lại va next recommended action.

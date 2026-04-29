@@ -121,7 +121,7 @@ flowchart LR
 
 | Flow | Source module | Target module | Data object | API/event | Tables |
 |---|---|---|---|---|---|
-| Source verified -> raw intake readiness | M05 | M06 | verified source origin | `SOURCE_ORIGIN_VERIFIED` | `op_source_origin`, `op_source_origin_verification` |
+| Source verified -> raw intake readiness | M05 | M06 | verified source origin with clean evidence metadata | `SOURCE_ORIGIN_VERIFIED` | `op_source_origin`, `op_source_origin_evidence`, `op_source_origin_verification` |
 | Raw lot QC signed -> readiness decision | M06/M09 | M06 | QC result and readiness command | `RAW_LOT_QC_SIGNED`, `POST /api/admin/raw-material/lots/{lotId}/readiness` | `op_raw_material_lot`, `op_raw_material_qc_inspection`, `state_transition_log` |
 | Raw lot ready -> material issue | M06 | M08 | ready raw lot | `RAW_LOT_READY_FOR_PRODUCTION` | `op_raw_material_lot`, `op_material_issue_line` |
 | Recipe active -> PO snapshot | M04 | M07 | recipe header and lines | `/api/admin/production/orders` resolves active recipe | `op_production_recipe`, `op_recipe_ingredient`, `op_production_order_item` |
@@ -132,6 +132,7 @@ flowchart LR
 | Warehouse receipt -> trace/MISA/dashboard | M11 | M12/M14/M15 | ledger and receipt refs | `WAREHOUSE_RECEIPT_CONFIRMED` | `op_inventory_ledger`, `op_trace_link`, `misa_sync_event` |
 | QR printed -> public trace | M10 | M12 | QR lifecycle | `QR_PRINTED` | `op_qr_registry`, `vw_public_traceability` |
 | Trace -> recall | M12 | M13 | genealogy/exposure inputs | impact analysis API | `op_trace_link`, `op_recall_exposure_snapshot` |
+| Recall CAPA evidence -> close | M13 | M13 | CAPA evidence metadata with `scan_status = CLEAN` | recall close API | `op_recall_capa`, `op_recall_capa_evidence` |
 | Outbox -> MISA | M01/all modules | M14 | integration event | outbox dispatch | `outbox_event`, `misa_sync_event` |
 
 ## 4. Public/Internal Data Policy

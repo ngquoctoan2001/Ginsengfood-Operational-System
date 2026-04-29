@@ -82,6 +82,9 @@ Do not destructive rollback these without owner-approved repair plan:
 - `op_inventory_ledger`
 - `op_qr_state_history`
 - `op_recall_exposure_snapshot`
+- `op_source_origin_evidence`
+- `op_recall_capa_evidence`
+- referenced evidence files in local/dev storage or company storage server
 - dispatched `outbox_event`/MISA sync logs
 - raw lot readiness state transition/audit records once accepted
 

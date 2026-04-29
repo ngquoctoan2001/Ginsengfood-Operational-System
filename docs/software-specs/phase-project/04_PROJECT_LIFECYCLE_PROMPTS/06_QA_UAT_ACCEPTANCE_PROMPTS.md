@@ -28,13 +28,13 @@ Workflow:
 5. Classify failures: P0/P1/P2.
 6. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Test execution summary.
-- Commands run.
+- Lệnh đã chạy.
 - Failures and severity.
 - Missing tests.
 - Release impact.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 06.02 - E2E Smoke Chain Validation
@@ -81,12 +81,12 @@ Workflow:
 6. Check inventory ledger correctness.
 7. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Smoke verdict: PASS / PARTIAL / FAIL.
 - Step result table.
 - IDs/evidence.
 - Blockers.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 06.03 - Owner UAT Session Pack
@@ -113,12 +113,12 @@ Workflow:
 5. Prepare sign-off/accepted risk template.
 6. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - UAT scenario list.
 - UAT evidence template.
 - Defect template.
 - Sign-off template.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 06.04 - Defect Triage And Fix Queue
@@ -138,11 +138,11 @@ Workflow:
 5. Produce fix prompt for each P0/P1 defect.
 6. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Defect triage table.
 - Fix queue.
 - Deferred work.
-- Owner decisions.
-- Progress update.
+- Quyết định owner.
+- Cập nhật tiến độ.
 ```
 

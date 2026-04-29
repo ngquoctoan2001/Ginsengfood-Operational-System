@@ -1,0 +1,24 @@
+{
+  "name": "ginsengfood-operational-system",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "restore": "dotnet restore Ginsengfood.Operational.sln -p:RestoreUseStaticGraphEvaluation=true",
+    "dotnet:build": "dotnet build Ginsengfood.Operational.sln -p:RestoreUseStaticGraphEvaluation=true -m:1 --disable-build-servers",
+    "dotnet:test": "dotnet test Ginsengfood.Operational.sln -p:RestoreUseStaticGraphEvaluation=true -m:1 --disable-build-servers",
+    "build": "npm run dotnet:build && npm run build --workspaces --if-present",
+    "test": "npm run dotnet:test && npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "e2e": "npx playwright test",
+    "local:check": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/dev/Test-LocalPrerequisites.ps1",
+    "db:init": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/db/Initialize-LocalDatabase.ps1",
+    "db:update": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/db/Update-LocalDatabase.ps1",
+    "db:seed": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/db/Run-LocalSeed.ps1",
+    "db:seed:fixtures": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/db/Run-LocalSeed.ps1 -IncludeFixtures",
+    "db:seed:validate": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/db/Validate-LocalSeed.ps1",
+    "db:reset:local": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/db/Reset-LocalDatabase.ps1 -ConfirmLocalReset"
+  }
+}

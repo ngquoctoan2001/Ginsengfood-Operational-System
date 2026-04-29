@@ -25,6 +25,19 @@ Do not assume these paths exist until they are created by a phase:
 
 When a layer does not exist, report validation as `N/A - not scaffolded yet` instead of treating the empty repo as a failed migration.
 
+## Agent Response Language
+
+All assistant/agent responses for this repository must be written in Vietnamese by default.
+
+Use English normally for technical terms, exact identifiers, and source text that should not be translated:
+
+- code identifiers, symbols, routes, DTOs, table/column names, enum values;
+- file/folder paths, package names, commands, migration names, branch names, commit messages;
+- JSON/YAML/TOML keys, HTTP status codes, framework/library/tool names;
+- original log output, error text, and code fences.
+
+Plans, review findings, validation summaries, handoff notes, blockers, risks, and final reports must be Vietnamese, with English technical terms embedded only where appropriate.
+
 ## Agent-Owned Process Lifecycle
 
 Agents must not leave local processes running after the response or session handoff.

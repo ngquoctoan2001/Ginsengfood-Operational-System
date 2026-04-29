@@ -204,7 +204,11 @@ sequenceDiagram
     RecallAPI->>InvSvc: Apply hold/sale lock
     RecallAPI->>Audit: Append recall hold event
     RecallAPI-->>UI: Recall HOLD_ACTIVE
-    Recall->>UI: Complete recovery/CAPA and close
+    Recall->>UI: Complete recovery/CAPA and attach evidence
+    UI->>RecallAPI: POST /api/admin/recall/capas/{capaId}/evidence
+    RecallAPI->>Audit: Append CAPA evidence metadata + scan status
+    RecallAPI-->>UI: CAPA evidence CLEAN or blocking scan error
+    Recall->>UI: Close recall
     UI->>RecallAPI: POST /api/admin/recall/cases/{id}/close
     RecallAPI-->>UI: Recall CLOSED or blocking errors
 ```

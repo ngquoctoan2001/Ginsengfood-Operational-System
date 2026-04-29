@@ -8,6 +8,10 @@ allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 
 Use this workflow for Ginsengfood V2 database, schema, migration, seed, or reset work.
 
+## Response Language
+
+Tra loi bang tieng Viet cho planning, risk, validation, blocker, handoff va final report. Giu nguyen tieng Anh cho migration names, EF Core commands, SQL/table/column names, file paths, package names va exact errors.
+
 ## Current State
 
 The repository is greenfield. EF/database infrastructure may not exist yet. If it does not exist, first plan or implement the backend/database scaffold phase from canonical database specs instead of running migration commands against nonexistent paths.

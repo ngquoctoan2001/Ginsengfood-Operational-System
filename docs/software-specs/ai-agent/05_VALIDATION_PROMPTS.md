@@ -1,45 +1,45 @@
-# 05 - Validation Prompts
+# 05 - Prompt kiểm chứng
 
-## 1. Validation Planner Prompt
+## 1. Prompt lập kế hoạch kiểm chứng
 
 ```text
 Create validation plan for gap {gap_id}.
 
-Include:
-- Backend build command.
+Bao gồm:
+- Lệnh backend build.
 - Backend tests.
-- Frontend build command if FE touched.
-- Frontend tests if FE touched.
-- Migration apply/update command if DB touched.
-- Seed command and validation if seed touched.
+- Lệnh frontend build nếu chạm FE.
+- Frontend tests nếu chạm FE.
+- Lệnh migration apply/update nếu chạm DB.
+- Lệnh seed và seed validation nếu chạm seed.
 - API tests.
 - UI tests.
 - Integration/regression tests.
 - E2E smoke subset.
-- Process cleanup steps.
+- Bước cleanup process.
 ```
 
-## 2. Migration Validation Prompt
+## 2. Prompt kiểm chứng migration
 
 ```text
 Validate database migration for gap {gap_id}.
 
-Check:
+Kiểm tra:
 - Applies to empty DB.
 - Applies to existing QA/staging DB.
 - FK/unique/check constraints work.
 - `lot_status` enum/check constraint includes `READY_FOR_PRODUCTION` and does not use `QC_PASS` as lot readiness state.
 - Append-only guard works.
-- Validation query passes.
+- Validation query pass.
 - Rollback/forward-fix note exists.
 ```
 
-## 3. Seed Validation Prompt
+## 3. Prompt kiểm chứng seed
 
 ```text
 Validate seed for gap {gap_id}.
 
-Run/check:
+Chạy/kiểm tra:
 - Active baseline SKU count = 20.
 - Required ingredients active.
 - 4 recipe groups exist.
@@ -51,14 +51,14 @@ Run/check:
 - Seed runs twice without duplicate.
 ```
 
-## 4. API Validation Prompt
+## 4. Prompt kiểm chứng API
 
 ```text
 Validate API for gap {gap_id}.
 
-Check:
+Kiểm tra:
 - Happy path.
-- Validation negative.
+- Negative validation.
 - Permission negative.
 - Idempotency replay/conflict if command.
 - Error code.
@@ -66,12 +66,12 @@ Check:
 - Response body matches contract.
 ```
 
-## 5. UI Validation Prompt
+## 5. Prompt kiểm chứng UI
 
 ```text
 Validate UI for gap {gap_id}.
 
-Check:
+Kiểm tra:
 - Screen route renders.
 - API client calls correct route family.
 - Loading, empty, error, validation and stale state.
@@ -80,7 +80,7 @@ Check:
 - Public trace whitelist if touched.
 ```
 
-## 6. Smoke Validation Prompt
+## 6. Prompt kiểm chứng smoke
 
 ```text
 Run smoke subset for affected phase.

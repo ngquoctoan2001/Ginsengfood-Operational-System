@@ -10,6 +10,10 @@ Use this workflow for one bounded Ginsengfood V2 scaffold or implementation phas
 
 The repository is greenfield. Missing application layers are `NOT_SCAFFOLDED`, not stale code.
 
+## Response Language
+
+Tra loi bang tieng Viet cho plan, tien do, review, validation, handoff, blocker, risk va final response. Giu nguyen tieng Anh cho technical terms va exact identifiers nhu file paths, code symbols, route paths, API methods, DTO/table/column/enum names, commands, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names va original log/error text.
+
 For broad scaffold, schema, seed, workflow, form, traceability, recall, MISA, QR, production, or route work, read the relevant Markdown files in `docs/software-specs/` before planning changes.
 
 ## Required Reading

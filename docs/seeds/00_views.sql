@@ -162,27 +162,11 @@ LEFT JOIN op_batch b
 WHERE po.is_deleted = FALSE
   AND po.production_status IN ('RELEASED', 'IN_PROGRESS');
 
-CREATE OR REPLACE VIEW vw_admin_packaging_line_monitor AS
-SELECT
-    pj.id AS packaging_job_id,
-    pj.packaging_job_no,
-    pj.batch_id,
-    po.packaging_spec_id AS spec_id,
-    po.line_id,
-    pj.job_status,
-    po.planned_qty,
-    pj.packed_box_qty,
-    pj.packed_sachet_qty,
-    pj.packaged_qty,
-    pj.packaging_loss_qty,
-    pj.machine_id,
-    pj.started_at,
-    pj.ended_at AS completed_at
-FROM op_packaging_job pj
-INNER JOIN op_packaging_order po
-    ON po.id = pj.packaging_order_id AND po.is_deleted = FALSE
-WHERE pj.is_deleted = FALSE
-  AND pj.job_status IN ('DRAFT', 'IN_PROGRESS', 'PAUSED');
+-- vw_admin_packaging_line_monitor: REMOVED Phase 5.
+-- Lý do: schema cũ tham chiếu `op_packaging_order` + `packaging_spec_id` + `packed_box_qty` / `packed_sachet_qty` không còn tồn tại.
+-- Canonical Phase 5: dùng `op_packaging_job` (snapshot fields `trade_item_id_snapshot`,
+-- `packaging_level`, `units_per_box_snapshot`, `boxes_per_carton_snapshot`, `carton_requested`)
+-- join `op_trade_item` cho `packaging_level` (PACKET/BOX/CARTON). Recreate khi schema Phase 5 stable.
 
 CREATE OR REPLACE VIEW vw_admin_qc_review_queue AS
 SELECT
@@ -245,35 +229,12 @@ SELECT
 FROM op_trace_search_index tsi
 WHERE tsi.is_deleted = FALSE;
 
-CREATE OR REPLACE VIEW vw_packaging_print_level AS
-SELECT
-    pj.id AS print_job_id,
-    pj.print_job_no,
-    pj.batch_id,
-    pj.packaging_job_id,
-    pj.print_template_id,
-    ps.id AS packaging_spec_id,
-    ps.spec_code,
-    ps.sku_id,
-    ps.inner_unit_type,
-    ps.commercial_unit_type,
-    ps.box_template_id,
-    ps.sachet_template_id,
-    CASE
-        WHEN ps.sachet_template_id = pj.print_template_id THEN 2
-        WHEN ps.box_template_id = pj.print_template_id THEN 1
-        ELSE 0
-    END AS template_level,
-    CASE
-        WHEN ps.sachet_template_id = pj.print_template_id THEN 'SACHET'
-        WHEN ps.box_template_id = pj.print_template_id THEN 'BOX'
-        ELSE 'UNKNOWN'
-    END AS print_level_type
-FROM op_print_job pj
-INNER JOIN op_packaging_job pkj ON pkj.id = pj.packaging_job_id
-INNER JOIN op_packaging_order pko ON pko.id = pkj.packaging_order_id
-INNER JOIN op_packaging_spec ps ON ps.id = pko.packaging_spec_id
-WHERE pj.is_deleted = FALSE;
+-- vw_packaging_print_level: REMOVED Phase 5.
+-- Lý do: schema cũ tham chiếu `op_packaging_spec` (sachet_template_id, box_template_id) +
+-- `op_packaging_order` không còn tồn tại trong Phase 5.
+-- Canonical Phase 5: print level suy ra từ `op_packaging_job.packaging_level` (PACKET/BOX/CARTON)
+-- + `op_trade_item.packaging_level` (đã snapshot vào job). Print template chọn theo packaging_level
+-- + trade_item_id snapshot, không qua bảng spec trung gian.
 
 CREATE OR REPLACE VIEW vw_recall_impact_summary AS
 SELECT

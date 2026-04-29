@@ -10,6 +10,10 @@ Use this workflow for any Ginsengfood Operational Domain scaffold, schema, seed,
 
 The repo is greenfield. Missing application layers are `NOT_SCAFFOLDED`.
 
+## Response Language
+
+Tra loi bang tieng Viet cho tat ca project communication. Giu nguyen tieng Anh cho technical terms va exact identifiers nhu file paths, code symbols, route paths, API methods, DTO/table/column/enum names, commands, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names va original log/error text.
+
 ## Required Reading
 
 1. `AGENTS.md`
@@ -40,6 +44,6 @@ Four go-live recipe groups are required: `SPECIAL_SKU_COMPONENT`, `NUTRITION_BAS
 
 ## Done Gate
 
-Report source evidence, files changed, commands run, backend build/tests, frontend build/tests, database migration/update, seed validation, smoke/e2e, process cleanup, Markdown/handoff update, blocked files, remaining stale references, remaining risks, and the next phase prompt.
+Bao cao bang tieng Viet: source evidence, file da sua, lenh da chay, backend build/tests, frontend build/tests, database migration/update, seed validation, smoke/e2e, cleanup process, cap nhat Markdown/handoff, file bi chan, reference cu con sot, rui ro con lai, va prompt phase tiep theo.
 
 Use `N/A - not scaffolded yet` for absent layers. Before final response, stop only agent-owned long-lived PIDs with `tools/agent/Stop-AgentOwnedProcesses.ps1 -IncludeDescendants`, run `dotnet build-server shutdown` after agent-run .NET build/test/EF commands, and never kill broad process names that may include owner-run terminals.

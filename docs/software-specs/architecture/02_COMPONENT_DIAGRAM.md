@@ -36,6 +36,7 @@ flowchart LR
 
   subgraph INT[Integration Layer]
     MisaSvc[MISA Integration Service]
+    EvidenceStorage[Evidence Storage Adapter]
     DeviceReg[Device Registry/Auth]
     PrinterAdapter[Printer/Scanner Adapter Service]
   end
@@ -57,6 +58,7 @@ flowchart LR
 
   subgraph EXT[External Systems]
     MISA[MISA AMIS]
+    EvidenceStore[Company Storage Server / Local Filesystem]
     Printer[Printer/Scanner Adapter]
     Commerce[Commerce/Order/Shipment]
     Notification[Notification/CRM]
@@ -81,6 +83,7 @@ flowchart LR
   PublicApi --> TraceSvc
 
   SourceSvc --> DB
+  SourceSvc --> EvidenceStorage
   RawSvc --> DB
   RecipeSvc --> DB
   ProdSvc --> DB
@@ -90,6 +93,7 @@ flowchart LR
   WhSvc --> DB
   TraceSvc --> DB
   RecallSvc --> DB
+  RecallSvc --> EvidenceStorage
   ReportSvc --> DB
   MisaSvc --> DB
   DeviceReg --> DB
@@ -101,6 +105,7 @@ flowchart LR
   APP --> Approval
 
   Outbox --> MisaSvc --> MISA
+  EvidenceStorage -. file refs only .-> EvidenceStore
   AdminApi --> MisaSvc
   AdminApi --> DeviceReg
   PackSvc --> PrinterAdapter --> Printer
@@ -122,3 +127,4 @@ flowchart LR
 | MISA Integration Layer | Outbox event/accounting document | MISA sync status/reconcile evidence | Business modules never call MISA directly. |
 | Printer/Device Integration | Print job, device heartbeat/callback | Print/QR technical state and device health | Device/printer cannot create inventory, QC pass or release. |
 | Public Trace API | QR code | Whitelist public trace payload | No private/internal fields. |
+| Evidence Storage Adapter | Source-origin/CAPA evidence file upload metadata | File URI/key, hash, size, MIME, scan status | Dev/test uses local filesystem; production uses company storage server config; DB stores metadata only. |

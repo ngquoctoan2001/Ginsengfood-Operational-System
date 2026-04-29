@@ -92,8 +92,8 @@ stateDiagram-v2
         SALE_LOCK_ACTIVE --> RECOVERY
         RECOVERY --> DISPOSITION
         DISPOSITION --> CAPA
-        CAPA --> CLOSED
-        CAPA --> CLOSED_WITH_RESIDUAL_RISK: accepted residual risk
+        CAPA --> CLOSED: clean CAPA evidence
+        CAPA --> CLOSED_WITH_RESIDUAL_RISK: clean evidence + accepted residual risk
         CLOSED --> [*]
         CLOSED_WITH_RESIDUAL_RISK --> [*]
     }
@@ -121,7 +121,7 @@ stateDiagram-v2
 | Raw Material Lot | M06/M09 | WF-M06-QC, WF-M06-READINESS | `/api/admin/raw-material/lots/{lotId}/qc-inspections`, `/api/admin/raw-material/lots/{lotId}/readiness` | `op_raw_material_lot`, `op_raw_material_qc_inspection`, `state_transition_log` |
 | QR Lifecycle | M10/M12 | WF-M10-QR | `/api/admin/qr/generate`, `/api/admin/printing/jobs` | `op_qr_registry`, `op_qr_state_history` |
 | Trace | M12 | WF-M12-INTERNAL, WF-M12-PUBLIC | `/api/admin/trace/search`, `/api/public/trace/{qrCode}` | `op_trace_link`, `vw_public_traceability` |
-| Recall | M13 | WF-M13-RECALL | `/api/admin/recall/cases/*` | `op_recall_case`, `op_recall_exposure_snapshot` |
+| Recall | M13 | WF-M13-RECALL | `/api/admin/recall/cases/*`, `/api/admin/recall/capas/{capaId}/evidence` | `op_recall_case`, `op_recall_exposure_snapshot`, `op_recall_capa`, `op_recall_capa_evidence` |
 | MISA Sync | M14 | WF-M14-SYNC | `/api/admin/integrations/misa/*` | `misa_sync_event`, `misa_reconcile_record` |
 
 ## 5. Critical gates
@@ -130,6 +130,7 @@ stateDiagram-v2
 |---|---|
 | Material issue | Raw lot must be `READY_FOR_PRODUCTION`, available, not held. `QC_PASS` is prerequisite only. |
 | Ledger | Issue posts decrement once; receipt does not decrement again. |
+| Recall close | Recovery/CAPA must be closed and CAPA evidence must include at least 1 `CLEAN` scan metadata row. |
 | Release | `QC_PASS` is prerequisite only; batch release approval is separate. |
 | Warehouse | Warehouse receipt requires `APPROVED_RELEASED` batch. |
 | Public trace | Only `PUBLISHED_PUBLIC` response uses whitelist fields. |

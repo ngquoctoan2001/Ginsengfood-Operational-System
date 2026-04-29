@@ -39,7 +39,7 @@ BEGIN
 END $$;
 ```
 
-### SV-002 - Không có operational formula ngoài G1 trong baseline seed
+### SV-002 - Không có operational formula bị cấm (G0) trong baseline seed; G1 PILOT và G2 FIXED được phép coexist
 
 ```sql
 DO $$
@@ -48,20 +48,26 @@ BEGIN
   SELECT count(*) INTO v_count
   FROM op_production_recipe
   WHERE formula_status IN ('ACTIVE_OPERATIONAL', 'APPROVED_SEED_BASELINE')
-    AND formula_version <> 'G1';
+    AND (
+      formula_version = 'G0'
+      OR formula_kind NOT IN ('PILOT_PERCENT_BASED', 'FIXED_QUANTITY_BATCH')
+      OR (formula_version = 'G1' AND formula_kind <> 'PILOT_PERCENT_BASED')
+      OR (formula_version = 'G2' AND formula_kind <> 'FIXED_QUANTITY_BATCH')
+    );
 
   IF v_count <> 0 THEN
-    RAISE EXCEPTION 'SV-002 failed: active operational baseline must be G1 only, got % invalid rows', v_count;
+    RAISE EXCEPTION 'SV-002 failed: invalid baseline operational recipes (G0 active or formula_kind mismatch), got % invalid rows', v_count;
   END IF;
 END $$;
 ```
 
-### SV-003 - Mỗi baseline SKU có đúng một active G1
+### SV-003 - Mỗi baseline SKU có đúng một active recipe per `(sku_id, formula_kind)`; pilot baseline yêu cầu 1 active G1 PILOT
 
 ```sql
 DO $$
 DECLARE v_count int;
 BEGIN
+  -- Pilot baseline guarantee: mỗi SKU baseline có đúng 1 active G1 PILOT
   SELECT count(*) INTO v_count
   FROM (
     SELECT s.sku_code, count(r.recipe_id) AS active_g1_count
@@ -69,6 +75,7 @@ BEGIN
     LEFT JOIN op_production_recipe r
       ON r.sku_id = s.sku_id
      AND r.formula_version = 'G1'
+     AND r.formula_kind = 'PILOT_PERCENT_BASED'
      AND r.formula_status = 'ACTIVE_OPERATIONAL'
     WHERE s.status = 'ACTIVE_BASELINE'
     GROUP BY s.sku_code
@@ -76,7 +83,21 @@ BEGIN
   ) x;
 
   IF v_count <> 0 THEN
-    RAISE EXCEPTION 'SV-003 failed: some baseline SKU do not have exactly one active G1 recipe';
+    RAISE EXCEPTION 'SV-003a failed: some baseline SKU do not have exactly one active G1 PILOT recipe';
+  END IF;
+
+  -- Coexistence guarantee: không có SKU nào có nhiều hơn 1 active recipe per `(sku_id, formula_kind)`
+  SELECT count(*) INTO v_count
+  FROM (
+    SELECT sku_id, formula_kind, count(*) AS c
+    FROM op_production_recipe
+    WHERE formula_status = 'ACTIVE_OPERATIONAL'
+    GROUP BY sku_id, formula_kind
+    HAVING count(*) > 1
+  ) y;
+
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'SV-003b failed: more than one active operational recipe for the same (sku_id, formula_kind)';
   END IF;
 END $$;
 ```
@@ -172,18 +193,33 @@ BEGIN
 END $$;
 ```
 
-### SV-008 - Recipe line quantity hợp lệ
+### SV-008 - Recipe line quantity hợp lệ theo `formula_kind`
 
 ```sql
 DO $$
 DECLARE v_count int;
 BEGIN
   SELECT count(*) INTO v_count
-  FROM op_recipe_ingredient
-  WHERE quantity_per_batch_400 <= 0;
+  FROM op_recipe_ingredient ri
+  JOIN op_production_recipe r ON r.recipe_id = ri.recipe_id
+  WHERE (
+    -- FIXED line phải có quantity_per_batch_400 > 0
+    (r.formula_kind = 'FIXED_QUANTITY_BATCH'
+      AND (ri.quantity_per_batch_400 IS NULL OR ri.quantity_per_batch_400 <= 0))
+    OR
+    -- PILOT non-anchor line phải có ratio_percent > 0
+    (r.formula_kind = 'PILOT_PERCENT_BASED'
+      AND ri.is_anchor = false
+      AND (ri.ratio_percent IS NULL OR ri.ratio_percent <= 0))
+    OR
+    -- PILOT anchor line phải có ratio_percent > 0 (bằng anchor_ratio_percent)
+    (r.formula_kind = 'PILOT_PERCENT_BASED'
+      AND ri.is_anchor = true
+      AND (ri.ratio_percent IS NULL OR ri.ratio_percent <= 0))
+  );
 
   IF v_count <> 0 THEN
-    RAISE EXCEPTION 'SV-008 failed: recipe line quantity must be > 0';
+    RAISE EXCEPTION 'SV-008 failed: recipe line quantity/ratio invalid for formula_kind';
   END IF;
 END $$;
 ```
@@ -220,9 +256,9 @@ FROM ref_ingredient
 GROUP BY ingredient_code
 HAVING count(*) > 1;
 
-SELECT sku_id, formula_version, count(*)
+SELECT sku_id, formula_version, formula_kind, count(*)
 FROM op_production_recipe
-GROUP BY sku_id, formula_version
+GROUP BY sku_id, formula_version, formula_kind
 HAVING count(*) > 1;
 
 SELECT warehouse_code, count(*)
@@ -467,32 +503,99 @@ BEGIN
 END $$;
 ```
 
+### SV-019 - PILOT recipe có đúng 1 anchor line trùng `recipe.anchor_ingredient_id`
+
+```sql
+DO $$
+DECLARE v_count int;
+BEGIN
+  -- (a) Số anchor line per PILOT recipe phải = 1
+  SELECT count(*) INTO v_count
+  FROM (
+    SELECT r.recipe_id
+    FROM op_production_recipe r
+    LEFT JOIN op_recipe_ingredient ri
+      ON ri.recipe_id = r.recipe_id
+     AND ri.is_anchor = true
+    WHERE r.formula_kind = 'PILOT_PERCENT_BASED'
+      AND r.formula_status IN ('ACTIVE_OPERATIONAL', 'APPROVED_SEED_BASELINE')
+    GROUP BY r.recipe_id
+    HAVING count(ri.recipe_ingredient_id) <> 1
+  ) x;
+
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'SV-019a failed: PILOT recipe phải có đúng 1 line is_anchor=true';
+  END IF;
+
+  -- (b) Anchor line phải trùng recipe.anchor_ingredient_id
+  SELECT count(*) INTO v_count
+  FROM op_production_recipe r
+  JOIN op_recipe_ingredient ri
+    ON ri.recipe_id = r.recipe_id
+   AND ri.is_anchor = true
+  WHERE r.formula_kind = 'PILOT_PERCENT_BASED'
+    AND r.formula_status IN ('ACTIVE_OPERATIONAL', 'APPROVED_SEED_BASELINE')
+    AND (ri.ingredient_id <> r.anchor_ingredient_id
+         OR ri.ratio_percent IS NULL
+         OR ri.ratio_percent <= 0);
+
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'SV-019b failed: PILOT anchor line phai trung anchor_ingredient_id va ratio_percent > 0';
+  END IF;
+END $$;
+```
+
+### SV-020 - PILOT recipe `SUM(ratio_percent) ∈ [99.95, 100.05]` per recipe
+
+```sql
+DO $$
+DECLARE v_count int;
+BEGIN
+  SELECT count(*) INTO v_count
+  FROM (
+    SELECT r.recipe_id, sum(ri.ratio_percent) AS s
+    FROM op_production_recipe r
+    JOIN op_recipe_ingredient ri ON ri.recipe_id = r.recipe_id
+    WHERE r.formula_kind = 'PILOT_PERCENT_BASED'
+      AND r.formula_status IN ('ACTIVE_OPERATIONAL', 'APPROVED_SEED_BASELINE')
+    GROUP BY r.recipe_id
+    HAVING sum(ri.ratio_percent) NOT BETWEEN 99.95 AND 100.05
+  ) x;
+
+  IF v_count <> 0 THEN
+    RAISE EXCEPTION 'SV-020 failed: PILOT recipe SUM(ratio_percent) phai thuoc [99.95, 100.05]';
+  END IF;
+END $$;
+```
+
 ## 4. CSV Pre-Import Checks
 
 Nếu seed loader đọc CSV trước khi insert DB, phải check:
 
-| check_id | file | expected |
-|---|---|---|
-| CSV-001 | `skus.csv` | 20 rows and column `is_advisory_enabled` present |
-| CSV-002 | `g1_recipe_headers.csv` | 20 rows |
-| CSV-003 | `g1_recipe_lines.csv` | 433 rows |
-| CSV-004 | `ingredients.csv` | 52 rows |
-| CSV-005 | `recipe_groups.csv` | 4 rows |
-| CSV-006 | `g1_recipe_lines.csv.group_code` | chỉ 4 group chuẩn |
-| CSV-007 | `g1_recipe_lines.csv.quantity_per_batch_400` | numeric và `> 0` |
-| CSV-008 | `g1_recipe_lines.csv.ingredient_code` | tồn tại trong `ingredients.csv` |
-| CSV-009 | `uom.csv` | 11 rows, required list present |
-| CSV-010 | `source_origin_fixture.csv` | có `SELF_GROWN` verified và `PURCHASED` supplier path |
-| CSV-011 | `gtin_fixture.csv` | 40 rows, toàn bộ `is_test_fixture = true` |
-| CSV-012 | `event_schema_registry.csv` | required event baseline present, including `RAW_LOT_READY_FOR_PRODUCTION` |
-| CSV-013 | `ui_registry_fixture.csv` | cover đủ module `M01` đến `M16`; M06 includes `RAW_LOT_MARK_READY` |
-| CSV-014 | all CSV | đọc bằng `UTF-8`, không mojibake tên tiếng Việt |
-| CSV-015 | `roles_permissions.csv` | `RAW_LOT_MARK_READY` allowed for `R-QA-REL` and `R-OPS-MGR` |
+| check_id | file                                         | expected                                                                                                        |
+| -------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| CSV-001  | `skus.csv`                                   | 20 rows and column `is_advisory_enabled` present                                                                |
+| CSV-002  | `g1_recipe_headers.csv`                      | 20 rows                                                                                                         |
+| CSV-003  | `g1_recipe_lines.csv`                        | 433 rows                                                                                                        |
+| CSV-004  | `ingredients.csv`                            | 52 rows                                                                                                         |
+| CSV-005  | `recipe_groups.csv`                          | 4 rows                                                                                                          |
+| CSV-006  | `g1_recipe_lines.csv.group_code`             | chỉ 4 group chuẩn                                                                                               |
+| CSV-007  | `g1_recipe_lines.csv.quantity_per_batch_400` | numeric và `> 0` khi `formula_kind = FIXED_QUANTITY_BATCH`; có thể NULL khi `PILOT_PERCENT_BASED`               |
+| CSV-008  | `g1_recipe_lines.csv.ingredient_code`        | tồn tại trong `ingredients.csv`                                                                                 |
+| CSV-008A | `g1_recipe_lines.csv` PILOT lines            | `ratio_percent > 0`; SUM per recipe ∈ `[99.95, 100.05]`; đúng 1 `is_anchor = true` trùng anchor_ingredient_code |
+| CSV-008B | `g1_recipe_headers.csv` PILOT/FIXED rows     | PILOT yêu cầu 4 anchor field NOT NULL > 0 (`anchor_ratio_percent <= 100`); FIXED yêu cầu 4 anchor field NULL    |
+| CSV-009  | `uom.csv`                                    | 11 rows, required list present                                                                                  |
+| CSV-010  | `source_origin_fixture.csv`                  | có `SELF_GROWN` verified và `PURCHASED` supplier path                                                           |
+| CSV-011  | `gtin_fixture.csv`                           | 40 rows, toàn bộ `is_test_fixture = true`                                                                       |
+| CSV-012  | `event_schema_registry.csv`                  | required event baseline present, including `RAW_LOT_READY_FOR_PRODUCTION`                                       |
+| CSV-013  | `ui_registry_fixture.csv`                    | cover đủ module `M01` đến `M16`; M06 includes `RAW_LOT_MARK_READY`                                              |
+| CSV-014  | all CSV                                      | đọc bằng `UTF-8`, không mojibake tên tiếng Việt                                                                 |
+| CSV-015  | `roles_permissions.csv`                      | `RAW_LOT_MARK_READY` allowed for `R-QA-REL` and `R-OPS-MGR`                                                     |
 
 ## 5. Done Gate
 
 - Seed chạy lần 1 thành công.
 - Seed chạy lần 2 không tạo duplicate.
-- Tất cả SV-001 đến SV-018 pass.
+- Tất cả SV-001 đến SV-020 pass.
 - CSV pre-import checks pass.
 - Seed validation output được lưu trong handoff khi bắt đầu coding phase seed/migration.

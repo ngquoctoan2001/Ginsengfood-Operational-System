@@ -5,6 +5,10 @@ applyTo: "**/*.{ts,tsx,js}"
 
 # Next.js Guidelines
 
+## Response Language
+
+Respond in Vietnamese for explanations, plans, reviews, and validation notes. Keep Next.js/React terms, route paths, component names, file paths, commands, package names, env keys, and exact errors in English.
+
 ## Greenfield Note
 
 The website may not exist yet. If website code is absent, first follow the active scaffold phase and `docs/software-specs/` before assuming `apps/website`, package scripts, or routing structure.

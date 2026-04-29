@@ -41,7 +41,7 @@ Hướng dẫn backend triển khai domain/service/API/workflow đúng spec, kh�
 | M10 | Packaging, trade item, QR, print/reprint | QR state history append-only; reprint links original |
 | M11 | Warehouse receipt, inventory ledger, balance, adjustment | Warehouse receipt requires batch `RELEASED`; ledger append-only |
 | M12 | Internal trace, public trace, genealogy | Public trace whitelist-only; invalid QR safe response |
-| M13 | Incident, recall, impact snapshot, hold/sale lock, CAPA | Recall impact uses snapshot; close blocked while recovery/CAPA open |
+| M13 | Incident, recall, impact snapshot, hold/sale lock, CAPA, CAPA evidence | Recall impact uses snapshot; close blocked while recovery/CAPA open or CAPA evidence is missing/not clean |
 | M14 | MISA mapping, sync event/log, retry, reconcile | Missing mapping creates review/reconcile pending, not dropped event |
 | M15 | Dashboard, alert, health | Metrics derived from operational truth, not duplicate truth |
 | M16 | UI registry, mobile/PWA command | Offline submit idempotent |

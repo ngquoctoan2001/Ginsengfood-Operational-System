@@ -1,37 +1,51 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const root = path.resolve(__dirname, '../..');
-const seedDir = path.join(root, 'docs/seeds');
-const createdAt = '2025-01-01T07:00:00+07:00';
+const root = path.resolve(__dirname, "../..");
+const seedDir = path.join(root, "docs/seeds");
+const createdAt = "2025-01-01T07:00:00+07:00";
 
-const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8').split(/\r?\n/);
-const cells = (line) => line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((s) => s.trim());
+const read = (rel) =>
+  fs.readFileSync(path.join(root, rel), "utf8").split(/\r?\n/);
+const cells = (line) =>
+  line
+    .trim()
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((s) => s.trim());
 const sql = (v) => {
-  if (v === null || v === undefined) return 'NULL';
+  if (v === null || v === undefined) return "NULL";
   const text = String(v).trim();
-  if (!text || text === '—' || text === '-') return 'NULL';
+  if (!text || text === "—" || text === "-") return "NULL";
   return `'${text.replace(/'/g, "''")}'`;
 };
 const ts = (v) => `'${v}'::timestamptz`;
 const num = (v, digits) => {
-  if (v === null || v === undefined) return 'NULL';
-  const text = String(v).trim().replace('%', '').replace(',', '.');
-  if (!text || text === '—' || text === '-') return 'NULL';
+  if (v === null || v === undefined) return "NULL";
+  const text = String(v).trim().replace("%", "").replace(",", ".");
+  if (!text || text === "—" || text === "-") return "NULL";
   return Number(text).toFixed(digits);
 };
-const write = (name, content) => fs.writeFileSync(path.join(seedDir, name), content, 'utf8');
+const write = (name, content) =>
+  fs.writeFileSync(path.join(seedDir, name), content, "utf8");
 
 const skus = [];
-for (const line of read('docs/ginsengfood_sku_recipe_md_pack/01_SKU_CANONICAL_MASTER_GINSENGFOOD.md')) {
+for (const line of read(
+  "docs/ginsengfood_sku_recipe_md_pack/01_SKU_CANONICAL_MASTER_GINSENGFOOD.md",
+)) {
   if (!/^\|\s*\d+\s*\|/.test(line)) continue;
   const c = cells(line);
-  if (c.length < 10 || c[3] === 'SKU') continue;
+  if (c.length < 10 || c[3] === "SKU") continue;
   const groupLetter = c[1];
-  const groupCode = { A: 'SEASONAL', B: 'FUNCTIONAL', C: 'NOURISHING' }[groupLetter] || groupLetter;
+  const groupCode =
+    { A: "SEASONAL", B: "FUNCTIONAL", C: "NOURISHING" }[groupLetter] ||
+    groupLetter;
   const isVegan = /Thuần|vegan|VEGAN/i.test(c[6]);
-  let proteinSource = c[4].replace(/^Cháo Sâm\s*–\s*/, '').replace(/\s*\(.*$/, '');
-  if (isVegan) proteinSource = 'Thuần chay';
+  let proteinSource = c[4]
+    .replace(/^Cháo Sâm\s*–\s*/, "")
+    .replace(/\s*\(.*$/, "");
+  if (isVegan) proteinSource = "Thuần chay";
   skus.push({
     id: Number(c[0]),
     groupLetter,
@@ -40,8 +54,8 @@ for (const line of read('docs/ginsengfood_sku_recipe_md_pack/01_SKU_CANONICAL_MA
     skuCode: c[3],
     skuNameVi: c[4],
     skuNameEn: c[5],
-    veganClassification: isVegan ? 'VEGAN' : 'NON_VEGAN',
-    skuType: isVegan ? 'VEGAN' : 'SAVORY',
+    veganClassification: isVegan ? "VEGAN" : "NON_VEGAN",
+    skuType: isVegan ? "VEGAN" : "SAVORY",
     formulaCode: c[7],
     proteinSource,
   });
@@ -49,19 +63,24 @@ for (const line of read('docs/ginsengfood_sku_recipe_md_pack/01_SKU_CANONICAL_MA
 
 const ingredients = [];
 const ingredientNameByCode = new Map();
-for (const line of read('docs/ginsengfood_sku_recipe_md_pack/02_INGREDIENT_CANONICAL_MASTER_GINSENGFOOD.md')) {
+for (const line of read(
+  "docs/ginsengfood_sku_recipe_md_pack/02_INGREDIENT_CANONICAL_MASTER_GINSENGFOOD.md",
+)) {
   if (!/^\|\s*(HRB|ING)_/.test(line)) continue;
   const c = cells(line);
   if (c.length < 7) continue;
   const code = c[0];
   const sourceStatus = c[5];
-  const materialStatus = sourceStatus === 'INACTIVE_NOT_USED_IN_G1' ? 'INACTIVE' : 'ACTIVE';
-  const ingredientStatus = code === 'ING_THIT_HEO_NAC' ? 'LOCKED_OWNER_SEPARATE' : sourceStatus;
+  const materialStatus =
+    sourceStatus === "INACTIVE_NOT_USED_IN_G1" ? "INACTIVE" : "ACTIVE";
+  const ingredientStatus =
+    code === "ING_THIT_HEO_NAC" ? "LOCKED_OWNER_SEPARATE" : sourceStatus;
   let notes = c[6];
-  if (code === 'ING_THIT_HEO_NAC') {
-    notes = `${notes} Owner decision: seed as a separate stock/QC ingredient for B4 G1.`.trim();
+  if (code === "ING_THIT_HEO_NAC") {
+    notes =
+      `${notes} Owner decision: seed as a separate stock/QC ingredient for B4 G1.`.trim();
   }
-  const group = code.startsWith('HRB_') ? 'HERB' : 'INGREDIENT';
+  const group = code.startsWith("HRB_") ? "HERB" : "INGREDIENT";
   ingredients.push({
     code,
     name: c[1],
@@ -76,95 +95,102 @@ for (const line of read('docs/ginsengfood_sku_recipe_md_pack/02_INGREDIENT_CANON
   ingredientNameByCode.set(code, c[1]);
 }
 
-const nameToIngredientCode = new Map(Object.entries({
-  'Sâm Savigin': 'HRB_SAM_SAVIGIN',
-  'Sâm Savigin – Pouzolzia zeylanica (L.) Benn.': 'HRB_SAM_SAVIGIN',
-  'Hoài sơn': 'HRB_HOAI_SON',
-  'Hoài sơn – Dioscorea opposita': 'HRB_HOAI_SON',
-  'Bạch linh': 'HRB_BACH_LINH',
-  'Kỷ tử': 'HRB_KY_TU',
-  'Kỷ tử – Lycium barbarum': 'HRB_KY_TU',
-  'Táo tàu': 'HRB_TAO_TAU',
-  'Táo tàu dùng nước hầm': 'HRB_TAO_TAU',
-  'Gừng nướng': 'HRB_GUNG_NUONG',
-  'Gừng nướng – Zingiber officinale': 'HRB_GUNG_NUONG',
-  'Trần bì': 'HRB_TRAN_BI',
-  'Quế chi': 'HRB_QUE_CHI',
-  'Đông trùng hạ thảo': 'HRB_DONG_TRUNG',
-  'Diêm mạch': 'ING_DIEM_MACH',
-  'Hạt sen': 'ING_HAT_SEN',
-  'Cá Basa': 'ING_CA_BASA',
-  'Cá hồi': 'ING_CA_HOI',
-  'Lươn đồng': 'ING_LUON_DONG',
-  'Thịt cừu': 'ING_THIT_CUU',
-  'Rau má': 'ING_RAU_MA',
-  'Đậu xanh không vỏ': 'ING_DAU_XANH_KHONG_VO',
-  'Vừng': 'ING_VUNG',
-  'Cá cơm': 'ING_CA_COM',
-  'Thịt heo': 'ING_THIT_HEO',
-  'Thịt heo nạc': 'ING_THIT_HEO_NAC',
-  'Da heo': 'ING_DA_HEO',
-  'Hàu biển': 'ING_HAU_BIEN',
-  'Gà ác': 'ING_GA_AC',
-  'Bào ngư – Haliotis spp.': 'ING_BAO_NGU',
-  'Nấm đông cô': 'ING_NAM_DONG_CO',
-  'Cua biển': 'ING_CUA_BIEN',
-  'Cá ngừ': 'ING_CA_NGU',
-  'Tôm': 'ING_TOM',
-  'Rong biển': 'ING_RONG_BIEN',
-  'Rong biển kombu / wakame': 'ING_RONG_BIEN',
-  'Rong biển kombu / wakame dùng nước hầm': 'ING_RONG_BIEN',
-  'Thịt gà': 'ING_THIT_GA',
-  'Thịt bò': 'ING_THIT_BO',
-  'Gạo (lúa – tôm, rửa sạch)': 'ING_GAO_LUA_TOM',
-  'Cà rốt thái hạt lựu': 'ING_CA_ROT',
-  'Bí đỏ thái hạt lựu': 'ING_BI_DO',
-  'Nấm kim châm cắt khúc 20–30 mm': 'ING_NAM_KIM_CHAM',
-  'Củ cải trắng thái khúc': 'ING_CU_CAI_TRANG',
-  'Hành tây chẻ 4': 'ING_HANH_TAY',
-  'Nước dừa nguyên chất': 'ING_NUOC_DUA',
-  'Muối biển rang': 'ING_MUOI_BIEN_RANG',
-  'Tiêu đen rang': 'ING_TIEU_DEN_RANG',
-  'Tỏi nướng': 'ING_TOI_NUONG',
-  'Hành lá thái khúc': 'ING_HANH_LA',
-  'Rễ cần tây thái nhuyễn': 'ING_RE_CAN_TAY',
-  'Mì chính': 'ING_MI_CHINH',
-}));
+const nameToIngredientCode = new Map(
+  Object.entries({
+    "Sâm Savigin": "HRB_SAM_SAVIGIN",
+    "Sâm Savigin – Pouzolzia zeylanica (L.) Benn.": "HRB_SAM_SAVIGIN",
+    "Hoài sơn": "HRB_HOAI_SON",
+    "Hoài sơn – Dioscorea opposita": "HRB_HOAI_SON",
+    "Bạch linh": "HRB_BACH_LINH",
+    "Kỷ tử": "HRB_KY_TU",
+    "Kỷ tử – Lycium barbarum": "HRB_KY_TU",
+    "Táo tàu": "HRB_TAO_TAU",
+    "Táo tàu dùng nước hầm": "HRB_TAO_TAU",
+    "Gừng nướng": "HRB_GUNG_NUONG",
+    "Gừng nướng – Zingiber officinale": "HRB_GUNG_NUONG",
+    "Trần bì": "HRB_TRAN_BI",
+    "Quế chi": "HRB_QUE_CHI",
+    "Đông trùng hạ thảo": "HRB_DONG_TRUNG",
+    "Diêm mạch": "ING_DIEM_MACH",
+    "Hạt sen": "ING_HAT_SEN",
+    "Cá Basa": "ING_CA_BASA",
+    "Cá hồi": "ING_CA_HOI",
+    "Lươn đồng": "ING_LUON_DONG",
+    "Thịt cừu": "ING_THIT_CUU",
+    "Rau má": "ING_RAU_MA",
+    "Đậu xanh không vỏ": "ING_DAU_XANH_KHONG_VO",
+    Vừng: "ING_VUNG",
+    "Cá cơm": "ING_CA_COM",
+    "Thịt heo": "ING_THIT_HEO",
+    "Thịt heo nạc": "ING_THIT_HEO_NAC",
+    "Da heo": "ING_DA_HEO",
+    "Hàu biển": "ING_HAU_BIEN",
+    "Gà ác": "ING_GA_AC",
+    "Bào ngư – Haliotis spp.": "ING_BAO_NGU",
+    "Nấm đông cô": "ING_NAM_DONG_CO",
+    "Cua biển": "ING_CUA_BIEN",
+    "Cá ngừ": "ING_CA_NGU",
+    Tôm: "ING_TOM",
+    "Rong biển": "ING_RONG_BIEN",
+    "Rong biển kombu / wakame": "ING_RONG_BIEN",
+    "Rong biển kombu / wakame dùng nước hầm": "ING_RONG_BIEN",
+    "Thịt gà": "ING_THIT_GA",
+    "Thịt bò": "ING_THIT_BO",
+    "Gạo (lúa – tôm, rửa sạch)": "ING_GAO_LUA_TOM",
+    "Cà rốt thái hạt lựu": "ING_CA_ROT",
+    "Bí đỏ thái hạt lựu": "ING_BI_DO",
+    "Nấm kim châm cắt khúc 20–30 mm": "ING_NAM_KIM_CHAM",
+    "Củ cải trắng thái khúc": "ING_CU_CAI_TRANG",
+    "Hành tây chẻ 4": "ING_HANH_TAY",
+    "Nước dừa nguyên chất": "ING_NUOC_DUA",
+    "Muối biển rang": "ING_MUOI_BIEN_RANG",
+    "Tiêu đen rang": "ING_TIEU_DEN_RANG",
+    "Tỏi nướng": "ING_TOI_NUONG",
+    "Hành lá thái khúc": "ING_HANH_LA",
+    "Rễ cần tây thái nhuyễn": "ING_RE_CAN_TAY",
+    "Mì chính": "ING_MI_CHINH",
+  }),
+);
 
 const prepNote = (name) => {
-  if (/rửa sạch/.test(name)) return 'rửa sạch';
-  if (/thái hạt lựu/.test(name)) return 'thái hạt lựu';
-  if (/cắt khúc 20–30 mm/.test(name)) return 'cắt khúc 20–30 mm';
-  if (/thái khúc/.test(name)) return 'thái khúc';
-  if (/chẻ 4/.test(name)) return 'chẻ 4';
-  if (/thái nhuyễn/.test(name)) return 'thái nhuyễn';
-  if (/dùng nước hầm/.test(name)) return 'dùng nước hầm';
-  if (/nướng/.test(name)) return 'nướng';
-  if (/rang/.test(name)) return 'rang';
+  if (/rửa sạch/.test(name)) return "rửa sạch";
+  if (/thái hạt lựu/.test(name)) return "thái hạt lựu";
+  if (/cắt khúc 20–30 mm/.test(name)) return "cắt khúc 20–30 mm";
+  if (/thái khúc/.test(name)) return "thái khúc";
+  if (/chẻ 4/.test(name)) return "chẻ 4";
+  if (/thái nhuyễn/.test(name)) return "thái nhuyễn";
+  if (/dùng nước hầm/.test(name)) return "dùng nước hầm";
+  if (/nướng/.test(name)) return "nướng";
+  if (/rang/.test(name)) return "rang";
   return null;
 };
-const variantNote = (name) => (/kombu \/ wakame/.test(name) ? 'kombu / wakame' : null);
+const variantNote = (name) =>
+  /kombu \/ wakame/.test(name) ? "kombu / wakame" : null;
 const usageRole = (section, code) => {
-  if (section === 'SPECIAL_SKU_COMPONENT') {
-    return code.startsWith('HRB_') ? 'SKU_HERBAL_COMPONENT' : 'SKU_FUNCTIONAL_COMPONENT';
+  if (section === "SPECIAL_SKU_COMPONENT") {
+    return code.startsWith("HRB_")
+      ? "SKU_HERBAL_COMPONENT"
+      : "SKU_FUNCTIONAL_COMPONENT";
   }
-  if (section === 'NUTRITION_BASE') return 'NUTRITION_BASE';
-  if (section === 'BROTH_EXTRACT') return 'BROTH_EXTRACT';
-  return code === 'ING_MI_CHINH' ? 'UMAMI' : 'SEASONING_FLAVOR';
+  if (section === "NUTRITION_BASE") return "NUTRITION_BASE";
+  if (section === "BROTH_EXTRACT") return "BROTH_EXTRACT";
+  return code === "ING_MI_CHINH" ? "UMAMI" : "SEASONING_FLAVOR";
 };
 
 const sectionMap = new Map([
-  ['Phần 1', 'SPECIAL_SKU_COMPONENT'],
-  ['Phần 2', 'NUTRITION_BASE'],
-  ['Phần 3', 'BROTH_EXTRACT'],
-  ['Phần 4', 'SEASONING_FLAVOR'],
+  ["Phần 1", "SPECIAL_SKU_COMPONENT"],
+  ["Phần 2", "NUTRITION_BASE"],
+  ["Phần 3", "BROTH_EXTRACT"],
+  ["Phần 4", "SEASONING_FLAVOR"],
 ]);
 const recipeLines = [];
 let currentSku = null;
 let currentRecipeCode = null;
 let currentSection = null;
 let lineNo = 0;
-for (const raw of read('docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATIONAL_20SKU_GINSENGFOOD.md')) {
+for (const raw of read(
+  "docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATIONAL_20SKU_GINSENGFOOD.md",
+)) {
   const line = raw.trim();
   const header = line.match(/^##\s+(.+?)\s+—\s+(.+)$/);
   if (header) {
@@ -174,11 +200,11 @@ for (const raw of read('docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATI
     lineNo = 0;
     continue;
   }
-  if (currentSku && line.startsWith('| Mã công thức |')) {
+  if (currentSku && line.startsWith("| Mã công thức |")) {
     currentRecipeCode = cells(line)[1];
     continue;
   }
-  if (currentSku && line.startsWith('### Phần')) {
+  if (currentSku && line.startsWith("### Phần")) {
     currentSection = null;
     for (const [key, value] of sectionMap) {
       if (line.includes(key)) {
@@ -190,16 +216,18 @@ for (const raw of read('docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATI
   }
   if (currentSku && currentSection && /^\|\s*\d+\s*\|/.test(line)) {
     const c = cells(line);
-    if (c.length < 6 || c[0] === 'STT') continue;
+    if (c.length < 6 || c[0] === "STT") continue;
     lineNo += 1;
     const name = c[1];
-    if (!nameToIngredientCode.has(name)) throw new Error(`Missing ingredient mapping for ${name}`);
+    if (!nameToIngredientCode.has(name))
+      throw new Error(`Missing ingredient mapping for ${name}`);
     const ingredientCode = nameToIngredientCode.get(name);
     const canonicalName = ingredientNameByCode.get(ingredientCode);
-    if (!canonicalName) throw new Error(`Missing ingredient master for ${ingredientCode}`);
+    if (!canonicalName)
+      throw new Error(`Missing ingredient master for ${ingredientCode}`);
     const noteParts = [];
     if (name !== canonicalName) noteParts.push(`Source display: ${name}`);
-    if (c[5] && c[5] !== '—' && c[5] !== '-') noteParts.push(c[5]);
+    if (c[5] && c[5] !== "—" && c[5] !== "-") noteParts.push(c[5]);
     recipeLines.push({
       recipeCode: currentRecipeCode,
       lineNo,
@@ -212,16 +240,21 @@ for (const raw of read('docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATI
       prepNote: prepNote(name),
       usageRole: usageRole(currentSection, ingredientCode),
       variantNote: variantNote(name),
-      ingredientNote: noteParts.length ? noteParts.join(' | ') : null,
+      ingredientNote: noteParts.length ? noteParts.join(" | ") : null,
     });
   }
 }
 
-if (skus.length !== 20) throw new Error(`Expected 20 SKU rows, got ${skus.length}`);
-if (ingredients.length !== 46) throw new Error(`Expected 46 ingredient rows, got ${ingredients.length}`);
-if (recipeLines.length !== 433) throw new Error(`Expected 433 recipe lines, got ${recipeLines.length}`);
+if (skus.length !== 20)
+  throw new Error(`Expected 20 SKU rows, got ${skus.length}`);
+if (ingredients.length !== 46)
+  throw new Error(`Expected 46 ingredient rows, got ${ingredients.length}`);
+if (recipeLines.length !== 433)
+  throw new Error(`Expected 433 recipe lines, got ${recipeLines.length}`);
 
-write('06_ref_sku.sql', `-- Seed canonical 20 SKU master rows from docs/ginsengfood_sku_recipe_md_pack/01_SKU_CANONICAL_MASTER_GINSENGFOOD.md.
+write(
+  "06_ref_sku.sql",
+  `-- Seed canonical 20 SKU master rows from docs/ginsengfood_sku_recipe_md_pack/01_SKU_CANONICAL_MASTER_GINSENGFOOD.md.
 -- Metadata is folded into this file; 07_ref_sku_metadata.sql is archived.
 
 BEGIN;
@@ -234,7 +267,7 @@ CREATE TEMP TABLE seed_ref_sku (
 ) ON COMMIT DROP;
 
 INSERT INTO seed_ref_sku VALUES
-${skus.map((s) => `(${s.id}, ${sql(s.skuCode)}, ${sql(s.skuNameVi)}, ${sql(s.skuNameVi)}, ${sql(s.skuNameEn)}, 'EA', TRUE, ${sql(s.veganClassification)}, ${sql(s.groupLetter)}, ${sql(s.groupCode)}, ${sql(s.groupName)}, ${sql(s.skuType)}, TRUE, TRUE, TRUE, TRUE, ${sql(s.proteinSource)}, ${ts(createdAt)})`).join(',\n')};
+${skus.map((s) => `(${s.id}, ${sql(s.skuCode)}, ${sql(s.skuNameVi)}, ${sql(s.skuNameVi)}, ${sql(s.skuNameEn)}, 'EA', TRUE, ${sql(s.veganClassification)}, ${sql(s.groupLetter)}, ${sql(s.groupCode)}, ${sql(s.groupName)}, ${sql(s.skuType)}, TRUE, TRUE, TRUE, TRUE, ${sql(s.proteinSource)}, ${ts(createdAt)})`).join(",\n")};
 
 INSERT INTO ref_sku (id, sku_code, sku_name, sku_name_vi, sku_name_en, unit, is_active, vegan_classification, sku_group, sku_group_code, sku_group_name, sku_type, is_sellable, is_advisory_enabled, is_producible, is_trace_public_enabled, protein_source, created_at, is_deleted)
 SELECT id, sku_code, sku_name, sku_name_vi, sku_name_en, unit, is_active, vegan_classification, sku_group, sku_group_code, sku_group_name, sku_type, is_sellable, is_advisory_enabled, is_producible, is_trace_public_enabled, protein_source, created_at, FALSE
@@ -260,65 +293,68 @@ ON CONFLICT (sku_code) DO UPDATE SET
     updated_at = NOW();
 
 COMMIT;
-`);
+`,
+);
 
 const aliases = [
-  ['HRB_SAM_SAVIGIN', 'MAT-SAM-SAVIGIN'],
-  ['HRB_HOAI_SON', 'MAT-HERB-HOAISON'],
-  ['HRB_BACH_LINH', 'MAT-HERB-BACHLINH'],
-  ['HRB_KY_TU', 'MAT-HERB-KYTU'],
-  ['HRB_TAO_TAU', 'MAT-HERB-TAOTAU'],
-  ['HRB_GUNG_NUONG', 'MAT-HERB-GINGNUONG'],
-  ['HRB_TRAN_BI', 'MAT-HERB-TRANBI'],
-  ['HRB_QUE_CHI', 'MAT-HERB-QUECCHI'],
-  ['HRB_DONG_TRUNG', 'MAT-HERB-DONGTRUNG'],
-  ['HRB_HUONG_SAM', 'MAT-HERB-HUONGSAM'],
-  ['ING_DIEM_MACH', 'MAT-HERB-DIEUMACH'],
-  ['ING_HAT_SEN', 'MAT-HERB-HATSEN'],
-  ['ING_CA_BASA', 'MAT-PROT-CABASA'],
-  ['ING_CA_HOI', 'MAT-PROT-CAHOI'],
-  ['ING_LUON_DONG', 'MAT-PROT-LUONDONQ'],
-  ['ING_THIT_CUU', 'MAT-PROT-THITCUU'],
-  ['ING_RAU_MA', 'MAT-HERB-RAUMA'],
-  ['ING_DAU_XANH_KHONG_VO', 'MAT-VEG-DAUXA'],
-  ['ING_VUNG', 'MAT-HERB-VUNG'],
-  ['ING_CA_COM', 'MAT-PROT-CACOM'],
-  ['ING_THIT_HEO', 'MAT-PROT-THITHEO'],
-  ['ING_THIT_HEO_NAC', 'MAT-PROT-THITHEO-NAC'],
-  ['ING_DA_HEO', 'MAT-PROT-DAHEO'],
-  ['ING_HAU_BIEN', 'MAT-PROT-HAUBIEN'],
-  ['ING_GA_AC', 'MAT-PROT-GAAC'],
-  ['ING_BAO_NGU', 'MAT-PROT-BAONGU'],
-  ['ING_NAM_DONG_CO', 'MAT-HERB-NAMDONGCO'],
-  ['ING_CUA_BIEN', 'MAT-PROT-CUABIEN'],
-  ['ING_CA_NGU', 'MAT-PROT-CANGU'],
-  ['ING_TOM', 'MAT-PROT-TOM'],
-  ['ING_RONG_BIEN', 'MAT-HERB-RONGBIEN'],
-  ['ING_THIT_GA', 'MAT-PROT-THITGA'],
-  ['ING_THIT_BO', 'MAT-PROT-THITBO'],
-  ['ING_GAO_LUA_TOM', 'MAT-GRAIN-GAOLUATOM'],
-  ['ING_CA_ROT', 'MAT-VEG-CARROT'],
-  ['ING_BI_DO', 'MAT-VEG-BIDOBI'],
-  ['ING_NAM_KIM_CHAM', 'MAT-VEG-NAMKIMCHAM'],
-  ['ING_CU_CAI_TRANG', 'MAT-VEG-CUCAITRANG'],
-  ['ING_HANH_TAY', 'MAT-VEG-HANHTAY'],
-  ['ING_NUOC_DUA', 'MAT-LIQ-NUOCDUA'],
-  ['ING_MUOI_BIEN_RANG', 'MAT-SEAS-MUOIRANG'],
-  ['ING_TIEU_DEN_RANG', 'MAT-SEAS-TIEUDEN'],
-  ['ING_TOI_NUONG', 'MAT-SEAS-TOINUONG'],
-  ['ING_HANH_LA', 'MAT-SEAS-HANHLAKUC'],
-  ['ING_RE_CAN_TAY', 'MAT-VEG-RECANHTAY'],
-  ['ING_MI_CHINH', 'MAT-SEAS-MICHINH'],
+  ["HRB_SAM_SAVIGIN", "MAT-SAM-SAVIGIN"],
+  ["HRB_HOAI_SON", "MAT-HERB-HOAISON"],
+  ["HRB_BACH_LINH", "MAT-HERB-BACHLINH"],
+  ["HRB_KY_TU", "MAT-HERB-KYTU"],
+  ["HRB_TAO_TAU", "MAT-HERB-TAOTAU"],
+  ["HRB_GUNG_NUONG", "MAT-HERB-GINGNUONG"],
+  ["HRB_TRAN_BI", "MAT-HERB-TRANBI"],
+  ["HRB_QUE_CHI", "MAT-HERB-QUECCHI"],
+  ["HRB_DONG_TRUNG", "MAT-HERB-DONGTRUNG"],
+  ["HRB_HUONG_SAM", "MAT-HERB-HUONGSAM"],
+  ["ING_DIEM_MACH", "MAT-HERB-DIEUMACH"],
+  ["ING_HAT_SEN", "MAT-HERB-HATSEN"],
+  ["ING_CA_BASA", "MAT-PROT-CABASA"],
+  ["ING_CA_HOI", "MAT-PROT-CAHOI"],
+  ["ING_LUON_DONG", "MAT-PROT-LUONDONQ"],
+  ["ING_THIT_CUU", "MAT-PROT-THITCUU"],
+  ["ING_RAU_MA", "MAT-HERB-RAUMA"],
+  ["ING_DAU_XANH_KHONG_VO", "MAT-VEG-DAUXA"],
+  ["ING_VUNG", "MAT-HERB-VUNG"],
+  ["ING_CA_COM", "MAT-PROT-CACOM"],
+  ["ING_THIT_HEO", "MAT-PROT-THITHEO"],
+  ["ING_THIT_HEO_NAC", "MAT-PROT-THITHEO-NAC"],
+  ["ING_DA_HEO", "MAT-PROT-DAHEO"],
+  ["ING_HAU_BIEN", "MAT-PROT-HAUBIEN"],
+  ["ING_GA_AC", "MAT-PROT-GAAC"],
+  ["ING_BAO_NGU", "MAT-PROT-BAONGU"],
+  ["ING_NAM_DONG_CO", "MAT-HERB-NAMDONGCO"],
+  ["ING_CUA_BIEN", "MAT-PROT-CUABIEN"],
+  ["ING_CA_NGU", "MAT-PROT-CANGU"],
+  ["ING_TOM", "MAT-PROT-TOM"],
+  ["ING_RONG_BIEN", "MAT-HERB-RONGBIEN"],
+  ["ING_THIT_GA", "MAT-PROT-THITGA"],
+  ["ING_THIT_BO", "MAT-PROT-THITBO"],
+  ["ING_GAO_LUA_TOM", "MAT-GRAIN-GAOLUATOM"],
+  ["ING_CA_ROT", "MAT-VEG-CARROT"],
+  ["ING_BI_DO", "MAT-VEG-BIDOBI"],
+  ["ING_NAM_KIM_CHAM", "MAT-VEG-NAMKIMCHAM"],
+  ["ING_CU_CAI_TRANG", "MAT-VEG-CUCAITRANG"],
+  ["ING_HANH_TAY", "MAT-VEG-HANHTAY"],
+  ["ING_NUOC_DUA", "MAT-LIQ-NUOCDUA"],
+  ["ING_MUOI_BIEN_RANG", "MAT-SEAS-MUOIRANG"],
+  ["ING_TIEU_DEN_RANG", "MAT-SEAS-TIEUDEN"],
+  ["ING_TOI_NUONG", "MAT-SEAS-TOINUONG"],
+  ["ING_HANH_LA", "MAT-SEAS-HANHLAKUC"],
+  ["ING_RE_CAN_TAY", "MAT-VEG-RECANHTAY"],
+  ["ING_MI_CHINH", "MAT-SEAS-MICHINH"],
 ];
 
-write('08_op_raw_material.sql', `-- Seed canonical ingredient/raw material master from docs/ginsengfood_sku_recipe_md_pack/02_INGREDIENT_CANONICAL_MASTER_GINSENGFOOD.md.
+write(
+  "08_op_raw_material.sql",
+  `-- Seed canonical ingredient/raw material master from docs/ginsengfood_sku_recipe_md_pack/02_INGREDIENT_CANONICAL_MASTER_GINSENGFOOD.md.
 -- Canonical material_code = ingredient_code (HRB_* / ING_*). Legacy MAT-* values are aliases only.
 
 BEGIN;
 
 CREATE TEMP TABLE seed_raw_material (material_code text, ingredient_code text, material_name text, canonical_name text, scientific_name text, raw_material_group text, uom_code text, shelf_life_days integer, spec_json jsonb, material_status text, ingredient_status text, ingredient_notes text, created_at timestamptz) ON COMMIT DROP;
 INSERT INTO seed_raw_material VALUES
-${ingredients.map((m) => `(${sql(m.code)}, ${sql(m.code)}, ${sql(m.name)}, ${sql(m.name)}, ${sql(m.scientificName)}, ${sql(m.group)}, ${sql(m.uom)}, NULL, NULL::jsonb, ${sql(m.materialStatus)}, ${sql(m.ingredientStatus)}, ${sql(m.notes)}, ${ts(createdAt)})`).join(',\n')};
+${ingredients.map((m) => `(${sql(m.code)}, ${sql(m.code)}, ${sql(m.name)}, ${sql(m.name)}, ${sql(m.scientificName)}, ${sql(m.group)}, ${sql(m.uom)}, NULL, NULL::jsonb, ${sql(m.materialStatus)}, ${sql(m.ingredientStatus)}, ${sql(m.notes)}, ${ts(createdAt)})`).join(",\n")};
 
 -- Retire legacy MAT-* rows from operational truth before assigning ingredient_code uniqueness to canonical rows.
 UPDATE op_raw_material
@@ -346,7 +382,7 @@ ON CONFLICT (material_code) DO UPDATE SET
 
 CREATE TEMP TABLE seed_raw_material_alias (ingredient_code text, alias_code text, alias_name text, alias_type text, created_at timestamptz) ON COMMIT DROP;
 INSERT INTO seed_raw_material_alias VALUES
-${aliases.map((a) => `(${sql(a[0])}, ${sql(a[1])}, ${sql(ingredientNameByCode.get(a[0]))}, 'LEGACY_CODE', ${ts(createdAt)})`).join(',\n')};
+${aliases.map((a) => `(${sql(a[0])}, ${sql(a[1])}, ${sql(ingredientNameByCode.get(a[0]))}, 'LEGACY_CODE', ${ts(createdAt)})`).join(",\n")};
 
 INSERT INTO op_raw_material_alias (raw_material_id, alias_code, alias_name, alias_type, created_at, is_deleted)
 SELECT m.id, a.alias_code, a.alias_name, a.alias_type, a.created_at, FALSE
@@ -364,9 +400,12 @@ SET material_status = 'DISCONTINUED', ingredient_status = 'LEGACY_ALIAS', is_del
 WHERE material_code LIKE 'MAT-%' AND is_deleted = FALSE;
 
 COMMIT;
-`);
+`,
+);
 
-write('09_ref_recipe_line_group.sql', `-- Seed canonical G1 recipe line groups from docs/ginsengfood_sku_recipe_md_pack/07_SEED_DATA_SPEC_SKU_INGREDIENT_RECIPE_GINSENGFOOD.md.
+write(
+  "09_ref_recipe_line_group.sql",
+  `-- Seed canonical G1 recipe line groups from docs/ginsengfood_sku_recipe_md_pack/07_SEED_DATA_SPEC_SKU_INGREDIENT_RECIPE_GINSENGFOOD.md.
 BEGIN;
 INSERT INTO ref_recipe_line_group (id, code, name, sort_order, is_active, created_at, is_deleted) VALUES
 (1, 'SPECIAL_SKU_COMPONENT', 'Thành phần đặc thù SKU', 10, TRUE, ${ts(createdAt)}, FALSE),
@@ -375,9 +414,12 @@ INSERT INTO ref_recipe_line_group (id, code, name, sort_order, is_active, create
 (4, 'SEASONING_FLAVOR', 'Nguyên liệu nêm và tạo hương vị', 40, TRUE, ${ts(createdAt)}, FALSE)
 ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name, sort_order = EXCLUDED.sort_order, is_active = TRUE, is_deleted = FALSE, deleted_at = NULL, updated_at = NOW();
 COMMIT;
-`);
+`,
+);
 
-write('10_op_production_recipe_g1_headers.sql', `-- Seed G1 production recipe headers from canonical 20 SKU pack.
+write(
+  "10_op_production_recipe_g1_headers.sql",
+  `-- Seed G1 production recipe headers from canonical 20 SKU pack.
 -- G0 is retired/tombstoned and must not be active operational configuration.
 
 BEGIN;
@@ -386,20 +428,28 @@ UPDATE op_production_recipe
 SET recipe_status = 'DEPRECATED', formula_status = 'RETIRED', source_of_truth = FALSE, retired_at = COALESCE(retired_at, NOW()), updated_at = NOW()
 WHERE is_deleted = FALSE AND (formula_version = 'G0' OR recipe_code LIKE 'FML-%-G0');
 
-CREATE TEMP TABLE seed_g1_recipe (recipe_code text, recipe_name text, sku_code text, recipe_status text, version_number integer, formula_version text, formula_status text, source_of_truth boolean, approved_by_actor_id bigint, approved_at timestamptz, effective_from timestamptz, recipe_note text, created_at timestamptz) ON COMMIT DROP;
-INSERT INTO seed_g1_recipe VALUES
-${skus.map((s) => `(${sql(s.formulaCode)}, ${sql(`${s.skuNameVi} (G1)`)}, ${sql(s.skuCode)}, 'ACTIVE', 1, 'G1', 'ACTIVE_OPERATIONAL', TRUE, 1, ${ts(createdAt)}, ${ts(createdAt)}, 'Canonical G1 operational go-live baseline from SKU/recipe source pack.', ${ts(createdAt)})`).join(',\n')};
+-- All G1 recipes are PILOT_PERCENT_BASED. Anchor = HRB_SAM_SAVIGIN, baseline 9.000 kg, anchor_ratio_percent 4.620000
+-- (matches the canonical SPECIAL_SKU_COMPONENT row across all 20 SKUs in the source pack).
+-- ratio_percent semantic in G1 source pack = "% relative to NUTRITION_BASE rice baseline (195 kg = 100%)";
+-- it is NOT a normalized "% of total batch" axis. Total batch quantity scales proportionally via
+-- anchor_baseline_quantity, not via SUM(ratio_percent)=100. See docs/v2-handoff for the formal note.
 
-INSERT INTO op_production_recipe (recipe_code, recipe_name, sku_id, recipe_status, version_number, formula_version, formula_status, source_of_truth, approved_by_actor_id, approved_at, effective_from, recipe_note, created_at, is_deleted)
-SELECT s.recipe_code, s.recipe_name, sku.id, s.recipe_status, s.version_number, s.formula_version, s.formula_status, s.source_of_truth, s.approved_by_actor_id, s.approved_at, s.effective_from, s.recipe_note, s.created_at, FALSE
+CREATE TEMP TABLE seed_g1_recipe (recipe_code text, recipe_name text, sku_code text, recipe_status text, version_number integer, formula_version text, formula_kind text, formula_status text, source_of_truth boolean, approved_by_actor_id bigint, approved_at timestamptz, effective_from timestamptz, recipe_note text, anchor_ingredient_code text, anchor_baseline_quantity numeric(18,3), anchor_uom_code text, anchor_ratio_percent numeric(10,4), created_at timestamptz) ON COMMIT DROP;
+INSERT INTO seed_g1_recipe VALUES
+${skus.map((s) => `(${sql(s.formulaCode)}, ${sql(`${s.skuNameVi} (G1)`)}, ${sql(s.skuCode)}, 'ACTIVE', 1, 'G1', 'PILOT_PERCENT_BASED', 'ACTIVE_OPERATIONAL', TRUE, 1, ${ts(createdAt)}, ${ts(createdAt)}, 'Canonical G1 operational go-live baseline from SKU/recipe source pack.', 'HRB_SAM_SAVIGIN', 9.000, 'kg', 4.6200, ${ts(createdAt)})`).join(",\n")};
+
+INSERT INTO op_production_recipe (recipe_code, recipe_name, sku_id, recipe_status, version_number, formula_version, formula_kind, formula_status, source_of_truth, approved_by_actor_id, approved_at, effective_from, recipe_note, anchor_ingredient_id, anchor_baseline_quantity, anchor_uom_code, anchor_ratio_percent, created_at, is_deleted)
+SELECT s.recipe_code, s.recipe_name, sku.id, s.recipe_status, s.version_number, s.formula_version, s.formula_kind, s.formula_status, s.source_of_truth, s.approved_by_actor_id, s.approved_at, s.effective_from, s.recipe_note, anchor_mat.id, s.anchor_baseline_quantity, s.anchor_uom_code, s.anchor_ratio_percent, s.created_at, FALSE
 FROM seed_g1_recipe s
 JOIN ref_sku sku ON sku.sku_code = s.sku_code AND sku.is_deleted = FALSE
+LEFT JOIN op_raw_material anchor_mat ON anchor_mat.ingredient_code = s.anchor_ingredient_code AND anchor_mat.is_deleted = FALSE
 ON CONFLICT (recipe_code) DO UPDATE SET
     recipe_name = EXCLUDED.recipe_name,
     sku_id = EXCLUDED.sku_id,
     recipe_status = EXCLUDED.recipe_status,
     version_number = EXCLUDED.version_number,
     formula_version = EXCLUDED.formula_version,
+    formula_kind = EXCLUDED.formula_kind,
     formula_status = EXCLUDED.formula_status,
     source_of_truth = EXCLUDED.source_of_truth,
     approved_by_actor_id = EXCLUDED.approved_by_actor_id,
@@ -409,21 +459,28 @@ ON CONFLICT (recipe_code) DO UPDATE SET
     retired_by_actor_id = NULL,
     retired_at = NULL,
     recipe_note = EXCLUDED.recipe_note,
+    anchor_ingredient_id = EXCLUDED.anchor_ingredient_id,
+    anchor_baseline_quantity = EXCLUDED.anchor_baseline_quantity,
+    anchor_uom_code = EXCLUDED.anchor_uom_code,
+    anchor_ratio_percent = EXCLUDED.anchor_ratio_percent,
     is_deleted = FALSE,
     deleted_at = NULL,
     updated_at = NOW();
 
 COMMIT;
-`);
+`,
+);
 
-write('11_op_recipe_ingredients_g1.sql', `-- Seed 433 canonical G1 recipe ingredient lines from docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATIONAL_20SKU_GINSENGFOOD.md.
+write(
+  "11_op_recipe_ingredients_g1.sql",
+  `-- Seed 433 canonical G1 recipe ingredient lines from docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATIONAL_20SKU_GINSENGFOOD.md.
 -- Uses canonical HRB_* / ING_* ingredient codes and four G1 recipe line groups.
 
 BEGIN;
 
-CREATE TEMP TABLE seed_recipe_ingredient (recipe_code text, line_no integer, recipe_line_group_code text, ingredient_code text, ingredient_display_name text, quantity_per_batch_400 numeric(18,3), ratio_percent numeric(18,6), prep_note text, usage_role text, variant_note text, quantity numeric(18,3), uom_code text, tolerance numeric(18,3), ingredient_note text, ingredient_section text, created_at timestamptz) ON COMMIT DROP;
+CREATE TEMP TABLE seed_recipe_ingredient (recipe_code text, line_no integer, recipe_line_group_code text, ingredient_code text, ingredient_display_name text, quantity_per_batch_400 numeric(18,3), ratio_percent numeric(18,6), is_anchor boolean, prep_note text, usage_role text, variant_note text, quantity numeric(18,3), uom_code text, tolerance numeric(18,3), ingredient_note text, ingredient_section text, created_at timestamptz) ON COMMIT DROP;
 INSERT INTO seed_recipe_ingredient VALUES
-${recipeLines.map((r) => `(${sql(r.recipeCode)}, ${r.lineNo}, ${sql(r.section)}, ${sql(r.ingredientCode)}, ${sql(r.ingredientDisplayName)}, ${num(r.quantity, 3)}, ${num(r.ratio, 6)}, ${sql(r.prepNote)}, ${sql(r.usageRole)}, ${sql(r.variantNote)}, ${num(r.quantity, 3)}, ${sql(r.uom)}, NULL, ${sql(r.ingredientNote)}, ${sql(r.section)}, ${ts(createdAt)})`).join(',\n')};
+${recipeLines.map((r) => `(${sql(r.recipeCode)}, ${r.lineNo}, ${sql(r.section)}, ${sql(r.ingredientCode)}, ${sql(r.ingredientDisplayName)}, ${num(r.quantity, 3)}, ${num(r.ratio, 6)}, ${r.section === "SPECIAL_SKU_COMPONENT" && r.ingredientCode === "HRB_SAM_SAVIGIN" ? "TRUE" : "FALSE"}, ${sql(r.prepNote)}, ${sql(r.usageRole)}, ${sql(r.variantNote)}, ${num(r.quantity, 3)}, ${sql(r.uom)}, NULL, ${sql(r.ingredientNote)}, ${sql(r.section)}, ${ts(createdAt)})`).join(",\n")};
 
 DO $$
 DECLARE missing_count integer;
@@ -463,6 +520,7 @@ SET material_id = resolved.material_id,
     ingredient_display_name = resolved.ingredient_display_name,
     quantity_per_batch_400 = resolved.quantity_per_batch_400,
     ratio_percent = resolved.ratio_percent,
+    is_anchor = resolved.is_anchor,
     prep_note = resolved.prep_note,
     usage_role = resolved.usage_role,
     variant_note = resolved.variant_note,
@@ -483,8 +541,8 @@ WITH resolved AS (
     JOIN op_production_recipe r ON r.recipe_code = s.recipe_code AND r.is_deleted = FALSE
     JOIN op_raw_material m ON m.ingredient_code = s.ingredient_code AND m.is_deleted = FALSE
 )
-INSERT INTO op_recipe_ingredient (recipe_id, material_id, line_no, recipe_line_group_code, ingredient_code, ingredient_display_name, quantity_per_batch_400, ratio_percent, prep_note, usage_role, variant_note, quantity, uom_code, tolerance, ingredient_note, ingredient_section, created_at, is_deleted)
-SELECT resolved.recipe_id, resolved.material_id, resolved.line_no, resolved.recipe_line_group_code, resolved.ingredient_code, resolved.ingredient_display_name, resolved.quantity_per_batch_400, resolved.ratio_percent, resolved.prep_note, resolved.usage_role, resolved.variant_note, resolved.quantity, resolved.uom_code, resolved.tolerance, resolved.ingredient_note, resolved.ingredient_section, resolved.created_at, FALSE
+INSERT INTO op_recipe_ingredient (recipe_id, material_id, line_no, recipe_line_group_code, ingredient_code, ingredient_display_name, quantity_per_batch_400, ratio_percent, is_anchor, prep_note, usage_role, variant_note, quantity, uom_code, tolerance, ingredient_note, ingredient_section, created_at, is_deleted)
+SELECT resolved.recipe_id, resolved.material_id, resolved.line_no, resolved.recipe_line_group_code, resolved.ingredient_code, resolved.ingredient_display_name, resolved.quantity_per_batch_400, resolved.ratio_percent, resolved.is_anchor, resolved.prep_note, resolved.usage_role, resolved.variant_note, resolved.quantity, resolved.uom_code, resolved.tolerance, resolved.ingredient_note, resolved.ingredient_section, resolved.created_at, FALSE
 FROM resolved
 WHERE NOT EXISTS (
     SELECT 1 FROM op_recipe_ingredient ri
@@ -492,13 +550,16 @@ WHERE NOT EXISTS (
 );
 
 COMMIT;
-`);
+`,
+);
 
-write('12_op_sku_operational_config.sql', `-- Seed per-SKU operational configuration. Initial go-live active formula version is G1.
+write(
+  "12_op_sku_operational_config.sql",
+  `-- Seed per-SKU operational configuration. Initial go-live active formula version is G1.
 BEGIN;
 CREATE TEMP TABLE seed_sku_operational_config (sku_code text, active_recipe_code text, recipe_version text, packaging_l1_unit text, packaging_l2_unit text, qc_required boolean, public_trace_enabled boolean, recall_applicable boolean, created_at timestamptz) ON COMMIT DROP;
 INSERT INTO seed_sku_operational_config VALUES
-${skus.map((s) => `(${sql(s.skuCode)}, ${sql(s.formulaCode)}, 'G1', 'gói', 'hộp', TRUE, TRUE, TRUE, ${ts(createdAt)})`).join(',\n')};
+${skus.map((s) => `(${sql(s.skuCode)}, ${sql(s.formulaCode)}, 'G1', 'gói', 'hộp', TRUE, TRUE, TRUE, ${ts(createdAt)})`).join(",\n")};
 
 WITH resolved AS (
     SELECT sku.id AS sku_id, seed.*
@@ -519,9 +580,12 @@ ON CONFLICT (sku_id) DO UPDATE SET
     deleted_at = NULL,
     updated_at = NOW();
 COMMIT;
-`);
+`,
+);
 
-write('13_trade_item_qr_public_trace_misa.sql', `-- Seed V2 non-recipe operational config from final/forms source packs.
+write(
+  "13_trade_item_qr_public_trace_misa.sql",
+  `-- Seed V2 non-recipe operational config from final/forms source packs.
 -- Owner-approved production GTIN/GS1 values are still owner data.
 -- One TEST_ONLY_DEV_FIXTURE GTIN/map is seeded for local validation and must not be used as production data.
 
@@ -529,7 +593,7 @@ BEGIN;
 
 CREATE TEMP TABLE seed_trade_item_pending (trade_item_code text, sku_code text, packaging_level text, item_type text, packaging_spec text, status text, notes text, created_at timestamptz) ON COMMIT DROP;
 INSERT INTO seed_trade_item_pending VALUES
-${skus.map((s) => `(${sql(`TI-${s.formulaCode.replace(/^FML-/, '').replace(/-G1$/, '')}-RETAIL-PENDING`)}, ${sql(s.skuCode)}, 'LEVEL_2', 'RETAIL', 'OWNER_PENDING_GTIN_GS1', 'INACTIVE', 'Owner must provide approved GTIN/GS1 and packaging spec before commercial print is enabled.', ${ts(createdAt)})`).join(',\n')};
+${skus.map((s) => `(${sql(`TI-${s.formulaCode.replace(/^FML-/, "").replace(/-G1$/, "")}-RETAIL-PENDING`)}, ${sql(s.skuCode)}, 'LEVEL_2', 'RETAIL', 'OWNER_PENDING_GTIN_GS1', 'INACTIVE', 'Owner must provide approved GTIN/GS1 and packaging spec before commercial print is enabled.', ${ts(createdAt)})`).join(",\n")};
 
 INSERT INTO trade_item (trade_item_code, sku_id, sku_code, packaging_level, item_type, packaging_spec, status, notes, created_at, is_deleted)
 SELECT s.trade_item_code, sku.id, s.sku_code, s.packaging_level, s.item_type, s.packaging_spec, s.status, s.notes, s.created_at, FALSE
@@ -772,9 +836,12 @@ ON CONFLICT (internal_document_type) DO UPDATE SET
     updated_at = NOW();
 
 COMMIT;
-`);
+`,
+);
 
-write('15_seed_validation.sql', `-- Canonical Ginsengfood V2 seed validation.
+write(
+  "15_seed_validation.sql",
+  `-- Canonical Ginsengfood V2 seed validation.
 -- Run after docs/seeds/*.sql in sorted non-recursive order.
 
 DO $$
@@ -957,9 +1024,12 @@ BEGIN
 END $$;
 
 SELECT 'canonical seed validation passed' AS result;
-`);
+`,
+);
 
-write('README.md', `# Seed SQL
+write(
+  "README.md",
+  `# Seed SQL
 
 Run these SQL files after applying EF migrations on a fresh local/dev database.
 
@@ -1041,6 +1111,9 @@ Run the chain a second time when checking idempotency.
 - G0 remains historical/research context only and is not active operational seed.
 - Active seed execution is non-recursive; do not include \`docs/seeds/archive/\` in seed runs.
 - The canonical packs require trade item/GTIN, but they do not provide owner-approved production GTIN/GS1 values. This seed creates inactive owner-pending \`trade_item\` rows plus one active \`TEST_ONLY_DEV_FIXTURE\` \`trade_item_gtin\`/\`packaging_trade_item_map\` for local validation only.
-`);
+`,
+);
 
-console.log(`Generated canonical seed files. SKU=${skus.length}, ingredients=${ingredients.length}, recipe_lines=${recipeLines.length}`);
+console.log(
+  `Generated canonical seed files. SKU=${skus.length}, ingredients=${ingredients.length}, recipe_lines=${recipeLines.length}`,
+);

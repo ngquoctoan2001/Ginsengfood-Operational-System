@@ -8,6 +8,14 @@ The single accepted source of truth is:
 
 - `docs/software-specs/`
 
+## Response Language
+
+Respond in Vietnamese for all planning, implementation notes, reviews, validation reports, handoff, blockers, risks, and final answers.
+
+Keep English for technical terms and exact identifiers: code symbols, file paths, route paths, API methods, DTO/table/column/enum names, commands, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names, and original log/error text.
+
+Do not translate code blocks, commands, schema names, route names, or exact errors.
+
 Treat `.tmp-docx-extract/`, `specs/`, DOCX/PDF extracts, old prompts, historical migrations, and seed SQL as historical reference only when they do not conflict with the source specs.
 
 ## Formula Rule

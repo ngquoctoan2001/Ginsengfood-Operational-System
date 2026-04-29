@@ -8,6 +8,10 @@ For Ginsengfood V2 schema/seed work, read `AGENTS.md`, `CLAUDE.md`, and the rele
 
 The repository is greenfield. If backend/EF infrastructure does not exist, do not run migration commands against imaginary paths. Plan or implement the backend/database scaffold phase first.
 
+## Response Language
+
+Write migration plans, risk notes, validation results, and blockers in Vietnamese. Keep migration names, EF Core commands, SQL/table/column names, package names, and exact errors in English.
+
 ## Source Rules
 
 - `docs/software-specs/` is the source of truth.

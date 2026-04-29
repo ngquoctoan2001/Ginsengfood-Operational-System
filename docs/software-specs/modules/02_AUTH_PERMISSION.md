@@ -95,7 +95,7 @@ Auth Permission quản lý đăng nhập, user, role, action permission, approva
 | Warehouse Operator | `RAW_INTAKE_CREATE`, `MATERIAL_ISSUE_EXECUTE`, `WAREHOUSE_RECEIPT_CONFIRM` | Không mark raw lot ready hoặc adjust inventory. |
 | Warehouse Manager | `WAREHOUSE_CREATE`, `INVENTORY_ADJUSTMENT_CREATE`, hold/release actions | No recipe approval. |
 | Packaging Operator | `PACKAGING_JOB_CREATE`, `QR_GENERATE`, `PRINT_JOB_CREATE`, `QR_REPRINT` | Reprint/void phải có reason. |
-| Recall Manager | `RECALL_CASE_CREATE`, `RECALL_IMPACT_ANALYSIS`, `RECALL_HOLD_APPLY`, `RECALL_CLOSE` | Không owner CRM/customer master. |
+| Recall Manager | `RECALL_CASE_CREATE`, `RECALL_IMPACT_ANALYSIS`, `RECALL_HOLD_APPLY`, `RECALL_SALE_LOCK_APPLY`, `RECALL_CAPA_EVIDENCE_ADD`, `RECALL_CLOSE` | Không owner CRM/customer master; CAPA evidence close gate vẫn cần clean scan. |
 | Integration Operator | `MISA_SYNC_VIEW`, `MISA_MANUAL_RETRY`, `MISA_RECONCILE`, `ACCOUNTING_DOCUMENT_POST` | Không sửa operational truth. |
 | Trace Operator | `TRACE_INTERNAL_VIEW`, `TRACE_GENEALOGY_VIEW` | Public-safe policy vẫn do QA/Admin duyệt. |
 | PM/Operations Viewer | `DASHBOARD_VIEW`, read-only reports | Không mutate transaction. |
@@ -203,7 +203,7 @@ sequenceDiagram
 - Admin API rejects unauthorized/forbidden requests.
 - Approval queue supports approve/reject with audit and idempotency.
 - UI action gating matches backend permission.
-- Role/action permission seed covers all P0 module actions, including `RAW_LOT_MARK_READY`, `ACCOUNTING_DOCUMENT_POST`, `BREAK_GLASS_ACTIVATE` and `BREAK_GLASS_DEACTIVATE`.
+- Role/action permission seed covers all P0 module actions, including `RAW_LOT_MARK_READY`, `RECALL_CAPA_EVIDENCE_ADD`, `ACCOUNTING_DOCUMENT_POST`, `BREAK_GLASS_ACTIVATE` and `BREAK_GLASS_DEACTIVATE`.
 - Break-glass policy is implemented with dual approval, scoped target, reason, short expiry and audit.
 
 ## 20. Risks

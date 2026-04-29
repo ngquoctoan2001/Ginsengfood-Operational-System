@@ -13,6 +13,10 @@ For Ginsengfood V2 tasks, the single accepted source of truth is:
 
 The repo is greenfield. If a layer is not scaffolded, report `N/A - not scaffolded yet`.
 
+## Response Language
+
+Tra loi bang tieng Viet cho gate result, blocker, risk va final report. Giu nguyen tieng Anh cho command lines, file paths, package/script names, HTTP status codes va original build/test/error output.
+
 ## Context
 
 Current task: `$TASK_DESCRIPTION`
@@ -82,17 +86,17 @@ dotnet build-server shutdown
 
 Never kill every `dotnet`, `node`, `npm`, `testhost`, or `VBCSCompiler` process by name.
 
-## Final Report
+## Bao cao cuoi
 
-| Gate | Status | Notes |
+| Gate | Trang thai | Ghi chu |
 | --- | --- | --- |
-| .md file updated |  |  |
+| File .md da cap nhat |  |  |
 | Backend build |  |  |
 | Backend tests |  |  |
 | Frontend type check |  |  |
 | Frontend build |  |  |
-| Migrations applied |  |  |
-| API client synced |  |  |
+| Migration da apply |  |  |
+| API client da sync |  |  |
 | Seed validation |  |  |
 | Smoke/e2e |  |  |
-| Process cleanup |  |  |
+| Cleanup process |  |  |

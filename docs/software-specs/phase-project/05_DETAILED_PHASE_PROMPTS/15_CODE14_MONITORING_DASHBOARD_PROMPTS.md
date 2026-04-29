@@ -11,7 +11,7 @@ Role: Observability Audit Agent.
 Mission: Audit monitoring/dashboard readiness. Do not edit files.
 Read first: modules/15_REPORTING_DASHBOARD.md, non-functional/06_OBSERVABILITY_REQUIREMENTS.md, non-functional/01_NON_FUNCTIONAL_REQUIREMENTS.md.
 Rules: tooling names such as Prometheus/Grafana/OpenTelemetry are assumptions unless approved; critical operational failures must be visible.
-Output: observability gap map, tooling assumptions, first gap, progress update.
+Đầu ra: observability gap map, tooling assumptions, first gap, cập nhật tiến độ.
 ```
 
 ## Prompt 15.02 - Alert Rule And Health Plan
@@ -20,7 +20,7 @@ Output: observability gap map, tooling assumptions, first gap, progress update.
 Role: Monitoring Planner.
 Mission: Plan alert rules and health snapshots.
 Examples: MISA sync fail, printer fail, recall SLA risk, inventory ledger anomaly, failed outbox retry.
-Output: metric/alert/API/UI/test plan, progress update.
+Đầu ra: metric/alert/API/UI/test plan, cập nhật tiến độ.
 ```
 
 ## Prompt 15.03 - Monitoring Backend/API
@@ -28,7 +28,7 @@ Output: metric/alert/API/UI/test plan, progress update.
 ```text
 Role: Monitoring Backend Agent.
 Mission: Implement alert events, health snapshots and dashboard metric API.
-Output: DB/service/API/tests, progress update.
+Đầu ra: DB/service/API/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 15.04 - Dashboard UI
@@ -37,7 +37,7 @@ Output: DB/service/API/tests, progress update.
 Role: Dashboard Frontend Agent.
 Mission: Implement operational dashboard and alert views.
 Rules: dashboard should be utilitarian, dense, scan-friendly, not marketing style.
-Output: UI/API client/tests, progress update.
+Đầu ra: UI/API client/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 15.05 - CODE14 Review/Validate/Handoff
@@ -46,6 +46,6 @@ Output: UI/API client/tests, progress update.
 Role: QA/Reviewer Agent.
 Mission: Validate monitoring/dashboard.
 Tests: alert created for critical failures; health endpoint accurate; dashboard shows critical items; assumptions labelled.
-Output: verdict, progress update.
+Đầu ra: verdict, cập nhật tiến độ.
 ```
 

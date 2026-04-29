@@ -8,6 +8,14 @@ This repository is currently greenfield. It contains source specifications and a
 
 Treat missing app layers as `NOT_SCAFFOLDED`, not as stale implementation. Do not require current-code route maps, historical migration deltas, seed deltas, or GitNexus code graph evidence before the initial scaffold exists.
 
+## Response Language
+
+Respond in Vietnamese for all project communication: plans, progress notes, reviews, validation, handoff, risks, blockers, and final responses.
+
+Keep English for standard technical terms and exact identifiers such as code symbols, file paths, route paths, API methods, DTO/table/column/enum names, commands, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names, and original log/error text.
+
+Do not translate code fences, command lines, exact schema names, route names, or error messages. Explain them in Vietnamese when needed.
+
 ## Source Packs
 
 The current accepted source-truth documents are exactly:

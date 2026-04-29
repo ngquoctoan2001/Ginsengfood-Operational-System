@@ -33,12 +33,12 @@ Stop conditions:
 - Stop if migration drops/renames production data without explicit approval.
 - Stop if retention/archive policy is unresolved and affects data deletion.
 
-Required output:
+Đầu ra bắt buộc:
 - Migration design.
 - Risk table.
 - Validation query plan.
 - Rollback/forward-fix note.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 05.02 - Migration Implementation And Validation
@@ -63,20 +63,20 @@ Workflow:
 5. Run validation queries.
 6. Update handoff/progress.
 
-Validation:
+Kiểm chứng:
 - Backend build.
 - Migration generation/build.
 - Database update if available.
 - Validation queries.
 
-Required output:
+Đầu ra bắt buộc:
 - Migration id/name.
-- Files changed.
+- File đã sửa.
 - Destructive risk.
-- Commands run.
+- Lệnh đã chạy.
 - DB update result.
-- Validation result.
-- Progress update.
+- Kết quả kiểm chứng.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 05.03 - Seed Chain Implementation
@@ -110,12 +110,12 @@ Workflow:
 5. Run seed twice if seed runtime exists and idempotency is required.
 6. Update progress report.
 
-Required output:
-- Seed files changed.
+Đầu ra bắt buộc:
+- Seed file đã sửa.
 - Manifest changes.
-- Validation result.
+- Kết quả kiểm chứng.
 - Idempotency result or blocker.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 05.04 - Data Quality And Production Data Readiness
@@ -140,11 +140,11 @@ Workflow:
 5. Produce readiness verdict.
 6. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Data readiness: READY / PARTIAL / NOT_READY.
 - Missing production data.
 - Fixture leakage risk.
 - Owner actions required.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 

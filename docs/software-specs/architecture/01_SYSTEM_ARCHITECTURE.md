@@ -49,7 +49,7 @@ Out-of-scope ownership:
 | M02 Auth Permission | User/role/permission/approval policy | Permission/approval events | Admin config events |
 | M03 Master Data | UOM, supplier, warehouse, config | Master data changed | None |
 | M04 SKU Ingredient Recipe | SKU, ingredient, recipe, recipe lines | Recipe approved/activated | Master data changed |
-| M05 Source Origin | Source zone/origin/evidence/verification | Source origin verified/rejected | Master data changed |
+| M05 Source Origin | Source zone/origin/evidence metadata/verification | Source origin verified/rejected | Master data changed |
 | M06 Raw Material | Raw receipt, raw lot, raw lot readiness, reference to incoming QC inspection | Raw lot created, raw lot ready for production | Source origin verified, raw QC signed |
 | M07 Production | PO, snapshot, work order, batch, process | PO opened, batch created/process done | Recipe active, material issue events |
 | M08 Material Issue Receipt | Material request/issue/receipt/variance | Material issued/received | PO snapshot, `RAW_LOT_READY_FOR_PRODUCTION` |
@@ -57,7 +57,7 @@ Out-of-scope ownership:
 | M10 Packaging Printing | Trade item, packaging, print, QR | QR printed/voided/reprinted | Batch/process events |
 | M11 Warehouse Inventory | Warehouse receipt, inventory ledger/balance | Ledger posted, warehouse receipt confirmed | Issue/release/recall hold |
 | M12 Traceability | Trace links, genealogy, public trace policy/projection | Trace gap, public trace updated | Source/raw/issue/batch/QR/warehouse events |
-| M13 Recall | Incident, recall, hold, exposure snapshot, recovery, CAPA | Recall opened/hold/sale lock/recovery | Trace results, inventory state |
+| M13 Recall | Incident, recall, hold, exposure snapshot, recovery, CAPA, CAPA evidence metadata | Recall opened/hold/sale lock/recovery | Trace results, inventory state |
 | M14 MISA Integration | Mapping, sync events/logs, reconcile | MISA sync status | Outbox events |
 | M15 Reporting Dashboard | Metrics, alerts, health | Alert events | All health/event streams |
 | M16 Admin UI | Screen/action/menu/form/table config | UI config changed | Permission/module metadata |
@@ -75,7 +75,7 @@ Out-of-scope ownership:
 | Batch release | QC/release state + audit | After commit: `BATCH_RELEASED` |
 | Warehouse receipt | Receipt + ledger credit + balance projection update + audit | After commit: `WAREHOUSE_RECEIPT_CONFIRMED` |
 | Recall impact | Recall state + exposure snapshot + audit | After commit: `RECALL_IMPACT_SNAPSHOT_CREATED` |
-| Recall close | Recall close state + close evidence; `CLOSED_WITH_RESIDUAL_RISK` requires `residual_note` in same transaction | After commit: `RECALL_CLOSED` or `RECALL_CLOSED_WITH_RESIDUAL_RISK` |
+| Recall close | Recall close state + close evidence; CAPA evidence must include at least 1 clean scanned metadata row when policy requires; `CLOSED_WITH_RESIDUAL_RISK` requires `residual_note` in same transaction | After commit: `RECALL_CLOSED` or `RECALL_CLOSED_WITH_RESIDUAL_RISK` |
 | MISA sync | Sync log/status/reconcile in integration transaction | After commit: sync status event |
 
 ## 6. Security Boundary

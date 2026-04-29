@@ -3,25 +3,27 @@
 ## 1. Implementation Handoff Prompt
 
 ```text
-Write final handoff for gap {gap_id}.
+Viết handoff cuối cho gap {gap_id}.
 
-Use this format:
-- Summary
-- Files changed
-- Requirement source
-- Evidence used
-- Commands run
-- Test result
-- Backend build result
-- Frontend build result
-- Process cleanup result
-- Markdown update
-- Database migration/update result, if applicable
-- Seed validation result, if applicable
-- API/Frontend sync result, if applicable
-- Remaining risks
-- Owner decisions
-- Next recommended gap
+Dùng format này, với heading tiếng Việt:
+- Tóm tắt
+- File đã sửa
+- Nguồn yêu cầu
+- Evidence đã dùng
+- Lệnh đã chạy
+- Kết quả test
+- Kết quả backend build
+- Kết quả frontend build
+- Kết quả cleanup process
+- Cập nhật Markdown
+- Kết quả database migration/update, nếu áp dụng
+- Kết quả seed validation, nếu áp dụng
+- Kết quả API/Frontend sync, nếu áp dụng
+- Rủi ro còn lại
+- Quyết định owner
+- Gap khuyến nghị tiếp theo
+
+Không dùng heading tiếng Anh như Progress Report Update, Commands Run, Validation, Summary, Files Changed, hoặc Process Cleanup Result.
 ```
 
 ## 2. Gap Register Prompt

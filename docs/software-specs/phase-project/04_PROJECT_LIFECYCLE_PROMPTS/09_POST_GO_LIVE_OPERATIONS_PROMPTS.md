@@ -27,14 +27,14 @@ Check:
 7. User-reported defects.
 8. Backup job status if available.
 
-Required output:
+Đầu ra bắt buộc:
 - Daily health: GREEN / YELLOW / RED.
 - Incidents.
 - Defects.
 - Data anomalies.
 - Actions taken.
 - Escalations.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 09.02 - Incident Response
@@ -60,14 +60,14 @@ Stop conditions:
 - If data corruption, stop feature changes and escalate to owner/DBA.
 - If public trace leaks private data, treat as critical security incident.
 
-Required output:
+Đầu ra bắt buộc:
 - Incident timeline.
 - Impact assessment.
 - Root cause hypothesis/final cause.
 - Mitigation.
 - Recovery validation.
 - Follow-up tasks.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 09.03 - Change Request Intake
@@ -88,13 +88,13 @@ Workflow:
 6. Produce implementation prompt if accepted.
 7. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Change classification.
 - Impact analysis.
 - Risk.
 - Required approvals.
 - Suggested phase/gap.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 09.04 - Post-Go-Live Retrospective
@@ -115,12 +115,12 @@ Workflow:
 6. Prioritize next backlog.
 7. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Retrospective summary.
 - What went well.
 - What failed or was risky.
 - Improvement backlog.
 - Next release recommendation.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 

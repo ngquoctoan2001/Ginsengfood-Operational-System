@@ -1,5 +1,10 @@
 -- Seed G1 production recipe headers from canonical 20 SKU pack.
 -- G0 is retired/tombstoned and must not be active operational configuration.
+-- All G1 recipes are PILOT_PERCENT_BASED. Anchor = HRB_SAM_SAVIGIN, baseline 9.000 kg, anchor_ratio_percent 4.6200
+-- (matches the canonical SPECIAL_SKU_COMPONENT row across all 20 SKUs in the source pack).
+-- ratio_percent semantic in G1 source pack = "% relative to NUTRITION_BASE rice baseline (195 kg = 100%)";
+-- it is NOT a normalized "% of total batch" axis. Total batch quantity scales proportionally via
+-- anchor_baseline_quantity, not via SUM(ratio_percent)=100. See docs/v2-handoff for the formal note.
 
 BEGIN;
 
@@ -7,8 +12,8 @@ UPDATE op_production_recipe
 SET recipe_status = 'DEPRECATED', formula_status = 'RETIRED', source_of_truth = FALSE, retired_at = COALESCE(retired_at, NOW()), updated_at = NOW()
 WHERE is_deleted = FALSE AND (formula_version = 'G0' OR recipe_code LIKE 'FML-%-G0');
 
-CREATE TEMP TABLE seed_g1_recipe (recipe_code text, recipe_name text, sku_code text, recipe_status text, version_number integer, formula_version text, formula_status text, source_of_truth boolean, approved_by_actor_id bigint, approved_at timestamptz, effective_from timestamptz, recipe_note text, created_at timestamptz) ON COMMIT DROP;
-INSERT INTO seed_g1_recipe VALUES
+CREATE TEMP TABLE seed_g1_recipe (recipe_code text, recipe_name text, sku_code text, recipe_status text, version_number integer, formula_version text, formula_status text, source_of_truth boolean, approved_by_actor_id bigint, approved_at timestamptz, effective_from timestamptz, recipe_note text, created_at timestamptz, formula_kind text, anchor_ingredient_code text, anchor_baseline_quantity numeric(18,3), anchor_uom_code text, anchor_ratio_percent numeric(10,4)) ON COMMIT DROP;
+INSERT INTO seed_g1_recipe (recipe_code, recipe_name, sku_code, recipe_status, version_number, formula_version, formula_status, source_of_truth, approved_by_actor_id, approved_at, effective_from, recipe_note, created_at) VALUES
 ('FML-A1-G1', 'Cháo Sâm – Diêm mạch & Hạt sen (Cháo Sâm Mùa Xuân) (G1)', 'A1/CS/DM/HS', 'ACTIVE', 1, 'G1', 'ACTIVE_OPERATIONAL', TRUE, 1, '2025-01-01T07:00:00+07:00'::timestamptz, '2025-01-01T07:00:00+07:00'::timestamptz, 'Canonical G1 operational go-live baseline from SKU/recipe source pack.', '2025-01-01T07:00:00+07:00'::timestamptz),
 ('FML-A2-G1', 'Cháo Sâm – Cá Basa (Cháo Sâm Mùa Hạ) (G1)', 'A2/CS/BASA', 'ACTIVE', 1, 'G1', 'ACTIVE_OPERATIONAL', TRUE, 1, '2025-01-01T07:00:00+07:00'::timestamptz, '2025-01-01T07:00:00+07:00'::timestamptz, 'Canonical G1 operational go-live baseline from SKU/recipe source pack.', '2025-01-01T07:00:00+07:00'::timestamptz),
 ('FML-A3-G1', 'Cháo Sâm – Cá hồi (Cháo Sâm Mùa Thu – Dưỡng âm) (G1)', 'A3/CS/CAHOI', 'ACTIVE', 1, 'G1', 'ACTIVE_OPERATIONAL', TRUE, 1, '2025-01-01T07:00:00+07:00'::timestamptz, '2025-01-01T07:00:00+07:00'::timestamptz, 'Canonical G1 operational go-live baseline from SKU/recipe source pack.', '2025-01-01T07:00:00+07:00'::timestamptz),
@@ -30,16 +35,25 @@ INSERT INTO seed_g1_recipe VALUES
 ('FML-C8-G1', 'Cháo Sâm – Thịt heo (G1)', 'C8/CS/THITHEO', 'ACTIVE', 1, 'G1', 'ACTIVE_OPERATIONAL', TRUE, 1, '2025-01-01T07:00:00+07:00'::timestamptz, '2025-01-01T07:00:00+07:00'::timestamptz, 'Canonical G1 operational go-live baseline from SKU/recipe source pack.', '2025-01-01T07:00:00+07:00'::timestamptz),
 ('FML-C9-G1', 'Cháo Sâm – Thịt bò (G1)', 'C9/CS/THITBO', 'ACTIVE', 1, 'G1', 'ACTIVE_OPERATIONAL', TRUE, 1, '2025-01-01T07:00:00+07:00'::timestamptz, '2025-01-01T07:00:00+07:00'::timestamptz, 'Canonical G1 operational go-live baseline from SKU/recipe source pack.', '2025-01-01T07:00:00+07:00'::timestamptz);
 
-INSERT INTO op_production_recipe (recipe_code, recipe_name, sku_id, recipe_status, version_number, formula_version, formula_status, source_of_truth, approved_by_actor_id, approved_at, effective_from, recipe_note, created_at, is_deleted)
-SELECT s.recipe_code, s.recipe_name, sku.id, s.recipe_status, s.version_number, s.formula_version, s.formula_status, s.source_of_truth, s.approved_by_actor_id, s.approved_at, s.effective_from, s.recipe_note, s.created_at, FALSE
+UPDATE seed_g1_recipe SET
+    formula_kind = 'PILOT_PERCENT_BASED',
+    anchor_ingredient_code = 'HRB_SAM_SAVIGIN',
+    anchor_baseline_quantity = 9.000,
+    anchor_uom_code = 'kg',
+    anchor_ratio_percent = 4.6200;
+
+INSERT INTO op_production_recipe (recipe_code, recipe_name, sku_id, recipe_status, version_number, formula_version, formula_kind, formula_status, source_of_truth, approved_by_actor_id, approved_at, effective_from, recipe_note, anchor_ingredient_id, anchor_baseline_quantity, anchor_uom_code, anchor_ratio_percent, created_at, is_deleted)
+SELECT s.recipe_code, s.recipe_name, sku.id, s.recipe_status, s.version_number, s.formula_version, s.formula_kind, s.formula_status, s.source_of_truth, s.approved_by_actor_id, s.approved_at, s.effective_from, s.recipe_note, anchor_mat.id, s.anchor_baseline_quantity, s.anchor_uom_code, s.anchor_ratio_percent, s.created_at, FALSE
 FROM seed_g1_recipe s
 JOIN ref_sku sku ON sku.sku_code = s.sku_code AND sku.is_deleted = FALSE
+LEFT JOIN op_raw_material anchor_mat ON anchor_mat.ingredient_code = s.anchor_ingredient_code AND anchor_mat.is_deleted = FALSE
 ON CONFLICT (recipe_code) DO UPDATE SET
     recipe_name = EXCLUDED.recipe_name,
     sku_id = EXCLUDED.sku_id,
     recipe_status = EXCLUDED.recipe_status,
     version_number = EXCLUDED.version_number,
     formula_version = EXCLUDED.formula_version,
+    formula_kind = EXCLUDED.formula_kind,
     formula_status = EXCLUDED.formula_status,
     source_of_truth = EXCLUDED.source_of_truth,
     approved_by_actor_id = EXCLUDED.approved_by_actor_id,
@@ -49,6 +63,10 @@ ON CONFLICT (recipe_code) DO UPDATE SET
     retired_by_actor_id = NULL,
     retired_at = NULL,
     recipe_note = EXCLUDED.recipe_note,
+    anchor_ingredient_id = EXCLUDED.anchor_ingredient_id,
+    anchor_baseline_quantity = EXCLUDED.anchor_baseline_quantity,
+    anchor_uom_code = EXCLUDED.anchor_uom_code,
+    anchor_ratio_percent = EXCLUDED.anchor_ratio_percent,
     is_deleted = FALSE,
     deleted_at = NULL,
     updated_at = NOW();

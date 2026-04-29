@@ -229,52 +229,78 @@ Ghi chú 2026-04-28: source policy trên áp dụng cho việc biên soạn/sử
 - **Quyết định owner**: làm **PWA trước** để phát triển/triển khai/bảo trì nhanh, hoạt động offline ở mức độ nhất định nếu thiết kế đúng, scan barcode dùng thư viện PWA hiện đại. Native app cân nhắc sau khi phát hiện nhu cầu thực tế (ví dụ scan/offline mạnh hơn).
 - **Tác động spec**: mobile spec mặc định PWA; field PWA & printer-agent là 2 surface độc lập.
 
+### CONFLICT-16 — M13 CAPA schema: `op_recall_capa_item` vs canonical `op_recall_capa`
+
+- **Severity**: HIGH
+- **Status**: RESOLVED 2026-04-29 theo owner decision / ADR-023.
+- **Nội dung mâu thuẫn**:
+  - `modules/13_RECALL.md` Section 6 từng nhắc `op_recall_capa_item`.
+  - `diagrams/06_ERD_DIAGRAM.md` khóa `op_recall_capa` là canonical CAPA table và không tạo parallel `op_recall_capa_item` nếu database spec chưa formally changed.
+- **Quyết định owner**:
+  - Baseline M13 dùng `op_recall_capa` làm CAPA action/task table canonical.
+  - Không tạo `op_recall_capa_item` trong baseline.
+  - Tạo `op_recall_capa_evidence` làm table metadata append-only cho evidence CAPA.
+  - Dev/test lưu ảnh/video evidence local filesystem qua storage adapter; production lưu trên server lưu trữ của công ty qua cấu hình DevOps.
+  - CAPA/recall close chỉ nhận evidence có `scan_status = CLEAN`.
+- **Tác động spec**: database/API/UI/testing/NFR đã đồng bộ theo `ADR-023`.
+
 ## C. Điểm cần owner xác nhận
 
 ### C.1 — Đã RESOLVED 2026-04-27
 
-| ID    | Điểm cần quyết                                        | Quyết định owner                                                                                                                    |
-| ----- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| OD-01 | `ING_THIT_HEO_NAC` có phải ingredient riêng theo lot? | RESOLVED → ingredient riêng, có QC, theo lot.                                                                                       |
-| OD-02 | Warehouse model phase 1                               | RESOLVED → multi-warehouse theo `warehouse_type` (RAW_MATERIAL + FINISHED_GOODS), tối thiểu 1 instance mỗi loại go-live.            |
-| OD-03 | Production GTIN/GS1 cho 20 SKU + packaging level      | RESOLVED → fake fixture, cấu hình cả `box_gtin` + `carton_gtin`, đánh dấu `TEST_ONLY_DEV_FIXTURE`. Owner update GTIN thật sau.      |
-| OD-04 | MISA endpoint/credential production                   | RESOLVED → MISA AMIS, retry 3x exponential backoff, credential giả định, owner cung cấp thật sau.                                   |
-| OD-05 | CODE09→CODE17 có cần giữ trong phase plan không?       | RESOLVED → giữ canonical CODE01→CODE17 theo `SRC-FILE04-1`; CODE09→17 là delivery/governance/ops gates, không phải analytics/AI.     |
-| OD-06 | Đơn vị batch chuẩn = 400 (sachet/hũ?)                 | RESOLVED tạm → giữ giả định 400, owner update sau.                                                                                  |
-| OD-07 | Mức expose source zone trong public trace             | RESOLVED → expose `source_zone_name` + `province` (Tỉnh) + `ward` (Xã, không có Huyện) + `address_detail` (free-form).              |
-| OD-08 | Mobile PWA vs native                                  | RESOLVED → PWA-first.                                                                                                               |
-| OD-09 | Source origin verification policy                     | RESOLVED → block intake/lot nếu source origin bắt buộc mà chưa `VERIFIED`.                                                          |
-| OD-10 | Recall SLA business                                  | RESOLVED → phát hiện đến khóa batch + gửi notification phải < 4h.                                                                    |
-| OD-15 | Operator authentication phase 1                       | RESOLVED → local account + RBAC; SSO identity map vào local user/role.                                                              |
-| OD-16 | Ingredient procurement_type (tự trồng vs mua ngoài)   | RESOLVED → 2 type: `SELF_GROWN` (có source_zone + source_origin) vs `PURCHASED` (chỉ supplier, không source_zone). Xem CONFLICT-13. |
-| OD-18 | Chuỗi công đoạn sản xuất bắt buộc                      | RESOLVED → mọi sản phẩm phải đi qua `Sơ chế → Cấp đông → Sấy thăng hoa`; không được bỏ qua cấp đông. Xem CONFLICT-15.               |
-| OD-19 | 20 SKU/công thức là baseline hay giới hạn vĩnh viễn?   | RESOLVED → 20 SKU/G1 là baseline go-live; hệ thống phải có CRUD/API + approval/versioning cho SKU, công thức và config tương lai.   |
+| ID                             | Điểm cần quyết                                                 | Quyết định owner                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| OD-01                          | `ING_THIT_HEO_NAC` có phải ingredient riêng theo lot?          | RESOLVED → ingredient riêng, có QC, theo lot.                                                                                                                                                                                                                                                                                                                                              |
+| OD-02                          | Warehouse model phase 1                                        | RESOLVED → multi-warehouse theo `warehouse_type` (RAW_MATERIAL + FINISHED_GOODS), tối thiểu 1 instance mỗi loại go-live.                                                                                                                                                                                                                                                                   |
+| OD-03                          | Production GTIN/GS1 cho 20 SKU + packaging level               | RESOLVED → fake fixture, cấu hình cả `box_gtin` + `carton_gtin`, đánh dấu `TEST_ONLY_DEV_FIXTURE`. Owner update GTIN thật sau.                                                                                                                                                                                                                                                             |
+| OD-04                          | MISA endpoint/credential production                            | RESOLVED → MISA AMIS, retry 3x exponential backoff, credential giả định, owner cung cấp thật sau.                                                                                                                                                                                                                                                                                          |
+| OD-05                          | CODE09→CODE17 có cần giữ trong phase plan không?               | RESOLVED → giữ canonical CODE01→CODE17 theo `SRC-FILE04-1`; CODE09→17 là delivery/governance/ops gates, không phải analytics/AI.                                                                                                                                                                                                                                                           |
+| OD-06                          | Đơn vị batch chuẩn = 400 (sachet/hũ?)                          | RESOLVED tạm → giữ giả định 400, owner update sau.                                                                                                                                                                                                                                                                                                                                         |
+| OD-07                          | Mức expose source zone trong public trace                      | RESOLVED → expose `source_zone_name` + `province` (Tỉnh) + `ward` (Xã, không có Huyện) + `address_detail` (free-form).                                                                                                                                                                                                                                                                     |
+| OD-08                          | Mobile PWA vs native                                           | RESOLVED → PWA-first.                                                                                                                                                                                                                                                                                                                                                                      |
+| OD-09                          | Source origin verification policy                              | RESOLVED → block intake/lot nếu source origin bắt buộc mà chưa `VERIFIED`.                                                                                                                                                                                                                                                                                                                 |
+| OD-10                          | Recall SLA business                                            | RESOLVED → phát hiện đến khóa batch + gửi notification phải < 4h.                                                                                                                                                                                                                                                                                                                          |
+| OD-15                          | Operator authentication phase 1                                | RESOLVED → local account + RBAC; SSO identity map vào local user/role.                                                                                                                                                                                                                                                                                                                     |
+| OD-16                          | Ingredient procurement_type (tự trồng vs mua ngoài)            | RESOLVED → 2 type: `SELF_GROWN` (có source_zone + source_origin) vs `PURCHASED` (chỉ supplier, không source_zone). Xem CONFLICT-13.                                                                                                                                                                                                                                                        |
+| OD-18                          | Chuỗi công đoạn sản xuất bắt buộc                              | RESOLVED → mọi sản phẩm phải đi qua `Sơ chế → Cấp đông → Sấy thăng hoa`; không được bỏ qua cấp đông. Xem CONFLICT-15.                                                                                                                                                                                                                                                                      |
+| OD-19                          | 20 SKU/công thức là baseline hay giới hạn vĩnh viễn?           | RESOLVED → 20 SKU/G1 là baseline go-live; hệ thống phải có CRUD/API + approval/versioning cho SKU, công thức và config tương lai.                                                                                                                                                                                                                                                          |
+| OD-23                          | M13 CAPA evidence schema/storage/scan policy                   | RESOLVED → `op_recall_capa` canonical, không tạo `op_recall_capa_item`; thêm `op_recall_capa_evidence`; dev/test local filesystem; production company storage server; close chỉ pass với `scan_status = CLEAN`.                                                                                                                                                                            |
+| OD-M06-SUP-CANCEL-001          | Cancel/decline policy cho pre-receipt và supplier confirmation | RESOLVED 2026-04-29 → company được cancel pre-receipt với reason; supplier không cancel phiếu công ty, chỉ được decline confirmation (`supplier_collaboration_status = SUPPLIER_DECLINED`); sau `RECEIVED_PENDING_QC` hoặc đã có lot thì cấm cancel thường, chỉ reject/return/correction/reversal. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                                           |
+| OD-M06-SUP-EDIT-001            | Supplier edit window sau `SUPPLIER_CONFIRMED`                  | RESOLVED 2026-04-29 → cấm supplier sửa trực tiếp `ingredient`, `proposed_quantity`, `proposed_uom_code`, `expected_delivery_date`, `supplier_lot_code`, `manufacture_date`, `expiry_date`. MVP yêu cầu cancel + tạo phiếu mới; supplier change request là enhancement sau MVP. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                                                               |
+| OD-M03-SUP-ING-001             | Supplier ↔ ingredient mapping ownership                        | RESOLVED 2026-04-29 → mapping thuộc M03A Supplier Management (bảng `op_supplier_ingredient`); M06 read-only consume; có `status`, `effective_from/to`, audit, approval (Supplier Manager hoặc Master Data Steward; ingredient rủi ro cao có thể cần QA Manager). Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                                                                             |
+| OD-M06-SUP-LOT-SPLIT-001       | Receipt item → lot cardinality                                 | RESOLVED 2026-04-29 → 1 receipt item tạo N lot; invariant `SUM(lot.initial_quantity WHERE receipt_item_id = X) <= received_quantity_of(X)`; chỉ lot `READY_FOR_PRODUCTION` mới được issue. MVP UI default 1:1 nhưng DB/API hỗ trợ 1:N từ đầu. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                                                                                                |
+| OD-M05-INTERNAL-GROWER-001     | Phạm vi Supplier Portal vs SELF_GROWN                          | RESOLVED 2026-04-29 → Supplier Portal scope = `PURCHASED` only. `SELF_GROWN` đi theo flow M05/M06 hiện tại; future internal grower portal là ADR riêng thuộc M05, không reuse `R_SUPPLIER`. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                                                                                                                                                  |
+| OD-M06-SUP-EVIDENCE-001        | Evidence required policy                                       | RESOLVED 2026-04-29 → policy-driven theo `op_supplier_ingredient` (`requires_photo`, `requires_video`, `requires_coa`, `requires_lab_report`, `min_photo_count`, `min_video_count`); MVP default ≥1 photo cho `PURCHASED`, COA/lab khi policy yêu cầu. Phiếu công ty tạo không được chuyển `WAITING_DELIVERY` nếu thiếu evidence bắt buộc. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.   |
+| OD-M06-SUP-LOT-TIMING-001      | Thời điểm tạo lot và enum khởi tạo                             | RESOLVED 2026-04-29 → lot chỉ tạo khi action `receive` chuyển phiếu sang `RECEIVED_PENDING_QC`; lot khởi tạo `lot_status = CREATED` + `lot_qc_status = PENDING_QC`; `QC_PASS` chưa usable, phải qua `RAW_LOT_MARK_READY` để chuyển `READY_FOR_PRODUCTION`. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                                                                                   |
+| OD-GLOSSARY-QTY-001            | Glossary và validation invariant cho quantity/status mới       | RESOLVED 2026-04-29 → chuẩn hóa term `proposed_quantity`, `proposed_uom_code`, `received_quantity`, `accepted_quantity`, `rejected_quantity`, `returned_quantity`, `raw_receipt_status`, `supplier_collaboration_status`, `lot_status`, `lot_qc_status`; bắt buộc DB CHECK + VAL-\* rule cho invariant quantity và lot quantity vs received. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`. |
+| OD-M12-PTRACE-SUP-EVIDENCE-001 | Supplier evidence trên public trace                            | RESOLVED 2026-04-29 → tuyệt đối không expose `evidence_uri`, `storage_path`, `original_filename`, supplier internal id/document, COA/lab/damage/delivery doc, internal/supplier note, scan payload, QC internal note, costing, MISA. Public trace giữ whitelist DTO/projection. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                                                              |
+| OD-MODULE-M03A-001             | Đăng ký module mới M03A Supplier Management                    | RESOLVED 2026-04-29 → tách Supplier Management thành M03A (sub-capability nhóm Master Data/Auth/Admin UI). Không tạo M17, giữ numbering M01-M16. M03A phối hợp M03/M02/M16 và sở hữu `op_supplier_ingredient`, supplier user/RBAC `R_SUPPLIER`, screens supplier admin + Supplier Portal. M06 chỉ consume mapping/identity. Xem `docs/v2-decisions/OD-M06-SUP-COLLAB.md`.                  |
 
 ### C.2 — Còn OPEN
 
-| ID    | Điểm cần quyết                                                     | Severity | CODE chặn |
-| ----- | ------------------------------------------------------------------ | -------- | --------- |
-| OD-11 | Trace query SLA technical: target latency?                         | MEDIUM   | CODE07    |
-| OD-12 | Backup/DR target: RPO, RTO?                                        | HIGH     | CODE16    |
-| OD-13 | Audit log retention: bao lâu?                                      | HIGH     | CODE16    |
-| OD-14 | Public trace có cần multi-language không?                          | LOW      | CODE07    |
-| OD-17 | Production printer model + driver chính thức                       | MEDIUM   | CODE12    |
-| OD-20 | MISA AMIS tenant/credential/endpoint thật cho production            | HIGH     | CODE13/CODE17 |
-| OD-21 | PWA task taxonomy và endpoint inbox `/api/admin/tasks/my`           | MEDIUM   | CODE11    |
-| OD-22 | Các mutation endpoint UI phụ: UOM write, raw lot hold/release, process command, screen registry write | MEDIUM | CODE09/CODE10/CODE11 |
+| ID    | Điểm cần quyết                                                                                        | Severity | CODE chặn            |
+| ----- | ----------------------------------------------------------------------------------------------------- | -------- | -------------------- |
+| OD-11 | Trace query SLA technical: target latency?                                                            | MEDIUM   | CODE07               |
+| OD-12 | Backup/DR target: RPO, RTO?                                                                           | HIGH     | CODE16               |
+| OD-13 | Audit log retention: bao lâu?                                                                         | HIGH     | CODE16               |
+| OD-14 | Public trace có cần multi-language không?                                                             | LOW      | CODE07               |
+| OD-17 | Production printer model + driver chính thức                                                          | MEDIUM   | CODE12               |
+| OD-20 | MISA AMIS tenant/credential/endpoint thật cho production                                              | HIGH     | CODE13/CODE17        |
+| OD-21 | PWA task taxonomy và endpoint inbox `/api/admin/tasks/my`                                             | MEDIUM   | CODE11               |
+| OD-22 | Các mutation endpoint UI phụ: UOM write, raw lot hold/release, process command, screen registry write | MEDIUM   | CODE09/CODE10/CODE11 |
 
 Các OD trên là implementation blocker list chính thức:
 
-| OD | Không được freeze trước khi chốt | Có thể làm trước |
-| -- | -------------------------------- | ---------------- |
-| OD-11 | Trace index/cache sizing và SLO final cho CODE07. | Ghi metric trace query và thiết kế query path có thể cấu hình. |
-| OD-12 | RPO/RTO, backup topology, restore drill gate cho CODE16. | Viết runbook/adapter restore generic. |
-| OD-13 | Retention/archive/search boundary và storage sizing cho CODE16. | Thiết kế retention configurable, không hard-code thời hạn. |
-| OD-14 | Public trace i18n contract final. | Ship single-language với field i18n-ready nếu cần. |
-| OD-17 | Production printer driver/model final cho CODE12. | Adapter/queue/callback generic, không bind driver cụ thể. |
-| OD-20 | Real MISA sync enablement cho production. | Giữ dry-run/fake credential dev; không hard-code secret trong spec/code. |
-| OD-21 | PWA task inbox contract final. | Giữ endpoint placeholder có đánh dấu `[OWNER DECISION NEEDED]`; command vẫn dùng idempotency. |
-| OD-22 | UI mutation route taxonomy final. | Chỉ dùng canonical route family hiện có; endpoint chưa chốt phải ghi owner decision, không tạo route song song. |
+| OD    | Không được freeze trước khi chốt                                | Có thể làm trước                                                                                                |
+| ----- | --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| OD-11 | Trace index/cache sizing và SLO final cho CODE07.               | Ghi metric trace query và thiết kế query path có thể cấu hình.                                                  |
+| OD-12 | RPO/RTO, backup topology, restore drill gate cho CODE16.        | Viết runbook/adapter restore generic.                                                                           |
+| OD-13 | Retention/archive/search boundary và storage sizing cho CODE16. | Thiết kế retention configurable, không hard-code thời hạn.                                                      |
+| OD-14 | Public trace i18n contract final.                               | Ship single-language với field i18n-ready nếu cần.                                                              |
+| OD-17 | Production printer driver/model final cho CODE12.               | Adapter/queue/callback generic, không bind driver cụ thể.                                                       |
+| OD-20 | Real MISA sync enablement cho production.                       | Giữ dry-run/fake credential dev; không hard-code secret trong spec/code.                                        |
+| OD-21 | PWA task inbox contract final.                                  | Giữ endpoint placeholder có đánh dấu `[OWNER DECISION NEEDED]`; command vẫn dùng idempotency.                   |
+| OD-22 | UI mutation route taxonomy final.                               | Chỉ dùng canonical route family hiện có; endpoint chưa chốt phải ghi owner decision, không tạo route song song. |
 
 ### C.3 — CONFLICT-13: Ingredient procurement_type (mới, owner đã chốt cùng đợt 2026-04-27)
 
@@ -328,6 +354,25 @@ Các OD trên là implementation blocker list chính thức:
   - Boundary vẫn giữ như CONFLICT-14: Catalog/Product là owner dài hạn của SKU identity; Operational tạm giữ `ref_sku` cho go-live và lưu snapshot transaction.
 - **Tác động spec**: MX2 là readiness gate trước CODE03, không phải “seed xong là đóng”; database/API docs phải có quản trị master/config dài hạn.
 
+### C.7 — CONFLICT-17: Supplier Collaboration Extension cho Raw Material Receipt
+
+- **Severity**: HIGH (ảnh hưởng M06 schema/API/UI/state machine, M02 user model, M03 master data, M16 admin UI; tạo module M03A Supplier Management; thêm Supplier Portal IA).
+- **Status**: RESOLVED 2026-04-29 (owner). Toàn bộ quyết định gom tại [`docs/v2-decisions/OD-M06-SUP-COLLAB.md`](../v2-decisions/OD-M06-SUP-COLLAB.md).
+- **Source A**: `docs/DAC_TA_NGHIEP_VU_SUPPLIER_COLLAB_RAW_MATERIAL_RECEIPT.md` (~24 section đặc tả mở rộng M06 cho supplier portal, evidence, pre-receipt).
+- **Source B**: `docs/software-specs/modules/06_RAW_MATERIAL.md`, `docs/software-specs/modules/02_AUTH_PERMISSION.md`, `docs/software-specs/modules/03_MASTER_DATA.md`, `docs/software-specs/06_MODULE_MAP.md`, `OWNER-2026-04-29`.
+- **Quyết định owner**:
+  - Reuse `op_raw_material_receipt` + `op_raw_material_receipt_item`; không tạo bảng nghiệp vụ song song `op_supplier_delivery`.
+  - Bổ sung 4 bảng/khái niệm mới: `op_raw_material_receipt_evidence` (M06), `op_raw_material_receipt_feedback` (M06), `op_supplier_ingredient` (M03A), supplier user (`user_type = SUPPLIER_USER`) và role `R_SUPPLIER` (M02).
+  - Chuẩn hóa enum chính thức: `raw_receipt_status` (11 giá trị), `supplier_collaboration_status` (7 giá trị, có `SUPPLIER_DECLINED`), `lot_qc_status` (5 giá trị, khởi tạo `PENDING_QC`), giữ `lot_status` hiện tại với khởi tạo `CREATED`.
+  - Đăng ký 17 hard lock `HL-SUP-001..017`; 9 OD chi tiết tại C.1 (`OD-M06-SUP-CANCEL-001` đến `OD-M12-PTRACE-SUP-EVIDENCE-001`); 1 OD module `OD-MODULE-M03A-001`.
+  - Bổ sung route family mới `/api/admin/suppliers/*` (M03A), `/api/supplier/raw-material/intakes/*` (Supplier Portal), mở rộng `/api/admin/raw-material/intakes/*` thêm action `submit/request-supplier-evidence/supplier-confirmation/receive/start-qc/qc-result/return/cancel/evidence`.
+  - Bổ sung error codes: `SUPPLIER_INGREDIENT_NOT_ALLOWED`, `SUPPLIER_EVIDENCE_REQUIRED`, `SUPPLIER_DECLINED_BLOCKED`, `RECEIPT_LOCKED_AFTER_RECEIVE`, `LOT_QUANTITY_EXCEEDS_RECEIVED`, `RECEIPT_QUANTITY_INVARIANT_FAILED`, `SUPPLIER_EDIT_LOCKED_AFTER_CONFIRMED`.
+- **Tác động spec**:
+  - `00_README.md` bảng Hard Locks bổ sung `HL-SUP-001..017`.
+  - `06_MODULE_MAP.md` đăng ký M03A là sub-capability dưới nhóm Master Data/Auth/Admin UI; M06 chỉ consume mapping; thêm bảng/route/screen/lock liên quan.
+  - `03_GLOSSARY.md`, `database/04_ENUM_REFERENCE.md`, `database/08_MIGRATION_STRATEGY.md`, `modules/06_RAW_MATERIAL.md`, `modules/03A_SUPPLIER_MANAGEMENT.md` (mới), `api/`, `ui/`, `workflows/04_STATE_MACHINES.md`, `workflows/05_CANONICAL_OPERATIONAL_FLOW.md`, `workflows/06_APPROVAL_WORKFLOWS.md`, `workflows/07_EXCEPTION_FLOWS.md`, `workflows/08_SMOKE_WORKFLOW.md`, `business/` (R_SUPPLIER + namespace `supplier.*`), `functional/01_MODULE_FUNCTION_MATRIX.md`, `functional/02_USE_CASE_CATALOG.md`, `testing/` cập nhật theo Đợt B/C.
+  - `phase-project/05_DETAILED_PHASE_PROMPTS/` thêm `01A_CODE01A_M03A_SUPPLIER_MANAGEMENT_PROMPTS.md` và mở rộng `02_CODE02_RAW_MATERIAL_PROMPTS.md` (`02.09..02.13`).
+
 ## D. `[BỔ SUNG TỪ specs.docx]` cần owner xác nhận
 
 Các nội dung sau lấy từ `HIST-SPECS` (specs.docx) và CHƯA có canonical doc xác nhận. Owner cần duyệt từng item.
@@ -342,13 +387,13 @@ Các nội dung sau lấy từ `HIST-SPECS` (specs.docx) và CHƯA có canonical
 
 ## E. Risks nếu không quyết kịp
 
-| Risk                                                                             | CODE chặn       | Mitigation                                                         |
-| -------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------ |
-| Không có GTIN production → không in mã thương mại thật được                      | CODE04          | Owner mua GS1 prefix + assign GTIN trước commercial print.          |
-| Không có MISA credential → không sync kế toán thật                               | CODE13/CODE17   | Build dry-run mode, defer real sync sau credential ready.           |
-| Không quyết trace query technical SLA → khó sizing index/cache đúng              | CODE07          | Thiết kế đo metric trước; chốt SLA trước performance freeze.        |
-| Không quyết backup/DR + retention → khó đóng CODE16                              | CODE16          | Thiết kế retention/archive configurable; chốt RPO/RTO trước release. |
-| Không quyết production printer model → CODE12 chỉ dừng ở adapter/queue generic   | CODE12          | Dùng adapter abstraction; cần driver thật trước factory smoke.      |
+| Risk                                                                           | CODE chặn     | Mitigation                                                           |
+| ------------------------------------------------------------------------------ | ------------- | -------------------------------------------------------------------- |
+| Không có GTIN production → không in mã thương mại thật được                    | CODE04        | Owner mua GS1 prefix + assign GTIN trước commercial print.           |
+| Không có MISA credential → không sync kế toán thật                             | CODE13/CODE17 | Build dry-run mode, defer real sync sau credential ready.            |
+| Không quyết trace query technical SLA → khó sizing index/cache đúng            | CODE07        | Thiết kế đo metric trước; chốt SLA trước performance freeze.         |
+| Không quyết backup/DR + retention → khó đóng CODE16                            | CODE16        | Thiết kế retention/archive configurable; chốt RPO/RTO trước release. |
+| Không quyết production printer model → CODE12 chỉ dừng ở adapter/queue generic | CODE12        | Dùng adapter abstraction; cần driver thật trước factory smoke.       |
 
 ## F. Quy trình resolve
 
@@ -359,11 +404,12 @@ Các nội dung sau lấy từ `HIST-SPECS` (specs.docx) và CHƯA có canonical
 
 ## G. Lịch sử update
 
-| Ngày       | Thay đổi                                                                                                                                                                                                                               | Người            |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| 2026-04-25 | Khởi tạo Batch 1 với 12 conflict + 15 owner decision                                                                                                                                                                                   | (auto-generated) |
-| 2026-04-27 | Owner duyệt batch resolve: CONFLICT-04/05/06/07/08/09/10/11/12 RESOLVED; OD-01→OD-10, OD-15, OD-16 RESOLVED; thêm CONFLICT-13 (ingredient procurement_type SELF_GROWN/PURCHASED) và CONFLICT-14 (SKU ownership transitional). Sửa phase plan về CODE01→CODE17 theo `SRC-FILE04-1`. | owner            |
-| 2026-04-27 | Owner bổ sung OD-18/CONFLICT-15: mọi sản phẩm phải qua `Sơ chế → Cấp đông → Sấy thăng hoa`; OD-19/CONFLICT-16: 20 SKU/G1 là baseline, hệ thống phải có CRUD/API + versioning/config cho SKU/công thức dài hạn. | owner |
-| 2026-04-27 | Thêm `CONFLICT-SRC-00` và khóa source policy cho batch `docs/software-specs/`: không đọc source code, không dùng `AGENTS.md`, không dùng `docs/ginsengfood_*`; chỉ dùng prompt gốc, `docs-software/`, `.tmp-docx-extract/`, kiến thức chuyên môn, và phê duyệt owner. | owner |
-| 2026-04-27 | Part 2 chuẩn hóa 10 top-level docs: `06_MODULE_MAP.md` dùng 16 module theo prompt, `07_PHASE_PLAN.md` giữ CODE01-CODE17 như phase/delivery gates, `08_REQUIREMENTS_TRACEABILITY_MATRIX.md` làm lại đúng 14 cột prompt và map requirement sang module/API/UI/DB/workflow/test. | Codex |
-| 2026-04-28 | Rà lại top-level docs sau khi thêm `phase-project/`: đồng bộ OD-20/21/22 vào executive/phase/RTM, sửa số liệu consistency, làm rõ code chỉ được đọc ở implementation phase như baseline, và cập nhật legacy mapping thành historical mapping. | Codex |
+| Ngày       | Thay đổi                                                                                                                                                                                                                                                                                           | Người            |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 2026-04-25 | Khởi tạo Batch 1 với 12 conflict + 15 owner decision                                                                                                                                                                                                                                               | (auto-generated) |
+| 2026-04-27 | Owner duyệt batch resolve: CONFLICT-04/05/06/07/08/09/10/11/12 RESOLVED; OD-01→OD-10, OD-15, OD-16 RESOLVED; thêm CONFLICT-13 (ingredient procurement_type SELF_GROWN/PURCHASED) và CONFLICT-14 (SKU ownership transitional). Sửa phase plan về CODE01→CODE17 theo `SRC-FILE04-1`.                 | owner            |
+| 2026-04-27 | Owner bổ sung OD-18/CONFLICT-15: mọi sản phẩm phải qua `Sơ chế → Cấp đông → Sấy thăng hoa`; OD-19/CONFLICT-16: 20 SKU/G1 là baseline, hệ thống phải có CRUD/API + versioning/config cho SKU/công thức dài hạn.                                                                                     | owner            |
+| 2026-04-27 | Thêm `CONFLICT-SRC-00` và khóa source policy cho batch `docs/software-specs/`: không đọc source code, không dùng `AGENTS.md`, không dùng `docs/ginsengfood_*`; chỉ dùng prompt gốc, `docs-software/`, `.tmp-docx-extract/`, kiến thức chuyên môn, và phê duyệt owner.                              | owner            |
+| 2026-04-27 | Part 2 chuẩn hóa 10 top-level docs: `06_MODULE_MAP.md` dùng 16 module theo prompt, `07_PHASE_PLAN.md` giữ CODE01-CODE17 như phase/delivery gates, `08_REQUIREMENTS_TRACEABILITY_MATRIX.md` làm lại đúng 14 cột prompt và map requirement sang module/API/UI/DB/workflow/test.                      | Codex            |
+| 2026-04-28 | Rà lại top-level docs sau khi thêm `phase-project/`: đồng bộ OD-20/21/22 vào executive/phase/RTM, sửa số liệu consistency, làm rõ code chỉ được đọc ở implementation phase như baseline, và cập nhật legacy mapping thành historical mapping.                                                      | Codex            |
+| 2026-04-29 | Đăng ký `CONFLICT-17 Supplier Collaboration Extension` (mục C.7), 9 owner decision `OD-M06-SUP-CANCEL-001` đến `OD-M12-PTRACE-SUP-EVIDENCE-001` cùng `OD-MODULE-M03A-001` (đều RESOLVED, mục C.1), và 17 hard lock `HL-SUP-001..017`. Quyết định gom tại `docs/v2-decisions/OD-M06-SUP-COLLAB.md`. | owner            |

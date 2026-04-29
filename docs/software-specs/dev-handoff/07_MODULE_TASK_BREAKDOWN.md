@@ -18,7 +18,7 @@ Task breakdown chia CODE01-CODE17 thành bounded implementation units cho PM, de
 | CODE05 | T-C05-M09-QC | M09 | QC inspection and batch release | QC/release | qc inspections/releases | QC/release screens | TC-M09-* | QC pass separate from release |
 | CODE06 | T-C06-M11-WH | M11 | Warehouse receipt, ledger, balance, adjustment | warehouse/inventory | warehouse/inventory | Warehouse/ledger/balance | TC-M11-* | Released-only receipt and ledger pass |
 | CODE07 | T-C07-M12-TRACE | M12 | Internal/public trace and genealogy | trace links/views/policy | trace/public trace | Trace/public preview | TC-M12-* | Public denylist pass |
-| CODE08 | T-C08-M13-RECALL | M13 | Incident, recall, impact, hold, CAPA | recall/hold/sale lock | incidents/recall | Recall screens | TC-M13-* | Impact snapshot and close gate pass |
+| CODE08 | T-C08-M13-RECALL | M13 | Incident, recall, impact, hold, CAPA, CAPA evidence | recall/hold/sale lock/CAPA evidence | incidents/recall | Recall screens | TC-M13-*, TC-UI-CAPA-* | Impact snapshot and clean-evidence close gate pass |
 | CODE09 | T-C09-M16-UIREG | M16/M02 | Screen/action/menu registry and permissions | ui registry/RBAC | ui/menu/roles | Admin shell | TC-M16-* | Permission-aware UI pass |
 | CODE10 | T-C10-M01-APICON | M01/all | API convention, error, pagination, auth middleware | support tables | all APIs | API client | API regression | Contract sync pass |
 | CODE11 | T-C11-M16-PWA | M16/M01 | Offline/PWA command contract | offline/idempotency | mobile/offline | PWA tasks | TC-M16-PWA-* | Replay idempotent |

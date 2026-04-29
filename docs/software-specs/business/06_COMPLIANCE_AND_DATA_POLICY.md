@@ -14,6 +14,7 @@
 | `INTEGRATION_DATA` | MISA mapping, sync log, retry/reconcile, external IDs | Restricted integration/accounting | Không để module nghiệp vụ sync trực tiếp. |
 | `RECONCILE_DATA` | MISA reconcile record, manual retry reason, mismatch evidence, correction note | Restricted integration/accounting/audit | Append-only hoặc correction-linked; không xóa mismatch sau khi reconcile. |
 | `DEVICE_INTEGRATION_DATA` | Device registry, printer token/reference, device auth attempt, print callback log, local agent id | Restricted operations/security | Device token/secret không public/log plaintext; callback không mutate business truth trực tiếp. |
+| `EVIDENCE_FILE_METADATA` | Source origin evidence metadata, CAPA evidence metadata, file hash, MIME, size, scan status | Restricted internal | DB lưu metadata only; binary lưu qua storage adapter. Dev/test local filesystem; production company storage server. |
 | `SNAPSHOT_DATA` | Production recipe snapshot, recall impact snapshot, print payload snapshot | Internal, immutable | Không mutate; correction tạo record mới. |
 | `MASTER_DATA` | SKU, ingredient, UOM, supplier, warehouse, source zone | Internal admin; selected fields public | Inactive thay vì delete khi có transaction. |
 
@@ -45,6 +46,7 @@
 | Notification | External notification/CRM | `notification_job_id` | Recall giữ reference, không owner notification delivery domain. |
 | Accounting/MISA | MISA/integration layer | External IDs/status | Operational emits events; integration syncs. |
 | Device/printer identity | Operational integration boundary | Driver/vendor/device details external | Operational lưu registry/callback evidence; token/secret quản lý như sensitive config. |
+| Evidence binary storage | Storage adapter / company storage server | Object key/URI only | Operational DB owns evidence metadata and scan status; binary file server is infrastructure, not business truth. |
 
 ## 4. Retention And Backup Policy
 
@@ -72,6 +74,7 @@
 | DP-009 | Device token/secret và printer callback data là sensitive; không log plaintext và không trả qua public/admin list response nếu không cần. | M10, M14, M15 | Device security test kiểm token absent/masked; callback audit có correlation. | Debug tạm thời phải dùng secret reference và audit. |
 | DP-010 | Reconcile data là evidence kế toán/tích hợp, không được hard delete sau khi resolved. | M14, M01 | Reconcile audit test kiểm original mismatch còn truy vết được. | Archive theo retention policy sau khi owner chốt. |
 | DP-011 | Một trade item/package level chỉ có một active barcode/GTIN; barcode conflict không được in hoặc public trace. | M10, M12 | GTIN/barcode uniqueness test; print conflict test. | Fixture dev phải flag `TEST_ONLY_DEV_FIXTURE`. |
+| DP-012 | Evidence binary không lưu trong DB; source verification và CAPA/recall close chỉ dùng evidence metadata có `scan_status = CLEAN`. | M05, M13 | Evidence upload/scan/close negative tests. | Local/dev/test có thể dùng mock/dev-skip scanner để tạo `CLEAN`; production phải dùng scanner thật. |
 
 ## 6. Testable Compliance Checks
 

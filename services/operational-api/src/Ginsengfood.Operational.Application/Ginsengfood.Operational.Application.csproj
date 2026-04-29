@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ginsengfood.Operational.Domain\Ginsengfood.Operational.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\api-contracts\src\Ginsengfood.Operational.Contracts\Ginsengfood.Operational.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\shared-kernel\src\Ginsengfood.Operational.SharedKernel\Ginsengfood.Operational.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

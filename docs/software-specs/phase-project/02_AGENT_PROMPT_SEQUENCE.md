@@ -1,6 +1,6 @@
 # 02 - Agent Prompt Sequence
 
-> Muc tieu: cung cap prompt copy/paste theo thu tu cho AI agents. Moi prompt duoi day la standalone, nhung nen chay theo sequence: Project lifecycle kickoff -> Bootstrap -> Phase Audit -> Phase Plan -> Implementation -> Review -> Validation -> Handoff/Progress Update.
+> Muc tieu: cung cap prompt copy/paste theo thu tu cho AI agents. Moi prompt duoi day la standalone, nhung nen chay theo sequence: Project lifecycle kickoff -> Bootstrap -> Phase Audit -> Phase Plan -> Implementation -> Review -> Kiểm chứng -> Handoff/Cập nhật tiến độ.
 
 ## 0. Thu Tu Chay Tong The
 
@@ -30,10 +30,10 @@ Moi prompt dung trong project nay phai co du cac phan:
 5. `Scope`: layer/file/module duoc cham.
 6. `Non-goals`: dieu khong lam.
 7. `Workflow`: cac buoc agent phai thuc hien.
-8. `Validation`: command/check can chay.
+8. `Kiểm chứng`: command/check cần chạy.
 9. `Stop conditions`: khi nao phai dung va hoi owner.
 10. `Required output`: format bat buoc.
-11. `Progress update`: bat buoc cap nhat `phase-project/03_PROGRESS_REPORT.md`.
+11. `Cập nhật tiến độ`: bat buoc cap nhat `phase-project/03_PROGRESS_REPORT.md`.
 
 ## 2. Copy/Paste Prompt 00 - Project Bootstrap
 
@@ -73,21 +73,21 @@ Non-goals:
 Workflow:
 1. Confirm phase order and current blockers.
 2. Identify first bounded gap for CODE01, sau khi lifecycle prompt 01-03 da chot scope/repo/architecture.
-3. Produce a gap card with goal, scope, non-goals, affected layers, source files, validation gate, and risk.
+3. Produce a gap card with goal, scope, non-goals, affected layers, source files, gate kiểm chứng, and risk.
 4. Update phase-project/03_PROGRESS_REPORT.md with project bootstrap result.
 
 Stop conditions:
 - If source precedence is unclear, stop and ask owner.
 - If CODE01 has an unresolved owner decision that blocks all work, stop and list it.
 
-Required output:
-- Summary.
+Đầu ra bắt buộc:
+- Tóm tắt.
 - First recommended gap.
-- Evidence used.
+- Evidence đã dùng.
 - Files read.
-- Owner decisions/blockers.
+- Quyết định owner/blockers.
 - Next prompt to run.
-- Progress report update confirmation.
+- Xác nhận cập nhật báo cáo tiến độ.
 ```
 
 ## 3. Copy/Paste Prompt 01 - Generic Phase Audit
@@ -121,7 +121,7 @@ Read first:
 Scope:
 - Phase: {CODE}
 - Modules: {Mxx list}
-- Allowed output: gap report and progress report update.
+- Allowed output: gap report and cập nhật báo cáo tiến độ.
 
 Non-goals:
 - Do not edit implementation files.
@@ -135,7 +135,7 @@ Workflow:
 4. Classify each gap: MISSING, PARTIAL, CONFLICT, WRONG_IMPLEMENTATION, LEGACY_REDUNDANT, MATCH, UNKNOWN.
 5. Pick one safest bounded gap to implement next.
 
-Validation:
+Kiểm chứng:
 - No build/test required for read-only audit.
 
 Stop conditions:
@@ -143,13 +143,13 @@ Stop conditions:
 - Stop if public/private trace exposure cannot be verified.
 - Stop if route/table/business truth duplication risk appears.
 
-Required output:
+Đầu ra bắt buộc:
 - Gap table.
 - Recommended first bounded gap.
-- Requirement source and evidence.
+- Nguồn yêu cầu và evidence.
 - Affected files likely to change.
-- Validation gate for next implementation.
-- Owner decisions needed.
+- Gate kiểm chứng for next implementation.
+- Quyết định owner needed.
 - Update phase-project/03_PROGRESS_REPORT.md.
 ```
 
@@ -188,16 +188,16 @@ Workflow:
 4. Define API/DTO/permission/idempotency changes.
 5. Define frontend client/screen/state changes.
 6. Define seed/test changes.
-7. Define validation commands.
+7. Define lệnh kiểm chứng.
 8. Define rollback/forward-fix notes.
 9. Define handoff update requirements.
 
-Required output:
+Đầu ra bắt buộc:
 - Implementation plan.
 - File/layer write scope.
 - Non-goals.
-- Validation commands.
-- Risk and owner decisions.
+- Lệnh kiểm chứng.
+- Risk and quyết định owner.
 - Prompt for the implementation agent.
 - Update phase-project/03_PROGRESS_REPORT.md.
 ```
@@ -238,10 +238,10 @@ Workflow:
 4. If schema changes, add focused migration and validation query.
 5. If seed changes, make seed idempotent and run validation.
 6. Add/update tests mapped to REQ/TC.
-7. Run validation commands.
+7. Run lệnh kiểm chứng.
 8. Update docs/software-specs/phase-project/03_PROGRESS_REPORT.md.
 
-Validation:
+Kiểm chứng:
 - Backend build/test: {commands}
 - Frontend build/test: {commands}
 - Migration/update: {commands or N/A}
@@ -256,22 +256,22 @@ Stop conditions:
 - MISA direct sync risk.
 - Inventory/audit/ledger append-only risk.
 
-Required output:
-- Summary.
-- Files changed.
-- Requirement source.
-- Evidence used.
-- Commands run.
-- Test result.
-- Backend build result.
-- Frontend build result.
-- Process cleanup result.
-- Database migration/update result if applicable.
-- Seed validation result if applicable.
-- Smoke result if applicable.
-- Markdown/progress update.
-- Remaining risks.
-- Next recommended action.
+Đầu ra bắt buộc:
+- Tóm tắt.
+- File đã sửa.
+- Nguồn yêu cầu.
+- Evidence đã dùng.
+- Lệnh đã chạy.
+- Kết quả test.
+- Kết quả backend build.
+- Kết quả frontend build.
+- Kết quả cleanup process.
+- Kết quả database migration/update nếu áp dụng.
+- Kết quả seed validation nếu áp dụng.
+- Kết quả smoke nếu áp dụng.
+- Cập nhật Markdown/báo cáo tiến độ.
+- Rủi ro còn lại.
+- Hành động khuyến nghị tiếp theo.
 ```
 
 ## 6. Copy/Paste Prompt 04 - Review Diff
@@ -301,22 +301,22 @@ Check:
 - Inventory ledger correctness.
 - QC/release separation.
 - MISA direct sync violation.
-- Process cleanup and validation evidence.
+- Process cleanup and evidence kiểm chứng.
 
-Output:
+Đầu ra:
 - Verdict: ACCEPT / NEEDS_FIX / REJECT.
 - Findings ordered by severity with file/line evidence.
 - Required fixes.
 - Missing validation.
-- Owner decisions/blockers.
+- Quyết định owner/blockers.
 - Whether progress report can mark DONE.
 ```
 
-## 7. Copy/Paste Prompt 05 - Validation and Handoff
+## 7. Copy/Paste Prompt 05 - Kiểm chứng và handoff
 
 ```text
 Role:
-Bạn là QA/Release Validation Agent.
+Bạn là QA/Release Kiểm chứng Agent.
 
 Mission:
 Validate completed gap {gap_id}, update handoff/progress, and prepare owner/management summary.
@@ -328,27 +328,27 @@ Read first:
 4. docs/software-specs/dev-handoff/
 5. docs/software-specs/phase-project/03_PROGRESS_REPORT.md
 
-Validation:
+Kiểm chứng:
 - Run only finite commands.
 - Do not start long-lived dev servers unless required and stopped before final.
 - If command cannot run, report exact command, blocker, and residual risk.
 
 Required checks:
-1. Backend build/test result.
-2. Frontend build/test result.
-3. Migration/update result if schema changed.
+1. Kết quả backend build/test.
+2. Kết quả frontend build/test.
+3. Kết quả migration/update nếu schema changed.
 4. Seed validation if seed changed.
 5. API/FE sync result if API changed.
-6. Smoke result if workflow changed.
+6. Kết quả smoke nếu workflow changed.
 7. Process cleanup.
-8. Progress report update.
+8. Cập nhật báo cáo tiến độ.
 
-Required output:
+Đầu ra bắt buộc:
 - DONE / PARTIAL / FAILED.
 - Evidence summary.
-- Commands run.
+- Lệnh đã chạy.
 - Blockers.
-- Remaining risks.
+- Rủi ro còn lại.
 - Management summary line.
 - Next gap recommendation.
 ```
@@ -358,7 +358,7 @@ Required output:
 ### CODE01 - Foundation + Source Origin
 
 ```text
-Use the Generic Phase Audit, Generic Implementation Plan, Generic Bounded Implementation, Review Diff, and Validation prompts with:
+Use the Generic Phase Audit, Generic Implementation Plan, Generic Bounded Implementation, Review Diff, and prompt kiểm chứng với:
 
 Phase: CODE01
 Modules: M01 Foundation Core, M02 Auth Permission, M03 Master Data, M05 Source Origin, M16 Admin UI
@@ -381,7 +381,7 @@ Recommended first gap:
 Done gate:
 - Source zone/source origin/evidence/verification lifecycle works.
 - RBAC/action permission exists or blocker recorded.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE02 - Raw Material Intake + Lot + Incoming QC
@@ -407,7 +407,7 @@ Recommended gaps:
 Done gate:
 - Raw lot readiness gates pass.
 - Negative tests for unverified source and missing supplier/COA pass.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### MX-GATE-G1 - Master Data/Recipe Readiness
@@ -432,7 +432,7 @@ Recommended gaps:
 Done gate:
 - Seed validation passes.
 - API/schema supports future recipe versions and SKU/config CRUD.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE03 - Manufacturing Execution + Batch Genealogy Root
@@ -459,7 +459,7 @@ Recommended gaps:
 - GAP-C03-PROCESS-EVENTS-FREEZING-FD
 Done gate:
 - Snapshot, issue/receipt and process order tests pass.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE04 - Packaging, Printing, QR
@@ -485,7 +485,7 @@ Recommended gaps:
 - GAP-C04-PRINT-REPRINT-AUDIT
 Done gate:
 - QR lifecycle/reprint tests pass.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE05 - QC Inspection and Batch Release
@@ -509,7 +509,7 @@ Recommended gaps:
 Done gate:
 - QC_PASS without release cannot enter warehouse.
 - Release audit/state transition exists.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE06 - Warehouse Receipt and Inventory
@@ -531,7 +531,7 @@ Recommended gaps:
 - GAP-C06-INVENTORY-LEDGER-BALANCE
 Done gate:
 - Released-only receipt and ledger tests pass.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE07 - Traceability
@@ -557,7 +557,7 @@ Recommended gaps:
 Done gate:
 - Public leakage tests pass.
 - If OD-11/OD-14 remain open, document deferred impact.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE08 - Recall and Recovery
@@ -579,7 +579,7 @@ Recommended gaps:
 - GAP-C08-HOLD-SALELOCK-RECOVERY
 Done gate:
 - Trace impact -> hold -> recovery -> close smoke passes.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE09 - Admin UI/RBAC Registry
@@ -600,7 +600,7 @@ Recommended gaps:
 - GAP-C09-PERMISSION-AWARE-MENU
 Done gate:
 - Permission-aware UI and backend permission evidence exist.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE10 - API Contract Convention
@@ -621,7 +621,7 @@ Recommended gaps:
 - GAP-C10-API-FE-SYNC
 Done gate:
 - Contract regression tests pass.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE11 - PWA/Internal App Contract
@@ -642,7 +642,7 @@ Recommended gaps:
 - GAP-C11-DEVICE-SESSION-HEADER
 Done gate:
 - Duplicate offline submit does not duplicate side effects.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE12 - Device/Printer Boundary
@@ -665,7 +665,7 @@ Recommended gaps:
 Done gate:
 - No direct DB/device bypass.
 - If OD-17 open, record blocked production-driver tasks.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE13 - Event Schema, Outbox, MISA Adapter
@@ -688,7 +688,7 @@ Recommended gaps:
 - GAP-C13-MISA-ADAPTER-RETRY-RECONCILE
 Done gate:
 - Outbox retry/reconcile tests pass.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE14 - Monitoring, Alert, Dashboard
@@ -708,7 +708,7 @@ Recommended gaps:
 - GAP-C14-OPERATIONAL-DASHBOARD
 Done gate:
 - Critical alerts visible.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE15 - Override Governance
@@ -728,7 +728,7 @@ Recommended gaps:
 - GAP-C15-BREAKGLASS-AUDIT
 Done gate:
 - Override audit/security tests pass.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE16 - Retention, Archive, Restore
@@ -736,7 +736,7 @@ Done gate:
 ```text
 Phase: CODE16
 Modules: M01 Foundation Core, M11 Warehouse Inventory, M12 Traceability, M13 Recall, M14 MISA Integration, M15 Reporting Dashboard
-Goal: Implement retention/archive/restore only after owner decisions for RPO/RTO and retention duration are closed or formally deferred.
+Goal: Implement retention/archive/restore only after quyết định owner for RPO/RTO and retention duration are closed or formally deferred.
 Primary specs:
 - docs/software-specs/non-functional/05_BACKUP_RETENTION_REQUIREMENTS.md
 - docs/software-specs/non-functional/07_SCALABILITY_AVAILABILITY_REQUIREMENTS.md
@@ -751,7 +751,7 @@ Recommended gaps:
 - GAP-C16-ARCHIVE-RESTORE-DRILL
 Done gate:
 - If OD-12/OD-13 open, mark NEEDS_OWNER and do not implement destructive behavior.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ### CODE17 - Final Close-Out
@@ -774,5 +774,5 @@ Recommended gaps:
 Done gate:
 - Management progress report complete.
 - Release readiness verdict is DONE/PARTIAL/FAILED with evidence.
-- Progress report updated.
+- Cập nhật báo cáo tiến độ.
 ```

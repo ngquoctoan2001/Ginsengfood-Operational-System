@@ -8,6 +8,10 @@ For initial Ginsengfood V2 scaffold, derive API routes and DTOs from `docs/softw
 
 After route code exists, map current routes/controllers/handlers and consumers before changing or adding route families. Do not create duplicate route families from documents.
 
+## Response Language
+
+Explain API/contract impact in Vietnamese. Keep API routes, HTTP methods, DTO names, enum values, OpenAPI operation IDs, code symbols, commands, and exact error text in English.
+
 ## When This Applies
 
 This instruction activates whenever you:

@@ -43,13 +43,13 @@ stateDiagram-v2
     CANCELLED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `DRAFT -> OPEN` | SKU active; approved active recipe version; snapshot complete | Create immutable PO snapshot lines. |
-| `APPROVED -> IN_PROGRESS` | PO approved; no active hold | Create work/batch execution context. |
-| `IN_PROGRESS -> COMPLETED` | Material receipt and required process events complete | Batch ready for downstream QC/packaging. |
-| `ANY -> ON_HOLD` | Authorized hold with reason | Append hold/audit event. |
-| `OPEN/ON_HOLD -> CANCELLED` | No irreversible downstream ledger/release/public QR side effect, or correction approval exists | Audit cancel reason. |
+| Transition                  | Guard                                                                                          | Side effect                              |
+| --------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `DRAFT -> OPEN`             | SKU active; approved active recipe version; snapshot complete                                  | Create immutable PO snapshot lines.      |
+| `APPROVED -> IN_PROGRESS`   | PO approved; no active hold                                                                    | Create work/batch execution context.     |
+| `IN_PROGRESS -> COMPLETED`  | Material receipt and required process events complete                                          | Batch ready for downstream QC/packaging. |
+| `ANY -> ON_HOLD`            | Authorized hold with reason                                                                    | Append hold/audit event.                 |
+| `OPEN/ON_HOLD -> CANCELLED` | No irreversible downstream ledger/release/public QR side effect, or correction approval exists | Audit cancel reason.                     |
 
 ## 3. Material Issue
 
@@ -70,11 +70,11 @@ stateDiagram-v2
     REVERSED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `DRAFT -> PENDING_APPROVAL` | Lines come from PO snapshot | Approval request. |
-| `APPROVED -> EXECUTED` | Raw lot `READY_FOR_PRODUCTION`, available balance, no active hold, idempotency key | Post raw inventory decrement ledger; trace raw lot to batch. |
-| `EXECUTED -> REVERSED` | Owner-approved correction/reversal | Append reversal ledger, do not update original ledger. |
+| Transition                  | Guard                                                                              | Side effect                                                  |
+| --------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `DRAFT -> PENDING_APPROVAL` | Lines come from PO snapshot                                                        | Approval request.                                            |
+| `APPROVED -> EXECUTED`      | Raw lot `READY_FOR_PRODUCTION`, available balance, no active hold, idempotency key | Post raw inventory decrement ledger; trace raw lot to batch. |
+| `EXECUTED -> REVERSED`      | Owner-approved correction/reversal                                                 | Append reversal ledger, do not update original ledger.       |
 
 ## 4. Material Receipt
 
@@ -92,11 +92,62 @@ stateDiagram-v2
     CORRECTED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `PENDING_CONFIRMATION -> CONFIRMED` | Received quantity valid | Store workshop receipt; no inventory decrement. |
-| `CONFIRMED -> VARIANCE_REVIEW` | Received qty differs from issued qty | Require variance reason. |
-| `CONFIRMED -> CORRECTED` | Correction approved | Append correction record; preserve original receipt. |
+| Transition                          | Guard                                | Side effect                                          |
+| ----------------------------------- | ------------------------------------ | ---------------------------------------------------- |
+| `PENDING_CONFIRMATION -> CONFIRMED` | Received quantity valid              | Store workshop receipt; no inventory decrement.      |
+| `CONFIRMED -> VARIANCE_REVIEW`      | Received qty differs from issued qty | Require variance reason.                             |
+| `CONFIRMED -> CORRECTED`            | Correction approved                  | Append correction record; preserve original receipt. |
+
+## 4A. Raw Material Receipt (Supplier Collaboration 2-axis)
+
+Receipt M06 dùng đồng thời 2 trục trạng thái: axis A `supplier_collaboration_status` (giữa NCC và company) và axis B `raw_receipt_status` (vận hành kho/QC). Chi tiết bảng kết hợp hợp lệ và mô tả đầy đủ ở `modules/06_RAW_MATERIAL.md` mục 11.2.
+
+### Axis A — `supplier_collaboration_status`
+
+```mermaid
+stateDiagram-v2
+    [*] --> NOT_APPLICABLE
+    [*] --> PENDING_SUPPLIER_CONFIRM: company tạo trước, gọi NCC xác nhận
+    [*] --> SUPPLIER_SUBMITTED: NCC tự khai báo trên Supplier Portal
+    PENDING_SUPPLIER_CONFIRM --> SUPPLIER_CONFIRMED: NCC confirm
+    PENDING_SUPPLIER_CONFIRM --> SUPPLIER_DECLINED: NCC decline
+    SUPPLIER_SUBMITTED --> COMPANY_ACKNOWLEDGED: company ack
+    SUPPLIER_CONFIRMED --> COMPANY_ACKNOWLEDGED: company ack
+    COMPANY_ACKNOWLEDGED --> COLLABORATION_CLOSED: receipt close
+    SUPPLIER_DECLINED --> COLLABORATION_CLOSED: company close (EX-SUP-DECLINE)
+    NOT_APPLICABLE --> COLLABORATION_CLOSED: receipt SELF_GROWN close
+```
+
+### Axis B — `raw_receipt_status`
+
+```mermaid
+stateDiagram-v2
+    [*] --> DRAFT
+    DRAFT --> PENDING_SUPPLIER_CONFIRM: gửi NCC xác nhận
+    DRAFT --> PENDING_RECEIVE: SELF_GROWN bỏ qua axis A
+    PENDING_SUPPLIER_CONFIRM --> PENDING_RECEIVE: NCC confirm
+    PENDING_SUPPLIER_CONFIRM --> CANCELLED: NCC decline + company close
+    PENDING_RECEIVE --> RECEIVED: warehouse nhận hàng
+    RECEIVED --> ACCEPTED: tất cả line accept
+    RECEIVED --> PARTIALLY_ACCEPTED: một phần accept, phần khác reject/return
+    RECEIVED --> REJECTED: tất cả line reject
+    ACCEPTED --> CLOSED: close receipt
+    PARTIALLY_ACCEPTED --> CLOSED: close receipt
+    REJECTED --> CLOSED: close receipt
+    CANCELLED --> [*]
+    CLOSED --> [*]
+```
+
+| Transition                                         | Guard                                                                                         | Side effect                                                                       |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `DRAFT -> PENDING_SUPPLIER_CONFIRM`                | Receipt PURCHASED, supplier ACTIVE, có ít nhất 1 line                                         | Phát event `RAW_RECEIPT_REQUESTED_TO_SUPPLIER`; lock edit company-side metadata.  |
+| `PENDING_SUPPLIER_CONFIRM -> PENDING_RECEIVE`      | Axis A đạt `SUPPLIER_CONFIRMED`                                                               | Cho phép warehouse receive.                                                       |
+| `PENDING_SUPPLIER_CONFIRM -> CANCELLED`            | Axis A `SUPPLIER_DECLINED` + close lý do                                                      | Đường EX-SUP-DECLINE; không phát sinh ledger.                                     |
+| `PENDING_RECEIVE -> RECEIVED`                      | Có `received_at`, `received_quantity ≥ 0`, evidence CLEAN nếu `HL-SUP-009`                    | Lock receive form; bắt đầu QC line; chưa decrement inventory raw.                 |
+| `RECEIVED -> ACCEPTED/PARTIALLY_ACCEPTED/REJECTED` | Mỗi line có quyết định accept/reject/return; `sum(lots.quantity) = acceptedQuantity` per line | Tạo `op_raw_material_lot` cho phần accepted; reject/return không sinh lot.        |
+| `* -> CLOSED`                                      | Chỉ từ ACCEPTED/PARTIALLY_ACCEPTED/REJECTED                                                   | Phát event `RAW_RECEIPT_CLOSED`; đẩy axis A `COLLABORATION_CLOSED`; lock toàn bộ. |
+
+Bảng kết hợp hợp lệ giữa axis A và axis B, cùng các invariant (`SUPPLIER_DECLINED ⇒ raw_receipt_status ∈ {CANCELLED}`; `RECEIVED+ ⇒ axis A ∈ {SUPPLIER_CONFIRMED, COMPANY_ACKNOWLEDGED, NOT_APPLICABLE}`) ở `modules/06_RAW_MATERIAL.md` mục 11.2.
 
 ## 5. Raw Material Lot
 
@@ -126,12 +177,12 @@ stateDiagram-v2
     DISPOSED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `IN_QC -> QC_PASSED_WAITING_READY` | QC inspection signed with result `QC_PASS` | Lot becomes a candidate for readiness review, not issue-ready yet. |
+| Transition                                        | Guard                                                                                           | Side effect                                                            |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `IN_QC -> QC_PASSED_WAITING_READY`                | QC inspection signed with result `QC_PASS`                                                      | Lot becomes a candidate for readiness review, not issue-ready yet.     |
 | `QC_PASSED_WAITING_READY -> READY_FOR_PRODUCTION` | `RAW_LOT_MARK_READY` permission, no hold/reject/quarantine/expiry, source/readiness checks pass | Append state transition/audit and emit `RAW_LOT_READY_FOR_PRODUCTION`. |
-| `READY_FOR_PRODUCTION -> RESERVED/CONSUMED` | Material request/issue uses approved PO snapshot and available balance | Ledger and balance update only at issue execution. |
-| `ON_HOLD/QUARANTINED/EXPIRED/REJECTED` | Reason/evidence required | Blocks material issue. |
+| `READY_FOR_PRODUCTION -> RESERVED/CONSUMED`       | Material request/issue uses approved PO snapshot and available balance                          | Ledger and balance update only at issue execution.                     |
+| `ON_HOLD/QUARANTINED/EXPIRED/REJECTED`            | Reason/evidence required                                                                        | Blocks material issue.                                                 |
 
 ## 6. QC Inspection
 
@@ -151,11 +202,11 @@ stateDiagram-v2
     CORRECTED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `IN_REVIEW -> QC_PASS` | Checklist complete | Entity may proceed to next gate if no hold. |
-| `IN_REVIEW -> QC_HOLD/QC_REJECT` | Reason/note required | Block downstream gate. |
-| `ANY_SIGNED -> CORRECTED` | Correction approval | New correction record, original remains append-only. |
+| Transition                       | Guard                | Side effect                                          |
+| -------------------------------- | -------------------- | ---------------------------------------------------- |
+| `IN_REVIEW -> QC_PASS`           | Checklist complete   | Entity may proceed to next gate if no hold.          |
+| `IN_REVIEW -> QC_HOLD/QC_REJECT` | Reason/note required | Block downstream gate.                               |
+| `ANY_SIGNED -> CORRECTED`        | Correction approval  | New correction record, original remains append-only. |
 
 ## 7. Batch
 
@@ -181,13 +232,13 @@ stateDiagram-v2
     QC_REJECT --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `IN_PRODUCTION -> PROCESS_COMPLETED` | Required process events complete and audited | Batch can enter packaging/QC downstream. |
-| `PACKAGED -> QC_PENDING` | Packaging/printing prerequisites complete | Batch is ready for finished-goods QC. |
-| `QC_PENDING -> QC_PASS` | Finished QC inspection signed | Batch is eligible to request release, not warehouse-ready yet. |
-| `RELEASE_PENDING -> RELEASED` | Separate batch release record approved | Batch becomes eligible for finished-goods warehouse receipt. |
-| `RELEASED -> BLOCKED` | Recall/quality/hold decision with reason | Blocks further warehouse/shipment actions according scope. |
+| Transition                           | Guard                                        | Side effect                                                    |
+| ------------------------------------ | -------------------------------------------- | -------------------------------------------------------------- |
+| `IN_PRODUCTION -> PROCESS_COMPLETED` | Required process events complete and audited | Batch can enter packaging/QC downstream.                       |
+| `PACKAGED -> QC_PENDING`             | Packaging/printing prerequisites complete    | Batch is ready for finished-goods QC.                          |
+| `QC_PENDING -> QC_PASS`              | Finished QC inspection signed                | Batch is eligible to request release, not warehouse-ready yet. |
+| `RELEASE_PENDING -> RELEASED`        | Separate batch release record approved       | Batch becomes eligible for finished-goods warehouse receipt.   |
+| `RELEASED -> BLOCKED`                | Recall/quality/hold decision with reason     | Blocks further warehouse/shipment actions according scope.     |
 
 ## 8. Batch Release
 
@@ -202,10 +253,10 @@ stateDiagram-v2
     REVOKED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `PENDING -> APPROVED_RELEASED` | Batch QC result is `QC_PASS`; no active hold | Batch eligible for warehouse receipt. |
-| `APPROVED_RELEASED -> REVOKED` | Recall/quality decision with approval | Blocks future warehouse/shipment; audit. |
+| Transition                     | Guard                                        | Side effect                              |
+| ------------------------------ | -------------------------------------------- | ---------------------------------------- |
+| `PENDING -> APPROVED_RELEASED` | Batch QC result is `QC_PASS`; no active hold | Batch eligible for warehouse receipt.    |
+| `APPROVED_RELEASED -> REVOKED` | Recall/quality decision with approval        | Blocks future warehouse/shipment; audit. |
 
 ## 9. Warehouse Receipt
 
@@ -221,11 +272,11 @@ stateDiagram-v2
     CORRECTED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `DRAFT -> PENDING_CONFIRMATION` | Batch release status `APPROVED_RELEASED` | Create receipt document. |
-| `PENDING_CONFIRMATION -> CONFIRMED` | Quantity > 0; warehouse valid; no active hold | Post finished-goods ledger and lot balance. |
-| `CONFIRMED -> CORRECTED` | Correction approval | Append correction/reversal; original ledger remains. |
+| Transition                          | Guard                                         | Side effect                                          |
+| ----------------------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| `DRAFT -> PENDING_CONFIRMATION`     | Batch release status `APPROVED_RELEASED`      | Create receipt document.                             |
+| `PENDING_CONFIRMATION -> CONFIRMED` | Quantity > 0; warehouse valid; no active hold | Post finished-goods ledger and lot balance.          |
+| `CONFIRMED -> CORRECTED`            | Correction approval                           | Append correction/reversal; original ledger remains. |
 
 ## 10. Inventory Ledger
 
@@ -240,11 +291,11 @@ stateDiagram-v2
     ADJUSTMENT_POSTED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `DRAFT_ENTRY -> POSTED` | Transaction succeeds atomically | Ledger becomes append-only. |
-| `POSTED -> REVERSAL_POSTED` | Reversal command approved | Add reversal entry; never mutate posted entry. |
-| `POSTED -> ADJUSTMENT_POSTED` | Adjustment approved | Add adjustment entry with reason. |
+| Transition                    | Guard                           | Side effect                                    |
+| ----------------------------- | ------------------------------- | ---------------------------------------------- |
+| `DRAFT_ENTRY -> POSTED`       | Transaction succeeds atomically | Ledger becomes append-only.                    |
+| `POSTED -> REVERSAL_POSTED`   | Reversal command approved       | Add reversal entry; never mutate posted entry. |
+| `POSTED -> ADJUSTMENT_POSTED` | Adjustment approved             | Add adjustment entry with reason.              |
 
 ## 11. Print Job
 
@@ -265,11 +316,11 @@ stateDiagram-v2
     REPRINTED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `DRAFT -> QUEUED` | QR is generated/eligible; GTIN if required | Print queue entry. |
-| `PRINTING -> PRINTED` | Printer confirms success | QR can become public trace eligible if policy passes. |
-| `PRINTED -> REPRINTED` | Reason required | Append reprint history. |
+| Transition             | Guard                                      | Side effect                                           |
+| ---------------------- | ------------------------------------------ | ----------------------------------------------------- |
+| `DRAFT -> QUEUED`      | QR is generated/eligible; GTIN if required | Print queue entry.                                    |
+| `PRINTING -> PRINTED`  | Printer confirms success                   | QR can become public trace eligible if policy passes. |
+| `PRINTED -> REPRINTED` | Reason required                            | Append reprint history.                               |
 
 ## 12. QR Lifecycle
 
@@ -290,12 +341,12 @@ stateDiagram-v2
     PRINTED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `GENERATED -> QUEUED` | Print job exists | Append QR state history. |
-| `QUEUED -> PRINTED` | Print success | Build public trace projection. |
-| `PRINTED -> REPRINTED` | Reason required | Original QR history preserved. |
-| `ANY -> VOID` | Reason required | Public trace must return safe invalid/void status. |
+| Transition             | Guard            | Side effect                                        |
+| ---------------------- | ---------------- | -------------------------------------------------- |
+| `GENERATED -> QUEUED`  | Print job exists | Append QR state history.                           |
+| `QUEUED -> PRINTED`    | Print success    | Build public trace projection.                     |
+| `PRINTED -> REPRINTED` | Reason required  | Original QR history preserved.                     |
+| `ANY -> VOID`          | Reason required  | Public trace must return safe invalid/void status. |
 
 ## 13. Trace
 
@@ -318,12 +369,12 @@ stateDiagram-v2
     PUBLISHED_PUBLIC --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `BUILDING -> COMPLETE` | Source/raw/issue/batch/QR/warehouse links are enough | Internal genealogy available. |
-| `COMPLETE -> PUBLISHED_PUBLIC` | Public whitelist policy passes | Public trace response available. |
-| `ANY -> GAP_DETECTED` | Required chain link missing | Alert/audit; may block recall close. |
-| `BUILDING -> FAILED` | Builder error, stale index, or unreadable source data | Trace is not considered complete or recall-ready until reviewed/rebuilt. |
+| Transition                     | Guard                                                 | Side effect                                                              |
+| ------------------------------ | ----------------------------------------------------- | ------------------------------------------------------------------------ |
+| `BUILDING -> COMPLETE`         | Source/raw/issue/batch/QR/warehouse links are enough  | Internal genealogy available.                                            |
+| `COMPLETE -> PUBLISHED_PUBLIC` | Public whitelist policy passes                        | Public trace response available.                                         |
+| `ANY -> GAP_DETECTED`          | Required chain link missing                           | Alert/audit; may block recall close.                                     |
+| `BUILDING -> FAILED`           | Builder error, stale index, or unreadable source data | Trace is not considered complete or recall-ready until reviewed/rebuilt. |
 
 ## 14. Recall
 
@@ -347,11 +398,11 @@ stateDiagram-v2
     CANCELLED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `OPEN -> IMPACT_ANALYSIS` | Recall case created | Create impact snapshot version. |
-| `IMPACT_ANALYSIS -> HOLD_ACTIVE` | Exposure snapshot exists or trace gap reviewed | Hold affected inventory/batches. |
-| `CAPA -> CLOSED` | Recovery, disposition and CAPA complete | Close recall with audit. |
+| Transition                          | Guard                                                                                                 | Side effect                                     |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `OPEN -> IMPACT_ANALYSIS`           | Recall case created                                                                                   | Create impact snapshot version.                 |
+| `IMPACT_ANALYSIS -> HOLD_ACTIVE`    | Exposure snapshot exists or trace gap reviewed                                                        | Hold affected inventory/batches.                |
+| `CAPA -> CLOSED`                    | Recovery, disposition and CAPA complete                                                               | Close recall with audit.                        |
 | `CAPA -> CLOSED_WITH_RESIDUAL_RISK` | Recovery/CAPA cannot fully eliminate accepted residual risk; residual risk note and approver required | Close recall with explicit residual risk audit. |
 
 ## 15. MISA Sync
@@ -371,11 +422,11 @@ stateDiagram-v2
     SYNCED --> [*]
 ```
 
-| Transition | Guard | Side effect |
-|---|---|---|
-| `PENDING -> MAPPED` | Mapping exists | Ready for integration dispatch. |
-| `SYNCING -> FAILED_RETRYABLE` | Retryable upstream/network error | Retry counter/log. |
-| `FAILED_NEEDS_REVIEW -> RECONCILED` | Operator reconciliation with reason | Reconcile record and audit. |
+| Transition                          | Guard                               | Side effect                     |
+| ----------------------------------- | ----------------------------------- | ------------------------------- |
+| `PENDING -> MAPPED`                 | Mapping exists                      | Ready for integration dispatch. |
+| `SYNCING -> FAILED_RETRYABLE`       | Retryable upstream/network error    | Retry counter/log.              |
+| `FAILED_NEEDS_REVIEW -> RECONCILED` | Operator reconciliation with reason | Reconcile record and audit.     |
 
 ## 16. State Machine Done Gate
 
@@ -385,19 +436,19 @@ stateDiagram-v2
 
 ## 17. Enum/Table Anchor Map
 
-| lifecycle | enum/cột anchor | module spec | database/table anchor | test anchor |
-|---|---|---|---|---|
-| Production Order | `production_order_status` | `modules/07_PRODUCTION.md` | `op_production_order.production_order_status` | TC-M07-PO-001 |
-| Material Issue | `material_issue_status` | `modules/08_MATERIAL_ISSUE_RECEIPT.md` | `op_material_issue.issue_status` | TC-M08-MI-001 |
-| Material Receipt | `material_receipt_status` | `modules/08_MATERIAL_ISSUE_RECEIPT.md` | `op_material_receipt.receipt_status` | TC-M08-MR-002 |
-| Raw Material Lot | `lot_status`, `readiness_status`, `lot_qc_status` | `modules/06_RAW_MATERIAL.md` | `op_raw_material_lot.lot_status`, `op_raw_material_lot.readiness_status`, `op_raw_material_lot.lot_qc_status`, `op_raw_material_lot.hold_status` | TC-M06-RM-004, TC-M06-RM-005 |
-| QC Inspection | `qc_status` | `modules/09_QC_RELEASE.md` | `op_qc_inspection.qc_result`, `op_raw_material_qc_inspection.qc_status` | TC-M09-QC-001 |
-| Batch | `batch_status` | `modules/07_PRODUCTION.md`, `modules/09_QC_RELEASE.md` | `op_batch.batch_status`, `op_batch_state_transition_log` | TC-M07-BATCH-001 |
-| Batch Release | `batch_release_status` | `modules/09_QC_RELEASE.md` | `op_batch_release.release_status` | TC-M09-REL-002 |
-| Warehouse Receipt | `warehouse_receipt_status` | `modules/11_WAREHOUSE_INVENTORY.md` | `op_warehouse_receipt.receipt_status` | TC-M11-WH-001 |
-| Inventory Ledger | `inventory_ledger_status` | `modules/11_WAREHOUSE_INVENTORY.md` | `op_inventory_ledger.ledger_direction`, append-only post status | TC-M11-INV-002 |
-| Print Job | `print_status` | `modules/10_PACKAGING_PRINTING.md` | `op_print_job.print_status` | TC-M10-PRINT-004 |
-| QR Lifecycle | `qr_status` | `modules/10_PACKAGING_PRINTING.md`, `modules/12_TRACEABILITY.md` | `op_qr_registry.qr_status` | TC-M10-QR-003 |
-| Trace | `trace_status` | `modules/12_TRACEABILITY.md` | `op_trace_link.trace_link_type`, trace projection readiness | TC-M12-TRACE-001 |
-| Recall | `recall_status` | `modules/13_RECALL.md` | `op_recall_case.recall_status` | TC-M13-RECALL-001 |
-| MISA Sync | `misa_sync_status` | `modules/14_MISA_INTEGRATION.md` | `misa_sync_event.sync_status` | TC-M14-MISA-002 |
+| lifecycle         | enum/cột anchor                                   | module spec                                                      | database/table anchor                                                                                                                            | test anchor                  |
+| ----------------- | ------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| Production Order  | `production_order_status`                         | `modules/07_PRODUCTION.md`                                       | `op_production_order.production_order_status`                                                                                                    | TC-M07-PO-001                |
+| Material Issue    | `material_issue_status`                           | `modules/08_MATERIAL_ISSUE_RECEIPT.md`                           | `op_material_issue.issue_status`                                                                                                                 | TC-M08-MI-001                |
+| Material Receipt  | `material_receipt_status`                         | `modules/08_MATERIAL_ISSUE_RECEIPT.md`                           | `op_material_receipt.receipt_status`                                                                                                             | TC-M08-MR-002                |
+| Raw Material Lot  | `lot_status`, `readiness_status`, `lot_qc_status` | `modules/06_RAW_MATERIAL.md`                                     | `op_raw_material_lot.lot_status`, `op_raw_material_lot.readiness_status`, `op_raw_material_lot.lot_qc_status`, `op_raw_material_lot.hold_status` | TC-M06-RM-004, TC-M06-RM-005 |
+| QC Inspection     | `qc_status`                                       | `modules/09_QC_RELEASE.md`                                       | `op_qc_inspection.qc_result`, `op_raw_material_qc_inspection.qc_status`                                                                          | TC-M09-QC-001                |
+| Batch             | `batch_status`                                    | `modules/07_PRODUCTION.md`, `modules/09_QC_RELEASE.md`           | `op_batch.batch_status`, `op_batch_state_transition_log`                                                                                         | TC-M07-BATCH-001             |
+| Batch Release     | `batch_release_status`                            | `modules/09_QC_RELEASE.md`                                       | `op_batch_release.release_status`                                                                                                                | TC-M09-REL-002               |
+| Warehouse Receipt | `warehouse_receipt_status`                        | `modules/11_WAREHOUSE_INVENTORY.md`                              | `op_warehouse_receipt.receipt_status`                                                                                                            | TC-M11-WH-001                |
+| Inventory Ledger  | `inventory_ledger_status`                         | `modules/11_WAREHOUSE_INVENTORY.md`                              | `op_inventory_ledger.ledger_direction`, append-only post status                                                                                  | TC-M11-INV-002               |
+| Print Job         | `print_status`                                    | `modules/10_PACKAGING_PRINTING.md`                               | `op_print_job.print_status`                                                                                                                      | TC-M10-PRINT-004             |
+| QR Lifecycle      | `qr_status`                                       | `modules/10_PACKAGING_PRINTING.md`, `modules/12_TRACEABILITY.md` | `op_qr_registry.qr_status`                                                                                                                       | TC-M10-QR-003                |
+| Trace             | `trace_status`                                    | `modules/12_TRACEABILITY.md`                                     | `op_trace_link.trace_link_type`, trace projection readiness                                                                                      | TC-M12-TRACE-001             |
+| Recall            | `recall_status`                                   | `modules/13_RECALL.md`                                           | `op_recall_case.recall_status`                                                                                                                   | TC-M13-RECALL-001            |
+| MISA Sync         | `misa_sync_status`                                | `modules/14_MISA_INTEGRATION.md`                                 | `misa_sync_event.sync_status`                                                                                                                    | TC-M14-MISA-002              |

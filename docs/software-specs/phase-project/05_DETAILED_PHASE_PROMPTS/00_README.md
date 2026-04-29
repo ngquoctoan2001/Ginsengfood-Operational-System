@@ -75,18 +75,18 @@ Moi prompt implement/review/validate trong thu muc nay mac dinh ap dung:
 
 Moi agent run phai tra ve:
 
-- Summary.
+- Tóm tắt.
 - Phase/gap ID.
-- Requirement source.
-- Evidence used.
-- Files changed.
-- Commands run.
-- Backend build/test result.
-- Frontend build/test result.
-- Migration/update result, if applicable.
-- Seed validation result, if applicable.
-- Smoke result, if applicable.
-- Process cleanup result.
-- Progress report update.
-- Remaining risks.
-- Next recommended prompt.
+- Nguồn yêu cầu.
+- Evidence đã dùng.
+- File đã sửa.
+- Lệnh đã chạy.
+- Kết quả backend build/test.
+- Kết quả frontend build/test.
+- Kết quả migration/update, nếu áp dụng.
+- Kết quả seed validation, nếu áp dụng.
+- Kết quả smoke, nếu áp dụng.
+- Kết quả cleanup process.
+- Cập nhật báo cáo tiến độ.
+- Rủi ro còn lại.
+- Prompt khuyến nghị tiếp theo.

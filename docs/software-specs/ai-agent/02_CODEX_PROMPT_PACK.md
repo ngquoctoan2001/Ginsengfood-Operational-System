@@ -26,7 +26,7 @@ Workflow:
 4. Implement minimal patch.
 5. Validate build/test/migration/seed/smoke theo done gate.
 6. Review security/public trace/MISA/inventory/audit/API-FE sync nếu chạm.
-7. Handoff bằng summary, files, evidence, commands, risks.
+7. Handoff bằng heading tiếng Việt: tóm tắt, file đã sửa, evidence, lệnh đã chạy, rủi ro.
 ```
 
 ## 2. Anti-Scope Prompt
@@ -58,7 +58,7 @@ Kiểm tra:
 6. FE API client/type/hook/form/table/action state.
 7. Tests trong testing/03_API_TEST_PLAN.md và testing/04_UI_TEST_PLAN.md.
 
-Output:
+Đầu ra:
 - API changes.
 - FE changes required.
 - FE files likely affected.
@@ -101,12 +101,12 @@ Read:
 - docs/software-specs/ui/03_SCREEN_CATALOG.md
 - docs/software-specs/testing/02_TEST_CASE_MATRIX.md
 
-Produce:
+Tạo đầu ra:
 - Gap map.
 - Implementation plan.
 - Minimal patch.
-- Validation evidence.
-- Handoff update.
+- Evidence kiểm chứng.
+- Cập nhật handoff.
 
 Protect:
 - G1 snapshot, 4 recipe groups, raw lot mark-ready gate (`QC_PASS` -> `RAW_LOT_MARK_READY` -> `READY_FOR_PRODUCTION` -> material issue), material issue decrement, batch release gate (`QC_PASS` -> explicit release -> warehouse receipt), public trace policy, MISA boundary, audit append-only.

@@ -14,9 +14,9 @@
 | OBS-MET-002 | QC/release metrics | M09 | Count QC hold/reject/pass, release pending, release blocked by hold. | P1 | Dashboard test | Tooling |
 | OBS-MET-003 | Public trace metrics | M12 | Count public trace success, invalid QR, not public, latency, leakage violations. | P1 | Public trace test | Tooling |
 | OBS-MET-004 | MISA sync metrics | M14 | Count pending, synced, failed, missing mapping, retry, reconcile pending. | P0 | TC-M14-MISA-002 | No |
-| OBS-MET-005 | Recall metrics | M13 | Count open recall, impact pending, hold active, CAPA overdue. | P1 | Recall dashboard test | SLA decision |
+| OBS-MET-005 | Recall metrics | M13 | Count open recall, impact pending, hold active, CAPA overdue, CAPA evidence pending/failed/malware scan. | P1 | Recall dashboard test | SLA decision |
 | OBS-MET-006 | Batch state metrics | M07, M09, M11 | Count batches by `QC_PENDING`, `QC_PASS`, `QC_HOLD`, `QC_REJECT`, `RELEASED`, blocked warehouse receipt and active hold per time window. | P1 | Production/QC dashboard test | Tooling |
-| OBS-HEALTH-001 | Health endpoint | M15 | Report app, DB, queue/outbox, MISA adapter, printer/device registry health, storage if applicable. | P1 | Health check test | Tooling |
+| OBS-HEALTH-001 | Health endpoint | M15 | Report app, DB, queue/outbox, MISA adapter, printer/device registry health, evidence storage adapter and scanner health where configured. | P1 | Health check test | Tooling |
 | OBS-ALERT-001 | Critical alerts | M15 | Alert on MISA fail, printer fail, inventory negative risk, public trace leakage, recall SLA risk. | P1 | TC-M15-ALERT-002 | Escalation channel |
 
 ## 3. Required Correlation IDs
@@ -28,7 +28,7 @@
 | Warehouse receipt | receipt id, batch id, ledger id |
 | Trace search | search request id, entity id, chain id if implemented |
 | Public trace | request id, QR code hash/reference only, public-safe result |
-| Recall | recall case id, impact snapshot id, hold/sale lock id |
+| Recall | recall case id, impact snapshot id, hold/sale lock id, CAPA id, evidence id/scan status |
 | MISA sync | outbox event id, sync event id, retry/reconcile id |
 
 ## 4. Logging Policy
@@ -48,6 +48,7 @@
 | ALERT-INV-001 | Inventory ledger posting failure or negative balance risk | Critical | Warehouse/Admin |
 | ALERT-TRACE-001 | Public trace response policy violation detected | Critical | Security/QA |
 | ALERT-RECALL-001 | Recall impact/hold/CAPA exceeds approved SLA; threshold pending `OD-TRACE-SLA`/recall SLA owner decision | High | Recall manager |
+| ALERT-EVIDENCE-001 | Evidence scan failed, malware detected, or storage adapter unavailable for source-origin/CAPA evidence | High | QA/Security/DevOps |
 | ALERT-PRINT-001 | Print/QR job failure rate above threshold | Medium/High | Packaging/Device operator |
 | ALERT-SEED-001 | Seed validation fails in QA/staging | High | DBA/Backend |
 

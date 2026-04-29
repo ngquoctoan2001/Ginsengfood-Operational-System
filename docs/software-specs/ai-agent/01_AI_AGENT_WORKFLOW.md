@@ -4,9 +4,9 @@
 
 Workflow này hướng dẫn AI coding agent nhận một phase/module/gap và triển khai có kiểm soát, dựa trên `docs/software-specs/`, không suy đoán nghiệp vụ.
 
-## 2. Operating Rules
+## 2. Quy tắc vận hành
 
-| rule_id | Rule |
+| rule_id | Quy tắc |
 |---|---|
 | AG-WF-001 | Luôn bắt đầu bằng `REQ-*`, module `M01..M16`, phase `CODE01..CODE17` và test case `TC-*`. |
 | AG-WF-002 | Không đọc hoặc dùng source bị cấm làm source-of-truth cho spec batch này. |
@@ -19,19 +19,19 @@ Workflow này hướng dẫn AI coding agent nhận một phase/module/gap và t
 
 ## 3. Delivery Sequence
 
-| step | Agent output |
+| step | Đầu ra của agent |
 |---|---|
 | 1. Intake | Requirement, module, phase, business rule, test, source file/section |
 | 2. Gap map | Current vs target gap by DB/backend/API/FE/seed/test/docs |
 | 3. Plan | Bounded work items, write scope, dependencies, non-goals |
 | 4. Implement | Minimal patch, no unrelated cleanup |
-| 5. Validate | Build/test/migration/seed/smoke commands and results |
+| 5. Validate | Lệnh và kết quả build/test/migration/seed/smoke |
 | 6. Review | Security, public trace, MISA, inventory, audit, API/FE sync |
-| 7. Handoff | Summary, files changed, evidence, residual risks, next gaps |
+| 7. Handoff | Tóm tắt, file đã sửa, evidence, rủi ro còn lại, gap tiếp theo |
 
-## 4. Evidence Required
+## 4. Evidence bắt buộc
 
-| evidence | Required when |
+| evidence | Bắt buộc khi |
 |---|---|
 | `REQ-*` and `BR-*` | Every gap |
 | API endpoint and DTO | API/backend/FE gap |
@@ -39,12 +39,12 @@ Workflow này hướng dẫn AI coding agent nhận một phase/module/gap và t
 | Screen/action/API client | FE gap |
 | State machine/workflow | Lifecycle gap |
 | Test case IDs | Every implementation gap |
-| Command output | Validation/build/test/seed/smoke |
+| Command output | Kiểm chứng/build/test/seed/smoke |
 | Owner decision | Any open ambiguity or deferred behavior |
 
-## 5. Stop Conditions
+## 5. Điều kiện dừng
 
-Agent must stop and produce a gap/decision report instead of implementing when:
+Agent phải dừng và tạo gap/decision report thay vì implement khi:
 
 - Source precedence is unclear.
 - Required owner decision blocks behavior.
@@ -53,20 +53,22 @@ Agent must stop and produce a gap/decision report instead of implementing when:
 - Public/private data exposure cannot be verified.
 - Migration/seed path would mutate append-only historical data destructively.
 
-## 6. Final Response Contract
+## 6. Contract phản hồi cuối
 
-Every implementation handoff must include:
+Mỗi implementation handoff phải dùng heading tiếng Việt và gồm:
 
-- Summary.
-- Files changed.
-- Requirement source.
-- Evidence used.
-- Commands run.
-- Test result.
-- Backend build result.
-- Frontend build result.
-- Process cleanup result.
-- Database migration/update result when applicable.
-- Seed validation result when applicable.
-- Remaining risks.
-- Handoff update.
+- Tóm tắt.
+- File đã sửa.
+- Nguồn yêu cầu.
+- Evidence đã dùng.
+- Lệnh đã chạy.
+- Kết quả test.
+- Kết quả backend build.
+- Kết quả frontend build.
+- Kết quả cleanup process.
+- Kết quả database migration/update khi áp dụng.
+- Kết quả seed validation khi áp dụng.
+- Rủi ro còn lại.
+- Cập nhật handoff.
+
+Không dùng heading phản hồi cuối bằng tiếng Anh như `Progress Report Update`, `Commands Run`, `Validation`, `Summary`, `Files Changed`, hoặc `Process Cleanup Result`.

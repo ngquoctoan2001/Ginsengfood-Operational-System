@@ -6,7 +6,8 @@
 
 ```mermaid
 flowchart TD
-  SZ[Source Zone / Source Origin] --> RM[Raw Material Intake]
+  SZ[Source Zone / Source Origin] --> SEV[Source Evidence Metadata / Clean Scan]
+  SEV --> RM[Raw Material Intake]
   SUP[Supplier] --> RM
   ING[Ingredient Master] --> RM
   RM --> RLOT[Raw Material Lot PENDING_QC]
@@ -50,7 +51,10 @@ flowchart TD
   WHR --> TRACE
   TRACE --> PUB[Public Trace View]
   TRACE --> RECALL[Recall Impact Snapshot]
-  RECALL --> HOLD[Hold / Sale Lock / Recovery / CAPA]
+  RECALL --> HOLD[Hold / Sale Lock / Recovery / CAPA / Clean Evidence]
+  HOLD --> CAPAEV[CAPA Evidence Metadata / Clean Scan]
+  SEV -. binary ref .-> ESTORE[Evidence Storage Adapter]
+  CAPAEV -. binary ref .-> ESTORE
 
   LEDGER1 --> OUTBOX[Outbox]
   MI --> OUTBOX
@@ -74,7 +78,7 @@ flowchart TD
 | Control | Applies to | Rule |
 | --- | --- | --- |
 | Idempotency | Intake, issue, receipt, print, release, recall actions | Same command key cannot create duplicate side effects. |
-| Append-only | Audit, state transition, ledger, QR history, recall snapshots | Correction/reversal creates new record. |
+| Append-only | Audit, state transition, ledger, QR history, recall snapshots, evidence metadata | Correction/reversal creates new record; evidence scan status can only move from `PENDING_SCAN` to a terminal scan result. |
 | FK/reference | All transaction tables | No orphan transaction rows. |
 | Check enum | State/status fields | Invalid state rejected at DB/app boundary. |
 | Public whitelist | Public trace | Internal/private fields excluded by design. |

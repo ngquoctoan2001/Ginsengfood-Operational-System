@@ -17,6 +17,7 @@
 | ADR-009 | Keep SKU transitional master in Operational for G1 go-live. | Catalog domain not in scope; PO needs SKU snapshot. Transitional until Catalog domain is in scope; Operational retains immutable snapshots/references after migration. | `ref_sku` exists but ownership is transitional. | Accepted with boundary note |
 | ADR-010 | Use fake GTIN fixture only with explicit `is_test_fixture`. | Real GTIN not supplied to dev yet. | Service/DB rejects production print job where trade item mapping is `is_test_fixture=true`; no SKU-code fallback for commercial barcode. | Accepted |
 | ADR-011 | `READY_FOR_PRODUCTION` is a distinct raw-lot readiness state, not an alias of `QC_PASS`. | QC decision and production readiness are separate gates; material issue on QC-pass-only lot must fail with `RAW_MATERIAL_LOT_NOT_READY`. | Separate readiness transition command, audit/state row and `RAW_LOT_READY_FOR_PRODUCTION` event. | Accepted |
+| ADR-012 | Evidence binary storage uses a storage adapter: dev/test local filesystem, production company storage server; DB stores metadata only and clean scan is required for verify/close gates. | Keeps code ready for production server config without binding specs to S3/MinIO/Azure; prevents DB blob storage and unsafe evidence acceptance. | `op_source_origin_evidence`, `op_recall_capa_evidence`, evidence API, storage config, scan-status validation. | Accepted |
 
 ## 2. Open Technical Decisions
 
@@ -31,6 +32,7 @@
 | OTD-007 | MISA retry/backoff exact policy | M14, outbox worker, integration tests | Do not hard-code unapproved retry count. |
 | OTD-008 | Break-glass session auto-expiry final policy | M01, M02, M15 | Security default <= 15 minutes pending owner confirmation. |
 | OTD-009 | Lot readiness workflow owner/action policy | M06, M08, M09 | Default: explicit `RAW_LOT_MARK_READY` by authorized QA/release or ops manager role. |
+| OTD-010 | Production evidence storage endpoint/credentials and malware scan engine | M05, M13, deployment, security | Dev/test local filesystem + `dev-skip`/mock scan only; production requires company storage server config and real scanner before go-live. |
 
 ## 3. Migration-Relevant Decisions
 
@@ -44,6 +46,7 @@
 | QC pass != release | Separate QC inspection and batch release tables/states. |
 | Warehouse requires release | FK/check/service validation against release record. |
 | Recall snapshot | Dedicated snapshot table or JSON snapshot with version. |
+| Evidence metadata | Dedicated source-origin and CAPA evidence metadata tables; binary file refs only; scan status check enum and clean scan gates. |
 | Public trace whitelist | Dedicated projection/view and policy table. |
 
 

@@ -26,13 +26,13 @@ Workflow:
 6. Define failure triage process.
 7. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - CI pipeline plan.
 - Required commands.
 - Artifact list.
 - Failure policy.
 - Implementation prompt.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 07.02 - CI Pipeline Implementation
@@ -51,12 +51,12 @@ Workflow:
 4. Run equivalent local validation where possible.
 5. Update progress report.
 
-Required output:
-- CI files changed.
-- Commands run.
-- Local validation result.
+Đầu ra bắt buộc:
+- CI file đã sửa.
+- Lệnh đã chạy.
+- Local kết quả kiểm chứng.
 - Remaining CI-only risks.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 07.03 - Staging Deployment Runbook
@@ -86,13 +86,13 @@ Stop conditions:
 - Do not deploy if production secrets are used in staging.
 - Do not run destructive DB commands.
 
-Required output:
+Đầu ra bắt buộc:
 - Staging deployment verdict.
 - Version/build artifact.
 - Migration/seed result.
-- Smoke result.
+- Kết quả smoke.
 - Rollback readiness.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 07.04 - Release Candidate And Rollback Plan
@@ -114,12 +114,12 @@ Workflow:
 7. Define go/no-go checklist.
 8. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Release candidate summary.
 - Migration/seed/config checklist.
 - Rollback plan.
 - Forward-fix plan.
 - Go/no-go criteria.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 

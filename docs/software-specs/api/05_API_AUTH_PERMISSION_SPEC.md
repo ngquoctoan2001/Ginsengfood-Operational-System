@@ -22,6 +22,7 @@
 | --- | --- | --- |
 | `AUDIT_VIEW` | `R-AUDITOR`, `R-OPS-MGR`, `R-ADMIN` | `GET /api/admin/audit/logs` |
 | `ROLE_PERMISSION_UPDATE` | `R-ADMIN` | `POST /api/admin/roles/{roleCode}/actions` |
+| `SOURCE_ORIGIN_EVIDENCE_ADD` | `R-WH-RAW`, `R-QA-REL`, `R-OPS-MGR` | `POST /api/admin/source-origins/{id}/evidence` |
 | `SOURCE_ORIGIN_VERIFY` | `R-QA-REL`, `R-OPS-MGR` | `POST /api/admin/source-origins/{id}/verify` |
 | `RAW_INTAKE_CREATE` | `R-WH-RAW` | `POST /api/admin/raw-material/intakes` |
 | `RAW_QC_SIGN` | `R-QC-RAW` | `POST /api/admin/raw-material/lots/{id}/qc-inspections` |
@@ -44,7 +45,11 @@
 | `INVENTORY_ADJUSTMENT_CREATE` | `R-WH-RAW`, `R-WH-FG`, approval by `R-OPS-MGR` | `POST /api/admin/inventory/adjustments` |
 | `TRACE_INTERNAL_VIEW` | `R-TRACE`, `R-RECALL-MGR`, `R-AUDITOR` | `GET /api/admin/trace/search` |
 | `RECALL_CASE_CREATE` | `R-RECALL-MGR` | `POST /api/admin/recall/cases` |
+| `RECALL_IMPACT_ANALYSIS` | `R-RECALL-MGR`, `R-QA-REL` | `POST /api/admin/recall/cases/{id}/impact-analysis` |
 | `RECALL_HOLD_APPLY` | `R-RECALL-MGR`, `R-OPS-MGR` | `POST /api/admin/recall/cases/{id}/hold` |
+| `RECALL_SALE_LOCK_APPLY` | `R-RECALL-MGR`, `R-OPS-MGR` | `POST /api/admin/recall/cases/{id}/sale-lock` |
+| `RECALL_CAPA_EVIDENCE_ADD` | `R-RECALL-MGR`, `R-QA-REL` | `POST /api/admin/recall/capas/{capaId}/evidence` |
+| `RECALL_CLOSE` | `R-RECALL-MGR`, approval by `R-QA-REL`/`R-OPS-MGR` if policy requires | `POST /api/admin/recall/cases/{id}/close` |
 | `MISA_MANUAL_RETRY` | `R-ACC-INT` | `POST /api/admin/integrations/misa/sync-events/{id}/retry` |
 | `ACCOUNTING_DOCUMENT_POST` | `R-ACC-INT` | `POST /api/admin/integrations/misa/material-issue-documents/{id}/post` |
 | `OVERRIDE_REQUEST_SUBMIT` | Authorized operator for target action | `POST /api/admin/governance/overrides` |

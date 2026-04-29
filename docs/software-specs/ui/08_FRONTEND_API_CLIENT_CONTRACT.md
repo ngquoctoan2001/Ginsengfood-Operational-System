@@ -23,31 +23,35 @@ Tài liệu này định nghĩa hợp đồng FE API client để backend/fronte
 
 ## 2. Client Boundaries
 
-| Client | Base path | Auth | Dùng cho | Không được dùng cho |
-|---|---|---|---|---|
-| `adminClient` | `/api/admin` | Required | Admin Web, Integration Console, internal trace, recall, inventory, MISA | Public trace page |
-| `mobileClient` | `/api/admin` hoặc mobile gateway [OWNER DECISION NEEDED] | Required | Shopfloor PWA commands, scan, offline queue | Anonymous access |
-| `publicTraceClient` | `/api/public` | Anonymous/public | `/trace/{qrCode}` public page | Admin trace, internal genealogy, supplier/personnel/cost/QC defect/loss/MISA fields |
+| Client              | Base path                                                | Auth                                                 | Dùng cho                                                                                                   | Không được dùng cho                                                                  |
+| ------------------- | -------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `adminClient`       | `/api/admin`                                             | Required                                             | Admin Web, Integration Console, internal trace, recall, inventory, MISA                                    | Public trace page                                                                    |
+| `mobileClient`      | `/api/admin` hoặc mobile gateway [OWNER DECISION NEEDED] | Required                                             | Shopfloor PWA commands, scan, offline queue                                                                | Anonymous access                                                                     |
+| `publicTraceClient` | `/api/public`                                            | Anonymous/public                                     | `/trace/{qrCode}` public page                                                                              | Admin trace, internal genealogy, supplier/personnel/cost/QC defect/loss/MISA fields  |
+| `supplierClient`    | `/api/supplier`                                          | Required (R-SUPPLIER, scope cứng theo `supplier_id`) | Supplier Portal `/supplier/*`: login, intake submit/list/detail, supplier confirm/decline, evidence upload | Admin write/internal trace/recall, ingredient ngoài allowlist, supplier khác (scope) |
 
 ## 3. Route Family Contract
 
 FE phải dùng route family đã chuẩn hóa trong `api/02_API_ENDPOINT_CATALOG.md`.
 
-| Domain | FE route group | API route family |
-|---|---|---|
-| Source Origin | `/admin/source-origin/*` | `/api/admin/source-zones`, `/api/admin/source-origins` |
-| Raw Material | `/admin/raw-material/*` | `/api/admin/raw-material/intakes`, `/api/admin/raw-material/lots`, `/api/admin/raw-material/lots/{lotId}/readiness` |
-| SKU/Recipe | `/admin/catalog/*` | `/api/admin/skus`, `/api/admin/ingredients`, `/api/admin/recipes` |
-| Production | `/admin/production/*` | `/api/admin/production-orders`, `/api/admin/work-orders`, `/api/admin/batch-executions` |
-| Material Flow | `/admin/material/*` | `/api/admin/material-requests`, `/api/admin/material-issues`, `/api/admin/material-receipts` |
-| QC/Release | `/admin/qc/*`, `/admin/release/*` | `/api/admin/qc-inspections`, `/api/admin/batch-releases`, `/api/admin/batches/{id}/release` |
-| Packaging/Printing | `/admin/packaging/*`, `/admin/printing/*` | `/api/admin/trade-items`, `/api/admin/packaging-jobs`, `/api/admin/qr-registry`, `/api/admin/print-jobs` |
-| Warehouse/Inventory | `/admin/warehouse/*`, `/admin/inventory/*` | `/api/admin/warehouse-receipts`, `/api/admin/inventory-ledger`, `/api/admin/lot-balances`, `/api/admin/inventory-adjustments` |
-| Traceability | `/admin/traceability/*` | `/api/admin/trace/*` |
-| Public Trace | `/trace/{qrCode}` | `/api/public/trace/{qrCode}` |
-| Recall | `/admin/recall/*` | `/api/admin/incidents`, `/api/admin/recall-cases`, `/api/admin/recall-holds` |
-| MISA Integration | `/admin/integrations/misa/*` | `/api/admin/integrations/misa/*` |
-| System | `/admin/system/*` | `/api/admin/users`, `/api/admin/roles`, `/api/admin/audit-logs`, `/api/admin/ui/screens` |
+| Domain                             | FE route group                             | API route family                                                                                                                                                                |
+| ---------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------- |
+| Source Origin                      | `/admin/source-origin/*`                   | `/api/admin/source-zones`, `/api/admin/source-origins`                                                                                                                          |
+| Raw Material                       | `/admin/raw-material/*`                    | `/api/admin/raw-material/intakes`, `/api/admin/raw-material/lots`, `/api/admin/raw-material/lots/{lotId}/readiness`                                                             |
+| SKU/Recipe                         | `/admin/catalog/*`                         | `/api/admin/skus`, `/api/admin/ingredients`, `/api/admin/recipes`                                                                                                               |
+| Production                         | `/admin/production/*`                      | `/api/admin/production-orders`, `/api/admin/work-orders`, `/api/admin/batch-executions`                                                                                         |
+| Material Flow                      | `/admin/material/*`                        | `/api/admin/material-requests`, `/api/admin/material-issues`, `/api/admin/material-receipts`                                                                                    |
+| QC/Release                         | `/admin/qc/*`, `/admin/release/*`          | `/api/admin/qc-inspections`, `/api/admin/batch-releases`, `/api/admin/batches/{id}/release`                                                                                     |
+| Packaging/Printing                 | `/admin/packaging/*`, `/admin/printing/*`  | `/api/admin/trade-items`, `/api/admin/packaging-jobs`, `/api/admin/qr-registry`, `/api/admin/print-jobs`                                                                        |
+| Warehouse/Inventory                | `/admin/warehouse/*`, `/admin/inventory/*` | `/api/admin/warehouse-receipts`, `/api/admin/inventory-ledger`, `/api/admin/lot-balances`, `/api/admin/inventory-adjustments`                                                   |
+| Traceability                       | `/admin/traceability/*`                    | `/api/admin/trace/*`                                                                                                                                                            |
+| Public Trace                       | `/trace/{qrCode}`                          | `/api/public/trace/{qrCode}`                                                                                                                                                    |
+| Recall                             | `/admin/recall/*`                          | `/api/admin/incidents`, `/api/admin/recall-cases`, `/api/admin/recall-holds`                                                                                                    |
+| MISA Integration                   | `/admin/integrations/misa/*`               | `/api/admin/integrations/misa/*`                                                                                                                                                |
+| System                             | `/admin/system/*`                          | `/api/admin/users`, `/api/admin/roles`, `/api/admin/audit-logs`, `/api/admin/ui/screens`                                                                                        |
+| Supplier Master (M03A)             | `/admin/master-data/suppliers/*`           | `/api/admin/suppliers`, `/api/admin/suppliers/{id}/suspend`, `/api/admin/suppliers/{id}/reactivate`, `/api/admin/suppliers/{id}/ingredients`, `/api/admin/suppliers/{id}/users` |
+| Supplier Collaboration (M06 admin) | `/admin/raw-material/intakes/*`            | `/api/admin/raw-material/intakes/{id}`, `.../receive`, `.../lines/{lineId}/accept                                                                                               | reject | return`, `.../close`, `.../evidence`, `.../feedback` |
+| Supplier Portal (M06 + M03A self)  | `/supplier/*`                              | `/api/supplier/auth/login`, `/api/supplier/me`, `/api/supplier/raw-material/intakes`, `.../{id}/confirm`, `.../{id}/decline`, `.../{id}/evidence`                               |
 
 Legacy/generated route families như `/api/admin/raw-material/source-zones` hoặc `/api/admin/master-data/skus` không được thêm vào FE client mới nếu chưa có route impact analysis và owner approval.
 
@@ -101,33 +105,46 @@ type ListParams = {
 };
 ```
 
-| Method type | Naming | Behavior |
-|---|---|---|
-| List | `listX(params)` | GET list, returns `ApiSuccess<Page<X>>` or `{data: X[], meta}` according API spec. |
-| Detail | `getX(id)` | GET detail. |
-| Create | `createX(payload, options)` | POST; idempotency required for transaction/stateful create. |
-| Patch | `updateX(id, payload, options)` | PATCH; include optimistic version if API supports. |
-| Command | `approveX`, `issueMaterial`, `releaseBatch` | POST action endpoint; idempotency required. |
-| Public | `getPublicTrace(qrCode)` | GET public trace with public DTO only. |
+| Method type | Naming                                      | Behavior                                                                           |
+| ----------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| List        | `listX(params)`                             | GET list, returns `ApiSuccess<Page<X>>` or `{data: X[], meta}` according API spec. |
+| Detail      | `getX(id)`                                  | GET detail.                                                                        |
+| Create      | `createX(payload, options)`                 | POST; idempotency required for transaction/stateful create.                        |
+| Patch       | `updateX(id, payload, options)`             | PATCH; include optimistic version if API supports.                                 |
+| Command     | `approveX`, `issueMaterial`, `releaseBatch` | POST action endpoint; idempotency required.                                        |
+| Public      | `getPublicTrace(qrCode)`                    | GET public trace with public DTO only.                                             |
 
 ## 6. DTO Families
 
-| DTO family | Scope | Notes |
-|---|---|---|
-| `Admin*Dto` | Admin Web/Internal | Có thể chứa internal status, internal ids, audit refs; không dùng cho public. |
-| `Command*Request` | Mutate command | Luôn có typed payload, reason nếu cần, idempotency qua header. |
-| `PublicTraceDto` | Public trace | Whitelist-only; không extend từ admin trace DTO. |
-| `LookupOptionDto` | Select/combobox | `id`, `code`, `label`, `status`, `disabled_reason?`. |
-| `Page<T>` | List response | Dùng chung pagination/filter/sort. |
-| `ErrorDto` | Error handling | Map theo `api/04_API_ERROR_CODE_SPEC.md`. |
-| `RecallCloseCommandRequest` | Recall close | `closeType` phải là `CLOSED` hoặc `CLOSED_WITH_RESIDUAL_RISK`; `residualNote` required khi close residual risk. |
+| DTO family                                                                                                                                                              | Scope                                      | Notes                                                                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Admin*Dto`                                                                                                                                                             | Admin Web/Internal                         | Có thể chứa internal status, internal ids, audit refs; không dùng cho public.                                                                                                                          |
+| `Command*Request`                                                                                                                                                       | Mutate command                             | Luôn có typed payload, reason nếu cần, idempotency qua header.                                                                                                                                         |
+| `PublicTraceDto`                                                                                                                                                        | Public trace                               | Whitelist-only; không extend từ admin trace DTO.                                                                                                                                                       |
+| `LookupOptionDto`                                                                                                                                                       | Select/combobox                            | `id`, `code`, `label`, `status`, `disabled_reason?`.                                                                                                                                                   |
+| `SupplierAdminDto` / `SupplierDetailDto` / `SupplierIngredientDto` / `SupplierUserDto`                                                                                  | M03A Admin (`adminClient`)                 | Tách khỏi supplier portal DTO. Bao gồm `collaboration_status`, `open_receipt_count`, `allowed_ingredient_count`, `last_activity`.                                                                      |
+| `RawIntakeDetailDto`                                                                                                                                                    | M06 Admin 2-axis (`adminClient`)           | Có cả `supplier_collaboration_status` và `raw_receipt_status`, line array với `received_quantity`, `accepted_quantity`, `rejected_quantity`, `returned_quantity`.                                      |
+| `RawIntakeReceiveRequest` / `LineAcceptRequest` / `LineRejectRequest` / `LineReturnRequest` / `CloseReceiptRequest` / `EvidenceUploadRequest` / `FeedbackCreateRequest` | M06 Admin command (`adminClient`)          | Idempotency bắt buộc.                                                                                                                                                                                  |
+| `SupplierIntakeListDto` / `SupplierIntakeDetailDto` / `SupplierSelfDto`                                                                                                 | Supplier Portal read (`supplierClient`)    | Scope-filtered theo `supplier_id`; không expose internal field như audit log company-side.                                                                                                             |
+| `SupplierIntakeSubmitRequest` / `SupplierConfirmRequest` / `SupplierDeclineRequest`                                                                                     | Supplier Portal command (`supplierClient`) | Idempotency bắt buộc.                                                                                                                                                                                  |
+| `Page<T>`                                                                                                                                                               | List response                              | Dùng chung pagination/filter/sort.                                                                                                                                                                     |
+| `ErrorDto`                                                                                                                                                              | Error handling                             | Map theo `api/04_API_ERROR_CODE_SPEC.md`.                                                                                                                                                              |
+| `RecallCloseCommandRequest`                                                                                                                                             | Recall close                               | `closeType` phải là `CLOSED` hoặc `CLOSED_WITH_RESIDUAL_RISK`; `residualNote` required khi close residual risk.                                                                                        |
+| `EvidenceCreateRequest`                                                                                                                                                 | Source/CAPA evidence upload metadata       | Used by `POST /api/admin/source-origins/{id}/evidence` and `POST /api/admin/recall/capas/{capaId}/evidence`; FE must display `scanStatus` and block verify/close until backend returns clean evidence. |
+| `RecallCapaResponse`                                                                                                                                                    | CAPA detail/evidence                       | Includes CAPA status and `op_recall_capa_evidence` metadata; binary is never embedded in the DTO.                                                                                                      |
 
 ## 7. Public Trace DTO
 
 ```ts
 export type PublicTraceResponse = {
   qr_code: string;
-  qr_status: "GENERATED" | "QUEUED" | "PRINTED" | "FAILED" | "VOID" | "REPRINTED";
+  qr_status:
+    | "GENERATED"
+    | "QUEUED"
+    | "PRINTED"
+    | "FAILED"
+    | "VOID"
+    | "REPRINTED";
   public_status: "VALID" | "VOID" | "RECALLED" | "UNKNOWN";
   sku: {
     sku_code: string;
@@ -160,56 +177,54 @@ Forbidden in `PublicTraceResponse` and public UI:
 
 ## 8. Idempotency Contract
 
-| Flow | FE requirement |
-|---|---|
-| Create transaction | Generate `Idempotency-Key` before submit and keep it until response resolved. |
-| Command action | Always pass `Idempotency-Key` in header. |
-| Retry after timeout | Reuse same key for same payload. |
-| Payload changed | Generate new key and treat as new command. |
-| PWA offline | Persist endpoint, payload, key, created_at, attempt_count. |
-| Duplicate response | Render existing result and refresh detail/list. |
+| Flow                | FE requirement                                                                |
+| ------------------- | ----------------------------------------------------------------------------- |
+| Create transaction  | Generate `Idempotency-Key` before submit and keep it until response resolved. |
+| Command action      | Always pass `Idempotency-Key` in header.                                      |
+| Retry after timeout | Reuse same key for same payload.                                              |
+| Payload changed     | Generate new key and treat as new command.                                    |
+| PWA offline         | Persist endpoint, payload, key, created_at, attempt_count.                    |
+| Duplicate response  | Render existing result and refresh detail/list.                               |
 
 Example:
 
 ```ts
-await adminClient.post(
-  `/material-issues/${issueId}/issue`,
-  payload,
-  { idempotencyKey }
-);
+await adminClient.post(`/material-issues/${issueId}/issue`, payload, {
+  idempotencyKey,
+});
 ```
 
 ## 9. Error Handling Contract
 
-| Error category | FE behavior |
-|---|---|
-| Field validation | Show field errors and summary. |
-| Permission | Remove forbidden action after reload; show permission denied. |
-| State conflict | Reload entity and show stale state message. |
-| Inventory/QC/release gate | Show blocking reason and link to relevant screen if allowed. |
-| MISA mapping/sync | Link to mapping/sync screen if allowed. |
-| Public trace not found/void/recalled | Show public-safe message only. |
-| Unknown error | Show generic message + correlation id; no raw stack/payload. |
+| Error category                       | FE behavior                                                   |
+| ------------------------------------ | ------------------------------------------------------------- |
+| Field validation                     | Show field errors and summary.                                |
+| Permission                           | Remove forbidden action after reload; show permission denied. |
+| State conflict                       | Reload entity and show stale state message.                   |
+| Inventory/QC/release gate            | Show blocking reason and link to relevant screen if allowed.  |
+| MISA mapping/sync                    | Link to mapping/sync screen if allowed.                       |
+| Public trace not found/void/recalled | Show public-safe message only.                                |
+| Unknown error                        | Show generic message + correlation id; no raw stack/payload.  |
 
 ## 10. Query Key And Cache Invalidation
 
-| Entity | Query key pattern | Invalidate after |
-|---|---|---|
-| SKU | `["skus", params]`, `["sku", id]` | create/update/deactivate SKU, recipe activation if displayed |
-| Recipe | `["recipes", params]`, `["recipe", id]`, `["recipe-lines", id]` | line change, submit, approve, activate, retire |
-| Source Origin | `["source-origins", params]`, `["source-origin", id]` | create/update/verify/reject |
-| Raw Intake | `["raw-intakes", params]`, `["raw-intake", id]` | create/receive/cancel |
-| Raw Lot | `["raw-lots", params]`, `["raw-lot", id]`, `["raw-lot-readiness", id]` | receive intake, QC result, mark_ready, hold/release |
-| Production Order | `["production-orders", params]`, `["production-order", id]` | create/start/cancel/close, material request updates |
-| Material Issue | `["material-issues", params]`, `["material-issue", id]` | issue/cancel |
-| Material Receipt | `["material-receipts", params]`, `["material-receipt", id]` | confirm/cancel |
-| QC Inspection | `["qc-inspections", params]`, `["qc-inspection", id]` | result/hold/reject |
-| Batch Release | `["batch-releases", params]`, `["batch", id]` | release/reject release |
-| QR Registry | `["qr-registry", params]`, `["qr", id]` | generate/queue/print/fail/void/reprint |
-| Inventory | `["inventory-ledger", params]`, `["lot-balances", params]` | material issue, warehouse receipt, adjustment |
-| Trace | `["trace-search", params]`, `["genealogy", entityType, id]` | material issue/receipt, batch release, QR, warehouse receipt, recall hold |
-| Recall | `["recall-cases", params]`, `["recall-case", id]`, `["recall-impact", id]` | create/start/hold/recover/close/close_with_residual_risk |
-| MISA | `["misa-sync", params]`, `["misa-mapping", params]`, `["misa-reconcile", params]` | mapping change, retry, reconcile |
+| Entity           | Query key pattern                                                                 | Invalidate after                                                          |
+| ---------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| SKU              | `["skus", params]`, `["sku", id]`                                                 | create/update/deactivate SKU, recipe activation if displayed              |
+| Recipe           | `["recipes", params]`, `["recipe", id]`, `["recipe-lines", id]`                   | line change, submit, approve, activate, retire                            |
+| Source Origin    | `["source-origins", params]`, `["source-origin", id]`                             | create/update/verify/reject                                               |
+| Raw Intake       | `["raw-intakes", params]`, `["raw-intake", id]`                                   | create/receive/cancel                                                     |
+| Raw Lot          | `["raw-lots", params]`, `["raw-lot", id]`, `["raw-lot-readiness", id]`            | receive intake, QC result, mark_ready, hold/release                       |
+| Production Order | `["production-orders", params]`, `["production-order", id]`                       | create/start/cancel/close, material request updates                       |
+| Material Issue   | `["material-issues", params]`, `["material-issue", id]`                           | issue/cancel                                                              |
+| Material Receipt | `["material-receipts", params]`, `["material-receipt", id]`                       | confirm/cancel                                                            |
+| QC Inspection    | `["qc-inspections", params]`, `["qc-inspection", id]`                             | result/hold/reject                                                        |
+| Batch Release    | `["batch-releases", params]`, `["batch", id]`                                     | release/reject release                                                    |
+| QR Registry      | `["qr-registry", params]`, `["qr", id]`                                           | generate/queue/print/fail/void/reprint                                    |
+| Inventory        | `["inventory-ledger", params]`, `["lot-balances", params]`                        | material issue, warehouse receipt, adjustment                             |
+| Trace            | `["trace-search", params]`, `["genealogy", entityType, id]`                       | material issue/receipt, batch release, QR, warehouse receipt, recall hold |
+| Recall           | `["recall-cases", params]`, `["recall-case", id]`, `["recall-impact", id]`        | create/start/hold/recover/close/close_with_residual_risk                  |
+| MISA             | `["misa-sync", params]`, `["misa-mapping", params]`, `["misa-reconcile", params]` | mapping change, retry, reconcile                                          |
 
 ## 11. Permission And Action Gating
 
@@ -241,24 +256,24 @@ Backend must still enforce the same rule. FE gating is only UX.
 
 ## 12. OpenAPI Type Generation
 
-| Step | Rule |
-|---|---|
-| 1 | Generate OpenAPI from accepted API spec, not from unreviewed parallel code routes. |
-| 2 | Generate TS types into a dedicated API types folder [path OWNER DECISION NEEDED]. |
-| 3 | Do not manually duplicate DTO types if generated type exists. |
-| 4 | Public trace DTO must stay separate from admin trace DTO even if fields overlap. |
-| 5 | Regenerate types whenever `api/03_API_REQUEST_RESPONSE_SPEC.md` changes. |
+| Step | Rule                                                                               |
+| ---- | ---------------------------------------------------------------------------------- |
+| 1    | Generate OpenAPI from accepted API spec, not from unreviewed parallel code routes. |
+| 2    | Generate TS types into a dedicated API types folder [path OWNER DECISION NEEDED].  |
+| 3    | Do not manually duplicate DTO types if generated type exists.                      |
+| 4    | Public trace DTO must stay separate from admin trace DTO even if fields overlap.   |
+| 5    | Regenerate types whenever `api/03_API_REQUEST_RESPONSE_SPEC.md` changes.           |
 
 ## 13. Offline/PWA Sync Contract
 
-| Requirement | Rule |
-|---|---|
-| Queue storage | Store endpoint, method, payload, idempotency key, created_at, attempt_count, last_error. |
-| Command ordering | Sync in order per workflow/entity where ordering matters. |
-| Conflict | If stale state, stop command and require user review. |
-| Retry | Retry retryable network/server errors with backoff. |
-| Security | Offline storage must not include forbidden public/private sensitive payload beyond task needs. |
-| Audit | Backend creates audit when command is accepted, not when queued. |
+| Requirement      | Rule                                                                                           |
+| ---------------- | ---------------------------------------------------------------------------------------------- |
+| Queue storage    | Store endpoint, method, payload, idempotency key, created_at, attempt_count, last_error.       |
+| Command ordering | Sync in order per workflow/entity where ordering matters.                                      |
+| Conflict         | If stale state, stop command and require user review.                                          |
+| Retry            | Retry retryable network/server errors with backoff.                                            |
+| Security         | Offline storage must not include forbidden public/private sensitive payload beyond task needs. |
+| Audit            | Backend creates audit when command is accepted, not when queued.                               |
 
 ## 14. FE/BE Contract Done Gate
 

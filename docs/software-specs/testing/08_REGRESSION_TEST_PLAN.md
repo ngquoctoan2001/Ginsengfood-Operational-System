@@ -57,6 +57,7 @@ Regression test plan xác định các test phải chạy lại sau mỗi phase/
 | Ledger movement ids | Inventory decrement/warehouse tests |
 | Snapshot before/after diff | Recipe/PO snapshot tests |
 | Public trace response key list | Public trace security tests |
+| Evidence metadata ids, scan status and storage ref | Source-origin/CAPA evidence upload and recall close tests |
 | MISA sync log and reconcile status | MISA tests |
 | Screenshot/video/trace | UI/E2E failures |
 

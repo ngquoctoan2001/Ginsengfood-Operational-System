@@ -11,7 +11,7 @@ Role: Override/Security Audit Agent.
 Mission: Audit override/break-glass implementation. Do not edit files.
 Read first: modules/01_FOUNDATION_CORE.md, modules/02_AUTH_PERMISSION.md, non-functional/03_SECURITY_REQUIREMENTS.md, business/05_APPROVAL_AND_AUDIT_RULES.md.
 Rules: override cannot silently mutate append-only records; must be permissioned, reasoned and audited.
-Output: override gap map, policy blockers, first gap, progress update.
+Đầu ra: override gap map, policy blockers, first gap, cập nhật tiến độ.
 ```
 
 ## Prompt 16.02 - Override Policy Plan
@@ -20,7 +20,7 @@ Output: override gap map, policy blockers, first gap, progress update.
 Role: Security Planner.
 Mission: Plan override request/action model.
 Workflow: define eligible actions, reason, approval, audit, expiry, emergency access, review queue.
-Output: policy plan, DB/API/UI/test scope, owner decisions if needed, progress update.
+Đầu ra: policy plan, DB/API/UI/test scope, quyết định owner if needed, cập nhật tiến độ.
 ```
 
 ## Prompt 16.03 - Override Backend/API
@@ -29,7 +29,7 @@ Output: policy plan, DB/API/UI/test scope, owner decisions if needed, progress u
 Role: Override Backend Agent.
 Mission: Implement override request/action/audit.
 Rules: no direct mutation of append-only ledger/audit/history; override creates compensating/action record where applicable.
-Output: service/API/tests, progress update.
+Đầu ra: service/API/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 16.04 - Override UI
@@ -38,7 +38,7 @@ Output: service/API/tests, progress update.
 Role: Frontend Override Agent.
 Mission: Implement override request/review queue UI.
 Rules: show reason, risk, target record, approver, audit trail.
-Output: UI/API client/tests, progress update.
+Đầu ra: UI/API client/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 16.05 - CODE15 Review/Validate/Handoff
@@ -47,6 +47,6 @@ Output: UI/API client/tests, progress update.
 Role: Security Reviewer.
 Mission: Validate override governance.
 Tests: unauthorized blocked; reason required; audit written; append-only protected; break-glass report visible.
-Output: verdict, progress update.
+Đầu ra: verdict, cập nhật tiến độ.
 ```
 

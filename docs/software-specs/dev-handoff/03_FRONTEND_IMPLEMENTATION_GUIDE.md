@@ -36,11 +36,11 @@ Hướng dẫn frontend/admin UI triển khai màn hình, form, table, action st
 | module | Screens | Must test |
 |---|---|---|
 | M04 | SKU, Ingredient, Recipe, Recipe Lines | 20 SKU baseline, required ingredients, 4 recipe groups, G1 active |
-| M05/M06 | Source zones/origins, Raw intakes/lots, Incoming QC, Lot Readiness | Source verification, procurement type, QC status, `lotStatus`, Mark Ready action |
+| M05/M06 | Source zones/origins, Raw intakes/lots, Incoming QC, Lot Readiness | Source evidence upload/scan state, source verification, procurement type, QC status, `lotStatus`, Mark Ready action |
 | M07/M08 | PO, PO detail, Work order, Process, Material request/issue/receipt | Snapshot read-only, issue decrement, lot `READY_FOR_PRODUCTION` gate, receipt no double decrement |
 | M09/M11 | QC inspection, Batch release, Warehouse receipt, Ledger, Balance | QC pass vs release, released-only receipt |
 | M10/M12 | Packaging, QR registry, Print queue, Public trace preview/page | QR states, reprint reason, public whitelist |
-| M13/M14 | Recall, Impact, Hold, CAPA, MISA sync/mapping/reconcile | Snapshot, hold/sale lock, mapping missing |
+| M13/M14 | Recall, Impact, Hold, CAPA, CAPA evidence, MISA sync/mapping/reconcile | Snapshot, hold/sale lock, clean evidence close gate, mapping missing |
 | M15/M16 | Dashboard, Alerts, Screen registry, PWA | Permission, status, offline idempotency |
 
 ## 5. Backend/Frontend Sync Checklist

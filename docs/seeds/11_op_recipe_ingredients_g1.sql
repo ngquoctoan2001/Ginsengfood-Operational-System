@@ -1,10 +1,11 @@
 -- Seed 433 canonical G1 recipe ingredient lines from docs/ginsengfood_sku_recipe_md_pack/04_RECIPE_G1_OPERATIONAL_20SKU_GINSENGFOOD.md.
 -- Uses canonical HRB_* / ING_* ingredient codes and four G1 recipe line groups.
+-- Anchor (PILOT_PERCENT_BASED) = the SPECIAL_SKU_COMPONENT row for HRB_SAM_SAVIGIN — exactly 1 per recipe.
 
 BEGIN;
 
-CREATE TEMP TABLE seed_recipe_ingredient (recipe_code text, line_no integer, recipe_line_group_code text, ingredient_code text, ingredient_display_name text, quantity_per_batch_400 numeric(18,3), ratio_percent numeric(18,6), prep_note text, usage_role text, variant_note text, quantity numeric(18,3), uom_code text, tolerance numeric(18,3), ingredient_note text, ingredient_section text, created_at timestamptz) ON COMMIT DROP;
-INSERT INTO seed_recipe_ingredient VALUES
+CREATE TEMP TABLE seed_recipe_ingredient (recipe_code text, line_no integer, recipe_line_group_code text, ingredient_code text, ingredient_display_name text, quantity_per_batch_400 numeric(18,3), ratio_percent numeric(18,6), prep_note text, usage_role text, variant_note text, quantity numeric(18,3), uom_code text, tolerance numeric(18,3), ingredient_note text, ingredient_section text, created_at timestamptz, is_anchor boolean NOT NULL DEFAULT FALSE) ON COMMIT DROP;
+INSERT INTO seed_recipe_ingredient (recipe_code, line_no, recipe_line_group_code, ingredient_code, ingredient_display_name, quantity_per_batch_400, ratio_percent, prep_note, usage_role, variant_note, quantity, uom_code, tolerance, ingredient_note, ingredient_section, created_at) VALUES
 ('FML-A1-G1', 1, 'SPECIAL_SKU_COMPONENT', 'HRB_SAM_SAVIGIN', 'Sâm Savigin', 9.000, 4.620000, NULL, 'SKU_HERBAL_COMPONENT', NULL, 9.000, 'kg', NULL, 'Thành phần đặc thù SKU', 'SPECIAL_SKU_COMPONENT', '2025-01-01T07:00:00+07:00'::timestamptz),
 ('FML-A1-G1', 2, 'SPECIAL_SKU_COMPONENT', 'ING_DIEM_MACH', 'Diêm mạch', 15.500, 7.950000, NULL, 'SKU_FUNCTIONAL_COMPONENT', NULL, 15.500, 'kg', NULL, 'Thành phần đặc thù SKU', 'SPECIAL_SKU_COMPONENT', '2025-01-01T07:00:00+07:00'::timestamptz),
 ('FML-A1-G1', 3, 'SPECIAL_SKU_COMPONENT', 'ING_HAT_SEN', 'Hạt sen', 9.000, 4.620000, NULL, 'SKU_FUNCTIONAL_COMPONENT', NULL, 9.000, 'kg', NULL, 'Thành phần đặc thù SKU', 'SPECIAL_SKU_COMPONENT', '2025-01-01T07:00:00+07:00'::timestamptz),
@@ -439,6 +440,12 @@ INSERT INTO seed_recipe_ingredient VALUES
 ('FML-C9-G1', 20, 'SEASONING_FLAVOR', 'ING_RE_CAN_TAY', 'Rễ cần tây', 1.250, 0.640000, 'thái nhuyễn', 'SEASONING_FLAVOR', NULL, 1.250, 'kg', NULL, 'Source display: Rễ cần tây thái nhuyễn | Tạo hương vị', 'SEASONING_FLAVOR', '2025-01-01T07:00:00+07:00'::timestamptz),
 ('FML-C9-G1', 21, 'SEASONING_FLAVOR', 'ING_MI_CHINH', 'Mì chính', 1.900, 0.970000, NULL, 'UMAMI', NULL, 1.900, 'kg', NULL, 'Tạo vị umami', 'SEASONING_FLAVOR', '2025-01-01T07:00:00+07:00'::timestamptz);
 
+-- Mark anchor ingredient (HRB_SAM_SAVIGIN in SPECIAL_SKU_COMPONENT) for every G1 recipe — exactly 1 per recipe.
+UPDATE seed_recipe_ingredient
+SET is_anchor = TRUE
+WHERE recipe_line_group_code = 'SPECIAL_SKU_COMPONENT'
+  AND ingredient_code = 'HRB_SAM_SAVIGIN';
+
 DO $$
 DECLARE missing_count integer;
 BEGIN
@@ -477,6 +484,7 @@ SET material_id = resolved.material_id,
     ingredient_display_name = resolved.ingredient_display_name,
     quantity_per_batch_400 = resolved.quantity_per_batch_400,
     ratio_percent = resolved.ratio_percent,
+    is_anchor = resolved.is_anchor,
     prep_note = resolved.prep_note,
     usage_role = resolved.usage_role,
     variant_note = resolved.variant_note,
@@ -497,8 +505,8 @@ WITH resolved AS (
     JOIN op_production_recipe r ON r.recipe_code = s.recipe_code AND r.is_deleted = FALSE
     JOIN op_raw_material m ON m.ingredient_code = s.ingredient_code AND m.is_deleted = FALSE
 )
-INSERT INTO op_recipe_ingredient (recipe_id, material_id, line_no, recipe_line_group_code, ingredient_code, ingredient_display_name, quantity_per_batch_400, ratio_percent, prep_note, usage_role, variant_note, quantity, uom_code, tolerance, ingredient_note, ingredient_section, created_at, is_deleted)
-SELECT resolved.recipe_id, resolved.material_id, resolved.line_no, resolved.recipe_line_group_code, resolved.ingredient_code, resolved.ingredient_display_name, resolved.quantity_per_batch_400, resolved.ratio_percent, resolved.prep_note, resolved.usage_role, resolved.variant_note, resolved.quantity, resolved.uom_code, resolved.tolerance, resolved.ingredient_note, resolved.ingredient_section, resolved.created_at, FALSE
+INSERT INTO op_recipe_ingredient (recipe_id, material_id, line_no, recipe_line_group_code, ingredient_code, ingredient_display_name, quantity_per_batch_400, ratio_percent, is_anchor, prep_note, usage_role, variant_note, quantity, uom_code, tolerance, ingredient_note, ingredient_section, created_at, is_deleted)
+SELECT resolved.recipe_id, resolved.material_id, resolved.line_no, resolved.recipe_line_group_code, resolved.ingredient_code, resolved.ingredient_display_name, resolved.quantity_per_batch_400, resolved.ratio_percent, resolved.is_anchor, resolved.prep_note, resolved.usage_role, resolved.variant_note, resolved.quantity, resolved.uom_code, resolved.tolerance, resolved.ingredient_note, resolved.ingredient_section, resolved.created_at, FALSE
 FROM resolved
 WHERE NOT EXISTS (
     SELECT 1 FROM op_recipe_ingredient ri

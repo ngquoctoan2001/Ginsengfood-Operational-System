@@ -15,7 +15,7 @@ Hard locks:
 - Material Issue Execution is the only raw inventory decrement point.
 - Material Receipt Confirmation is separate and does not decrement again.
 - Required process sequence: PREPROCESSING -> FREEZING -> FREEZE_DRYING.
-Output: gap map, first bounded gap, dependency on MX-GATE-G1, progress update.
+Đầu ra: gap map, first bounded gap, dependency on MX-GATE-G1, cập nhật tiến độ.
 ```
 
 ## Prompt 04.02 - Production Order G1 Snapshot Plan
@@ -24,11 +24,11 @@ Output: gap map, first bounded gap, dependency on MX-GATE-G1, progress update.
 Role: Production Planner Agent.
 Mission: Plan production order snapshot implementation for gap {gap_id}.
 Workflow:
-1. Define snapshot fields: sku_id, formula_code, formula_version, group, ingredient code/name, quantity_per_batch_400, UOM, prep_note, usage_role.
+1. Define snapshot fields theo `formula_kind_snapshot`: chung gồm sku_id, formula_code, formula_version, group, ingredient code/name, UOM, prep_note, usage_role. PILOT_PERCENT_BASED snapshot thêm anchor_ingredient_id, anchor_quantity_input, anchor_uom_code, anchor_ratio_percent, total_batch_quantity, per-line `ratio_percent`, `snapshot_quantity`, `snapshot_basis=PILOT_RATIO_OF_ANCHOR`. FIXED_QUANTITY_BATCH snapshot thêm `batch_size`, per-line `quantity_per_batch_400`, `snapshot_quantity = qty × batch_size`, `snapshot_basis=FIXED_PER_BATCH_N`.
 2. Define when snapshot is created.
 3. Define immutability and audit.
 4. Define API/UI/test changes.
-Output: plan, write scope, validation gate, progress update.
+Đầu ra: plan, write scope, gate kiểm chứng, cập nhật tiến độ.
 ```
 
 ## Prompt 04.03 - Production Order Backend/API
@@ -41,7 +41,7 @@ Rules:
 - Snapshot must not change when recipe master changes later.
 - API must expose snapshot for downstream material issue and trace.
 Workflow: implement DB/model/service/API/DTO, tests for immutable snapshot and missing recipe rejection, update FE impact.
-Output: files changed, tests, commands, progress update.
+Đầu ra: file đã sửa, tests, commands, cập nhật tiến độ.
 ```
 
 ## Prompt 04.04 - Material Request And Approval
@@ -53,7 +53,7 @@ Rules:
 - Request lines derive from PO snapshot/approved recipe, not manual arbitrary ingredient picking.
 - Approval is permissioned and audited.
 - Approved request does not decrement inventory.
-Output: backend/API/UI/tests, audit evidence, progress update.
+Đầu ra: backend/API/UI/tests, audit evidence, cập nhật tiến độ.
 ```
 
 ## Prompt 04.05 - Material Issue Execution Decrement
@@ -67,7 +67,7 @@ Rules:
 - Duplicate issue command must be idempotent.
 - Ledger append-only.
 Workflow: implement lot allocation/issue lines/ledger transaction, balance validation, negative tests.
-Output: no double-decrement evidence, ledger tests, progress update.
+Đầu ra: no double-decrement evidence, ledger tests, cập nhật tiến độ.
 ```
 
 ## Prompt 04.06 - Material Receipt Confirmation
@@ -79,7 +79,7 @@ Rules:
 - Receipt records workshop receipt/variance.
 - Receipt does not decrement raw inventory again.
 - Variance requires reason/audit.
-Output: service/API/UI/tests, variance evidence, progress update.
+Đầu ra: service/API/UI/tests, variance evidence, cập nhật tiến độ.
 ```
 
 ## Prompt 04.07 - Required Process Events
@@ -91,7 +91,7 @@ Rules:
 - Every product must pass PREPROCESSING -> FREEZING -> FREEZE_DRYING.
 - Later process cannot be recorded before earlier required process.
 - Process events must be auditable and linked to batch/work order.
-Output: state machine, API commands, UI actions, tests for invalid order, progress update.
+Đầu ra: state machine, API commands, UI actions, tests for invalid order, cập nhật tiến độ.
 ```
 
 ## Prompt 04.08 - Batch Genealogy Root
@@ -102,7 +102,7 @@ Mission: Implement batch creation and genealogy root using production order, mat
 Rules:
 - Batch genealogy must link source/raw lots -> issue -> production -> packaging later.
 - Batch state transitions must be logged.
-Output: batch model/API/UI/tests, trace handoff evidence, progress update.
+Đầu ra: batch model/API/UI/tests, trace handoff evidence, cập nhật tiến độ.
 ```
 
 ## Prompt 04.09 - CODE03 UI Implementation
@@ -114,7 +114,7 @@ Rules:
 - Use API client/types from API catalog.
 - Show immutable snapshot, lot selection constraints, issue/receipt variance, required process state.
 - Permission-aware UI but backend remains authority.
-Output: screens/forms/tables/actions/tests, FE validation, progress update.
+Đầu ra: screens/forms/tables/actions/tests, FE validation, cập nhật tiến độ.
 ```
 
 ## Prompt 04.10 - CODE03 Test/Review/Handoff
@@ -123,6 +123,5 @@ Output: screens/forms/tables/actions/tests, FE validation, progress update.
 Role: QA + Reviewer Agent.
 Mission: Validate CODE03.
 Required tests: missing active recipe blocks PO; snapshot immutable; manual ingredient outside snapshot rejected; issue decrements once; receipt does not decrement; process order blocks F-D before freezing; batch genealogy created.
-Output: verdict, findings, commands, smoke evidence, progress update.
+Đầu ra: verdict, findings, commands, smoke evidence, cập nhật tiến độ.
 ```
-

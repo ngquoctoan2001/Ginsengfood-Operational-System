@@ -25,7 +25,7 @@ project inception
 | Thu tu | File | Dung khi nao |
 | --- | --- | --- |
 | 00 | `00_README.md` | Hieu scope va cach dung bo prompt. |
-| 01 | `01_PROJECT_INITIATION_PROMPTS.md` | Khi bat dau du an, chot scope, success criteria, owner decisions, team/process. |
+| 01 | `01_PROJECT_INITIATION_PROMPTS.md` | Khi bat dau du an, chot scope, success criteria, quyết định owner, team/process. |
 | 02 | `02_REPO_AND_LOCAL_ENV_PROMPTS.md` | Khi tao/scaffold repo, local dev, env/secrets, branch strategy. |
 | 03 | `03_ARCHITECTURE_FOUNDATION_PROMPTS.md` | Khi khoa architecture, coding conventions, skeleton module, ADR. |
 | 04 | `04_IMPLEMENTATION_PHASE_PROMPTS.md` | Khi bat dau implement tung phase/gap theo CODE01-CODE17; sau kickoff, dung tiep `../05_DETAILED_PHASE_PROMPTS/`. |
@@ -50,7 +50,7 @@ Moi prompt trong bo nay duoc viet theo cau truc:
 - `Validation`
 - `Stop conditions`
 - `Required output`
-- `Progress update`
+- `Cập nhật tiến độ`
 
 Khi copy prompt, thay cac placeholder nhu `{project_name}`, `{phase}`, `{gap_id}`, `{environment}` bang gia tri thuc te.
 

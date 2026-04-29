@@ -4,6 +4,20 @@ This file applies only when Codex works inside `.codex/`.
 
 The repository root `AGENTS.md` remains the primary project instruction file.
 
+## Ngôn ngữ phản hồi / Response Language
+
+**Tất cả phản hồi phải viết bằng tiếng Việt** — bao gồm kế hoạch, tiến độ, kết quả review, validation, handoff, blocker, rủi ro và báo cáo cuối.
+
+Giữ nguyên tiếng Anh cho các thành phần kỹ thuật cụ thể:
+
+- code identifier, class name, function name, variable name;
+- file path, folder path, route path, API method, DTO/table/column/enum name;
+- command line, package name, migration name, branch name, commit message;
+- JSON/YAML/TOML key, HTTP status code, framework/library/tool name;
+- nội dung log/error gốc và code fence.
+
+Không dịch code fence, câu lệnh, schema name, route name, hoặc error message. Giải thích bằng tiếng Việt xung quanh thuật ngữ gốc khi cần.
+
 ## Local Codex Assets
 
 - `.codex/config.toml`

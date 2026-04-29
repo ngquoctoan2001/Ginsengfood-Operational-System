@@ -38,7 +38,7 @@ Stop conditions:
 - If repo has existing code and scaffold would overwrite it, stop and ask owner.
 - If stack is not approved, mark owner decision needed.
 
-Required output:
+Đầu ra bắt buộc:
 - Current repo status.
 - Proposed structure.
 - Scaffold write scope.
@@ -77,16 +77,16 @@ Workflow:
 5. Run build/test commands that should work at scaffold stage.
 6. Update progress report.
 
-Validation:
+Kiểm chứng:
 - Repo command list works or blockers are reported.
 - No long-running dev server remains.
 
-Required output:
+Đầu ra bắt buộc:
 - Files created.
-- Commands run.
+- Lệnh đã chạy.
 - Build/test result.
 - Cleanup result.
-- Progress report update.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ## Prompt 02.03 - Local Dev Environment And Secrets Policy
@@ -120,13 +120,13 @@ Stop conditions:
 - Do not commit real secrets.
 - Do not create destructive production reset command.
 
-Required output:
+Đầu ra bắt buộc:
 - Local setup steps.
 - Env variable matrix.
 - Secret policy.
-- Commands run.
-- Validation result.
-- Progress update.
+- Lệnh đã chạy.
+- Kết quả kiểm chứng.
+- Cập nhật tiến độ.
 ```
 
 ## Prompt 02.04 - Branching And Change Control Setup
@@ -151,11 +151,11 @@ Workflow:
 5. Define how to record deferred work.
 6. Update progress report.
 
-Required output:
+Đầu ra bắt buộc:
 - Branching policy.
 - PR template.
 - Review gates.
 - Merge rules.
-- Progress update.
+- Cập nhật tiến độ.
 ```
 

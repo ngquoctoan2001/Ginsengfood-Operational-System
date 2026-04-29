@@ -5,6 +5,10 @@ applyTo: "**/*.{ts,tsx}"
 
 # Frontend React / TypeScript Guidelines
 
+## Response Language
+
+Respond in Vietnamese for explanations, plans, reviews, and validation notes. Keep React/TypeScript terms, component/hook names, file paths, route paths, commands, package names, JSON keys, and exact errors in English.
+
 ## Greenfield Note
 
 The admin frontend may not exist yet. If frontend code is absent, first follow the active scaffold phase and `docs/software-specs/` before assuming `apps/admin-web`, router type, package scripts, or generated client paths.

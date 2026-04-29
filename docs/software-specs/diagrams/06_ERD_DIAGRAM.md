@@ -68,6 +68,7 @@ erDiagram
     op_recall_case ||--o{ op_sale_lock_registry : locks
     op_recall_case ||--o{ op_recall_recovery_item : recovers
     op_recall_case ||--o{ op_recall_capa : capa
+    op_recall_capa ||--o{ op_recall_capa_evidence : evidence
 
     outbox_event ||--o{ misa_sync_event : dispatched_to
     misa_mapping ||--o{ misa_sync_event : maps
@@ -85,11 +86,11 @@ erDiagram
 |---|---|---|---|---|
 | Auth/Approval | M02 | `auth_user`, `auth_role`, `role_action_permission`, `approval_request`, `approval_action` | `/api/admin/auth/login`, `/api/admin/roles`, `/api/admin/approvals` | WF-M02-APPROVAL |
 | Recipe catalog | M04 | `ref_sku`, `ref_ingredient`, `op_production_recipe`, `op_recipe_ingredient` | `/api/admin/skus`, `/api/admin/ingredients`, `/api/admin/recipes` | WF-M04-RECIPE |
-| Source/raw material | M05/M06 | `op_source_origin`, `op_raw_material_receipt`, `op_raw_material_lot`, `op_raw_material_qc_inspection`, `state_transition_log` | `/api/admin/source-origins`, `/api/admin/raw-material/intakes`, `/api/admin/raw-material/lots/{lotId}/readiness` | WF-M05-VERIFY, WF-M06-INTAKE, WF-M06-READINESS |
+| Source/raw material | M05/M06 | `op_source_origin`, `op_source_origin_evidence`, `op_raw_material_receipt`, `op_raw_material_lot`, `op_raw_material_qc_inspection`, `state_transition_log` | `/api/admin/source-origins`, `/api/admin/raw-material/intakes`, `/api/admin/raw-material/lots/{lotId}/readiness` | WF-M05-VERIFY, WF-M06-INTAKE, WF-M06-READINESS |
 | Production/material flow | M07/M08 | `op_production_order`, `op_production_order_item`, `op_material_issue`, `op_material_receipt` | `/api/admin/production/orders`, `/api/admin/production/material-*` | WF-M07-PO, WF-M08-ISSUE |
 | QC/release/inventory | M09/M11 | `op_qc_inspection`, `op_batch_release`, `op_warehouse_receipt`, `op_inventory_ledger` | `/api/admin/qc/*`, `/api/admin/warehouse/receipts` | WF-M09-RELEASE, WF-M11-WH |
 | Packaging/trace | M10/M12 | `op_packaging_job`, `op_qr_registry`, `op_trace_link`, `vw_public_traceability` | `/api/admin/qr/generate`, `/api/public/trace/{qrCode}` | WF-M10-QR, WF-M12-PUBLIC |
-| Recall | M13 | `op_recall_case`, `op_recall_exposure_snapshot`, `op_batch_hold_registry`, `op_recall_capa` | `/api/admin/recall/cases/*` | WF-M13-RECALL |
+| Recall | M13 | `op_recall_case`, `op_recall_exposure_snapshot`, `op_batch_hold_registry`, `op_recall_capa`, `op_recall_capa_evidence` | `/api/admin/recall/cases/*`, `/api/admin/recall/capas/{capaId}/evidence` | WF-M13-RECALL |
 | Integration/reporting/UI | M14/M15/M16 | `misa_sync_event`, `op_dashboard_metric`, `ui_screen_registry` | `/api/admin/integrations/misa/*`, `/api/admin/dashboard/operations`, `/api/admin/ui/menu` | WF-M14-SYNC, WF-M15-METRIC, WF-M16-MENU |
 
 ## 4. Implementation Notes
@@ -97,5 +98,5 @@ erDiagram
 - ERD này chỉ là view tổng hợp; table column chi tiết nằm ở `database/03_TABLE_SPECIFICATION.md`.
 - Ledger, audit, QR state history, recall exposure snapshot và MISA sync log là append-only/history-oriented.
 - `vw_public_traceability` phải là whitelist projection, không reuse internal trace view trực tiếp.
-- `op_recall_capa` is the canonical CAPA table name for M13; do not introduce parallel `op_recall_capa_item` unless the database spec is formally changed.
+- `op_recall_capa` is the canonical CAPA action/task table for M13; do not introduce parallel `op_recall_capa_item` unless the database spec is formally changed. Use `op_recall_capa_evidence` only for append-only CAPA evidence metadata.
 - Raw material readiness is represented by `op_raw_material_lot.lotStatus` plus append-only `state_transition_log`; QC inspection result is not the downstream issue gate by itself.

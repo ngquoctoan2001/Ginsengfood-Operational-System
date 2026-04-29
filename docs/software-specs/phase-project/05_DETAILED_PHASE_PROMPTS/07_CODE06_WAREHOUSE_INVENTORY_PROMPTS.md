@@ -11,7 +11,7 @@ Role: Warehouse/Inventory Audit Agent.
 Mission: Audit warehouse receipt and inventory implementation. Do not edit files.
 Read first: modules/11_WAREHOUSE_INVENTORY.md, database, api, ui, testing, data/warehouses_locations.csv.
 Hard locks: finished goods receipt requires batch RELEASED; ledger append-only; balance derives from ledger.
-Output: gap map, warehouse type assumptions, first gap, progress update.
+Đầu ra: gap map, warehouse type assumptions, first gap, cập nhật tiến độ.
 ```
 
 ## Prompt 07.02 - Warehouse Receipt Plan
@@ -23,7 +23,7 @@ Rules:
 - FINISHED_GOODS receipt requires batch RELEASED.
 - RAW_MATERIAL and FINISHED_GOODS are go-live required warehouse types.
 - PACKAGING/STAGING if present must be marked optional/assumption unless owner locks them.
-Output: plan, DB/API/UI/test scope, progress update.
+Đầu ra: plan, DB/API/UI/test scope, cập nhật tiến độ.
 ```
 
 ## Prompt 07.03 - Warehouse Receipt Backend/API
@@ -32,7 +32,7 @@ Output: plan, DB/API/UI/test scope, progress update.
 Role: Warehouse Backend/API Agent.
 Mission: Implement released-only warehouse receipt.
 Workflow: implement receipt commands, validation, audit, ledger write, API tests and FE impact.
-Output: files changed, released-gate evidence, commands, progress update.
+Đầu ra: file đã sửa, released-gate evidence, commands, cập nhật tiến độ.
 ```
 
 ## Prompt 07.04 - Inventory Ledger And Balance
@@ -43,7 +43,7 @@ Mission: Implement append-only inventory ledger and lot balance projection.
 Rules:
 - Transaction taxonomy must include RAW_MATERIAL_RECEIPT, PRODUCTION_ISSUE, FINISHED_GOODS_RECEIPT, SALES_ISSUE, RETURN_RECEIPT, RECALL_HOLD, RECALL_RELEASE where in scope.
 - Do not update ledger rows in place.
-Output: ledger service/model/tests, balance validation, progress update.
+Đầu ra: ledger service/model/tests, balance validation, cập nhật tiến độ.
 ```
 
 ## Prompt 07.05 - Inventory Adjustment And Allocation Reference
@@ -54,7 +54,7 @@ Mission: Implement adjustment/allocation references without bypassing audit.
 Rules:
 - Adjustment requires reason/permission/audit.
 - Allocation does not rewrite ledger history.
-Output: API/service/UI/tests, progress update.
+Đầu ra: API/service/UI/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 07.06 - Warehouse Admin UI
@@ -66,7 +66,7 @@ Rules:
 - Show receipt blocked reason if batch not RELEASED.
 - Ledger viewer is read-only.
 - Balance projections must show source ledger evidence.
-Output: UI/API client/tests, progress update.
+Đầu ra: UI/API client/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 07.07 - CODE06 Review/Validate/Handoff
@@ -75,6 +75,6 @@ Output: UI/API client/tests, progress update.
 Role: QA + Reviewer Agent.
 Mission: Validate warehouse/inventory.
 Required tests: unreleased batch receipt blocked; released receipt creates ledger and balance; ledger append-only; adjustment audited; transaction types match spec.
-Output: verdict, validation, progress update.
+Đầu ra: verdict, validation, cập nhật tiến độ.
 ```
 

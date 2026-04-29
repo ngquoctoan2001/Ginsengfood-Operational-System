@@ -66,7 +66,7 @@ Tài liệu này định nghĩa menu/sidebar cho Admin Web, Shopfloor PWA, Integ
 | 122 | MENU_RECALL_CASE | Recall Cases | `/admin/recall/cases` | M13 | Recall Manager, QA Manager | `recall_case.read` | active case | Hồ sơ recall. |
 | 123 | MENU_RECALL_IMPACT | Impact Analysis | `/admin/recall/impact-analysis` | M13 | Recall Manager, QA Manager | `recall_impact.read` | pending analysis | Exposure chain. |
 | 124 | MENU_HOLD_SALE_LOCK | Hold / Sale Lock | `/admin/recall/holds` | M13, M11 | Recall Manager, Warehouse Manager | `recall_hold.read` | active hold | Hold/sale lock. |
-| 125 | MENU_RECOVERY_CAPA | Recovery / CAPA | `/admin/recall/recovery-capa` | M13 | Recall Manager, QA Manager | `capa.read` | open CAPA | Recovery/disposition/CAPA. |
+| 125 | MENU_RECOVERY_CAPA | Recovery / CAPA | `/admin/recall/recovery-capa` | M13 | Recall Manager, QA Manager | `capa.read` | open CAPA or evidence scan pending | Recovery/disposition/CAPA evidence. |
 | 130 | MENU_INTEGRATIONS | Integrations | `/admin/integrations` | M14, M01 | Integration Operator, Admin | `integration.read` | failed sync | MISA và outbox. |
 | 131 | MENU_MISA_SYNC | MISA Sync Jobs | `/admin/integrations/misa/sync-jobs` | M14 | Integration Operator, Admin | `misa_sync.read` | failed sync | Sync qua integration layer. |
 | 132 | MENU_MISA_MAPPING | MISA Mapping | `/admin/integrations/misa/mapping` | M14 | Integration Operator, Admin | `misa_mapping.read` | unmapped count | Mapping bắt buộc. |

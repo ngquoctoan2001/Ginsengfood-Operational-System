@@ -19,6 +19,21 @@ Current expected top-level roles:
 - `tools/agent/`: process lifecycle helpers.
 - `.tmp-docx-extract/`: historical extraction only; never authoritative.
 
+## Agent Response Language
+
+All AI agents working in this repository must respond in Vietnamese for planning, progress updates, reviews, validation reports, handoff notes, risks, blockers, and final responses.
+
+Keep technical terms in English when they are standard engineering terms or exact identifiers, including:
+
+- code identifiers, class names, function names, variable names;
+- file paths, folder paths, route paths, API methods, DTO names, table names, column names, enum values;
+- command lines, package names, migration names, branch names, commit messages;
+- JSON/YAML/TOML keys, HTTP status codes, log/error text, tool names, framework/library names.
+
+Do not translate code fences, commands, route names, schema names, or exact error messages. Explain them in Vietnamese around the original term when needed.
+
+Final response section headings must also be Vietnamese. Do not use English headings such as `Progress Report Update`, `Commands Run`, `Validation`, `Summary`, `Files Changed`, or `Process Cleanup Result` as standalone final-response sections. Use the Vietnamese output contract in `Output Format` below.
+
 ## Agent-Owned Process Lifecycle
 
 Do not leave agent-started local processes running after a response or chat session.
@@ -30,7 +45,7 @@ Do not leave agent-started local processes running after a response or chat sess
 - After any agent-run .NET build/test/EF sequence, run `dotnet build-server shutdown` before final response to release Roslyn/MSBuild build servers.
 - Never stop processes by broad name matching such as killing every `dotnet`, `node`, `npm`, `testhost`, or `VBCSCompiler` process.
 - Never stop user-owned terminal processes. If ownership is unclear, report suspicious processes instead of killing them.
-- Every final implementation response must include a `Process cleanup result` entry.
+- Every final implementation response must include a `Kết quả cleanup process` entry.
 
 ## Current Priority: Greenfield Ginsengfood Operational Build
 
@@ -232,17 +247,17 @@ After code exists, also cite concrete code paths, symbols, routes, migrations, s
 
 Every Codex response after implementation must include:
 
-- Summary
-- Files changed
-- Requirement source
-- Evidence used
-- Commands run
-- Test result
-- Backend build result
-- Frontend build result
-- Process cleanup result
-- Markdown update
-- Database migration/update result, when applicable
-- Seed validation result, when applicable
-- Remaining risks
-- Handoff update
+- Tóm tắt
+- File đã sửa
+- Nguồn yêu cầu
+- Evidence đã dùng
+- Lệnh đã chạy
+- Kết quả test
+- Kết quả backend build
+- Kết quả frontend build
+- Kết quả cleanup process
+- Cập nhật Markdown
+- Kết quả database migration/update, nếu áp dụng
+- Kết quả seed validation, nếu áp dụng
+- Rủi ro còn lại
+- Cập nhật handoff

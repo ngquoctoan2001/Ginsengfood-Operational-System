@@ -26,7 +26,7 @@ Workflow:
 6. List top risks and mitigation.
 7. List next week plan.
 
-Required output:
+Đầu ra bắt buộc:
 - Executive summary.
 - Progress table.
 - Blockers.
@@ -54,7 +54,7 @@ Workflow:
 6. Define deadline and blocking phase.
 7. Update progress report after decision if answer is provided.
 
-Required output:
+Đầu ra bắt buộc:
 - Decision memo.
 - Recommendation.
 - Impact table.
@@ -78,10 +78,10 @@ Read first:
 4. UAT sign-off.
 5. Smoke/validation reports.
 
-Required output:
+Đầu ra bắt buộc:
 - Release scope.
 - Included phases/gaps.
-- Validation evidence.
+- Evidence kiểm chứng.
 - Open blockers.
 - Accepted risks.
 - Go/no-go recommendation.
@@ -96,7 +96,7 @@ Role:
 Bạn là Senior Leadership Reporting Agent.
 
 Mission:
-Write a one-page non-technical progress update.
+Write a one-page non-technical cập nhật tiến độ.
 
 Rules:
 - Keep it concise.
@@ -104,7 +104,7 @@ Rules:
 - Avoid implementation jargon unless necessary.
 - State what leadership must decide.
 
-Required output:
+Đầu ra bắt buộc:
 - Status: GREEN/YELLOW/RED.
 - What was completed.
 - What is next.

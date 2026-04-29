@@ -1,0 +1,16 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f7f8fa;
+  color: #1f2933;
+}
+
+body {
+  margin: 0;
+}
+
+.shell {
+  margin: 0 auto;
+  max-width: 960px;
+  padding: 48px 24px;
+}

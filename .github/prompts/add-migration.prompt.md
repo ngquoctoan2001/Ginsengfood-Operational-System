@@ -9,6 +9,10 @@ For Ginsengfood V2 schema work, read `AGENTS.md`, `CLAUDE.md`, and the relevant 
 
 The repository is greenfield. If EF infrastructure is not scaffolded yet, first create or request the backend/database scaffold phase instead of pretending a migration project exists.
 
+## Response Language
+
+Tra loi bang tieng Viet cho migration plan, risk, validation, blocker va report. Giu nguyen tieng Anh cho migration names, EF Core commands, SQL/table/column names, file paths va exact errors.
+
 ## Input
 
 - Migration name: `$MIGRATION_NAME`
@@ -69,11 +73,11 @@ Run `dotnet build-server shutdown` after agent-run .NET build/test/EF commands. 
 ## Report
 
 ```markdown
-Migration added:
+Migration da them:
 Module:
-Apply command:
-Migration status:
-Pending after:
-Build result:
-Process cleanup result:
+Lenh apply:
+Trang thai migration:
+Pending sau khi apply:
+Ket qua build:
+Ket qua cleanup process:
 ```

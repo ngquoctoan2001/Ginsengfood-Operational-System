@@ -1,6 +1,6 @@
 # 01 - Project Initiation Prompts
 
-> Dung truoc khi tao/scaffold code. Muc tieu la bien y tuong va docs thanh project charter co scope, done definition, owner decisions, timeline va rui ro.
+> Dung truoc khi tao/scaffold code. Muc tieu la bien y tuong va docs thanh project charter co scope, done definition, quyết định owner, timeline va rui ro.
 
 ## Prompt 01.01 - Owner Brief And Success Criteria
 
@@ -41,12 +41,12 @@ Workflow:
 2. Xác định in-scope và out-of-scope.
 3. Xác định P0/P1/P2 phases.
 4. Xác định success criteria đo được.
-5. Xác định open owner decisions và blocker.
+5. Xác định open quyết định owner và blocker.
 6. Xác định target users/roles.
 7. Xác định release strategy sơ bộ: MVP, staging, UAT, production.
 8. Cập nhật progress report với trạng thái inception.
 
-Validation:
+Kiểm chứng:
 - Kiểm tra mọi phase P0 trong CODE01-CODE08/CODE17 có mục tiêu và done gate.
 - Kiểm tra owner decision blocker đã xuất hiện trong report.
 
@@ -54,12 +54,12 @@ Stop conditions:
 - Nếu scope/phạm vi vận hành mâu thuẫn giữa docs, dừng và tạo conflict list.
 - Nếu owner decision chặn việc bắt đầu project, ghi rõ blocker thay vì tự quyết.
 
-Required output:
+Đầu ra bắt buộc:
 - Project brief.
 - In-scope / out-of-scope.
 - Success criteria.
 - Delivery phases.
-- Owner decisions.
+- Quyết định owner.
 - Initial risks.
 - Next prompt to run.
 - Confirmation that progress report was updated.
@@ -93,14 +93,14 @@ Workflow:
 5. Định nghĩa reporting cadence: daily, weekly, release checkpoint.
 6. Định nghĩa escalation path khi gặp owner decision hoặc validation fail.
 
-Required output:
+Đầu ra bắt buộc:
 - Project charter.
 - RACI-lite table.
 - AI agent operating model.
 - Done gate policy.
 - Reporting cadence.
 - Escalation rules.
-- Progress report update.
+- Cập nhật báo cáo tiến độ.
 ```
 
 ## Prompt 01.03 - Owner Decision Closure Plan
@@ -120,17 +120,17 @@ Read first:
 5. docs/software-specs/non-functional/07_SCALABILITY_AVAILABILITY_REQUIREMENTS.md
 
 Workflow:
-1. Liệt kê owner decisions đang open.
+1. Liệt kê quyết định owner đang open.
 2. Phân loại: blocks implementation, blocks UAT, blocks production, can defer.
 3. Với mỗi OD, viết câu hỏi ngắn, options, recommendation, impact.
 4. Đề xuất deadline cần chốt theo phase.
 5. Cập nhật progress report owner tracker.
 
-Required output:
+Đầu ra bắt buộc:
 - Owner decision table.
 - Recommended option per decision.
 - Impact by DB/API/UI/workflow/test/release.
 - Deadline/blocking phase.
-- Progress report update.
+- Cập nhật báo cáo tiến độ.
 ```
 

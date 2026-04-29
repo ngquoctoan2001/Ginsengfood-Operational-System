@@ -15,7 +15,7 @@ Rules:
 - G1 is active operational baseline, not only seed forever.
 - Future G2/G3+ must be supported by CRUD/versioning.
 - Recipe groups exactly SPECIAL_SKU_COMPONENT, NUTRITION_BASE, BROTH_EXTRACT, SEASONING_FLAVOR.
-Output: readiness report, missing CRUD/versioning gaps, seed validation gaps, first gap recommendation, progress update.
+Đầu ra: readiness report, missing CRUD/versioning gaps, seed validation gaps, first gap recommendation, cập nhật tiến độ.
 ```
 
 ## Prompt 03.02 - SKU/Ingredient CRUD And Versioning Plan
@@ -28,7 +28,7 @@ Workflow:
 2. Define DB/API/UI needs.
 3. Define validation and tests.
 4. Identify seed vs production master data separation.
-Output: bounded implementation plan, write scope, non-goals, progress update.
+Đầu ra: bounded implementation plan, write scope, non-goals, cập nhật tiến độ.
 ```
 
 ## Prompt 03.03 - Recipe Schema/Backend Implementation
@@ -42,7 +42,7 @@ Rules:
 - Production snapshot must capture formula/version/group/ingredient/quantity/UOM/prep/usage role.
 - Quantity basis 400 is not 400 kg unless owner later decides.
 Workflow: implement schema/model/service/API, constraints, version lifecycle, tests.
-Output: files changed, migration, API impact, validation, progress update.
+Đầu ra: file đã sửa, migration, API impact, validation, cập nhật tiến độ.
 ```
 
 ## Prompt 03.04 - G1 Seed And Validation
@@ -55,7 +55,7 @@ Rules:
 - Seed idempotent by business key.
 - Derived counts such as 433 lines must be marked derived validation, not canonical text if source did not state it.
 - Required ingredients ING_MI_CHINH and HRB_SAM_SAVIGIN must exist.
-Output: seed changes, manifest count check, validation commands, idempotency evidence, progress update.
+Đầu ra: seed changes, manifest count check, lệnh kiểm chứng, idempotency evidence, cập nhật tiến độ.
 ```
 
 ## Prompt 03.05 - SKU/Recipe API Contract
@@ -67,7 +67,7 @@ Rules:
 - Use API catalog route family; do not create parallel routes.
 - Include create/update/approve/activate/retire/clone where spec requires.
 - Backend and frontend DTOs must stay in sync.
-Output: route/DTO changes, error/idempotency behavior, API tests, FE impact, progress update.
+Đầu ra: route/DTO changes, error/idempotency behavior, API tests, FE impact, cập nhật tiến độ.
 ```
 
 ## Prompt 03.06 - Master Data Admin UI
@@ -79,7 +79,7 @@ Rules:
 - UI must support future SKU/recipe changes, not read-only seed forever.
 - Show recipe groups clearly.
 - Prevent editing active historical snapshot directly; use version workflow.
-Output: API client/types/screens/forms/tables, UI tests, progress update.
+Đầu ra: API client/types/screens/forms/tables, UI tests, cập nhật tiến độ.
 ```
 
 ## Prompt 03.07 - MX-GATE-G1 Review And Close
@@ -88,6 +88,6 @@ Output: API client/types/screens/forms/tables, UI tests, progress update.
 Role: QA/Reviewer Agent.
 Mission: Decide if manufacturing can start.
 Check: 20 SKU baseline, ingredients, UOM, G1 active formulas, 4 groups, future versioning, snapshot fields, seed validation, API/UI CRUD path.
-Output: MX-GATE-G1 verdict PASS/PARTIAL/FAIL, blockers, accepted deferrals, next CODE03 prompt, progress update.
+Đầu ra: MX-GATE-G1 verdict PASS/PARTIAL/FAIL, blockers, accepted deferrals, next CODE03 prompt, cập nhật tiến độ.
 ```
 

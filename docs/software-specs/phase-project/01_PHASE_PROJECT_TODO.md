@@ -10,7 +10,7 @@
 | `IN_PROGRESS` | Agent dang lam, chua co handoff. |
 | `NEEDS_OWNER` | Bi chan boi owner decision. |
 | `NEEDS_FIX` | Agent da lam nhung review/validation fail. |
-| `DONE` | Da co patch, validation, handoff va progress update. |
+| `DONE` | Da co patch, validation, handoff va cập nhật tiến độ. |
 | `DEFERRED` | Owner chap nhan day sang phase sau. |
 
 ## 2. Open Owner Decisions Canh Bao
@@ -29,7 +29,7 @@ Day/Week labels are planning hints only. For copy/paste prompt execution, follow
 
 | Run order | Suggested timing | Phase | Priority | Goal | Agent order | Done gate | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 00 | W0 | PROJECT-INITIATION | P0 | Confirm scope, success criteria, owner decisions, governance. | PM/BA Agent | Charter/governance/decision tracker ready. | TODO |
+| 00 | W0 | PROJECT-INITIATION | P0 | Confirm scope, success criteria, quyết định owner, governance. | PM/BA Agent | Charter/governance/decision tracker ready. | TODO |
 | 01 | W0 | REPO-LOCAL-ENV | P0 | Scaffold repo and local environment. | DevOps/Tech Lead Agent | Repo/local env baseline ready; absent app layers marked `NOT_SCAFFOLDED`. | TODO |
 | 02 | W0 | ARCHITECTURE-FOUNDATION | P0 | Lock architecture, conventions, module skeleton, ADR baseline. | Architect Agent -> Review | Architecture skeleton accepted. | TODO |
 | 03 | W0 | PROJECT-BOOTSTRAP | P0 | Confirm source/docs, initialize progress, select first bounded gap. | Audit Agent -> Planner Agent | Progress report initialized; first bounded gap selected. | TODO |
@@ -60,7 +60,7 @@ Moi phase phai tach thanh bounded gaps neu cham qua nhieu layer.
 | Check | Bat buoc |
 | --- | --- |
 | `gap_id` | Co ma gap ro rang, vi du `GAP-C03-PO-SNAPSHOT`. |
-| Requirement source | Co `REQ-*`, `BR-*`, `TC-*`, file spec va heading. |
+| Nguồn yêu cầu | Co `REQ-*`, `BR-*`, `TC-*`, file spec va heading. |
 | Scope | Ghi ro DB/backend/API/frontend/seed/test/docs nao duoc sua. |
 | Non-goals | Ghi ro nhung viec khong lam trong gap nay. |
 | Current evidence | Neu chua co app code, ghi `NOT_SCAFFOLDED`; neu da co code, doc code de audit sau khi da doc specs; khong dung code lam source-of-truth. |
@@ -79,7 +79,7 @@ Moi phase phai tach thanh bounded gaps neu cham qua nhieu layer.
 | CODE05 | QC template; inspection; disposition; release queue; release action; release audit. |
 | CODE06 | Warehouse receipt; inventory ledger; lot balance projection; adjustment; allocation reference. |
 | CODE07 | Internal trace graph; public trace whitelist; QR resolve; trace query performance; trace tests. |
-| CODE08 | Incident; recall case; impact snapshot; hold/sale lock; recovery/disposition; CAPA/close. |
+| CODE08 | Incident; recall case; impact snapshot; hold/sale lock; recovery/disposition; CAPA/evidence/close. |
 | CODE09-CODE16 | Treat each as cross-cutting slice; never let cross-cutting work rewrite business workflow truth. |
 
 ## 6. Mandatory Management Reporting Fields
@@ -89,7 +89,7 @@ Sau moi agent run, cap nhat `03_PROGRESS_REPORT.md` voi:
 - phase/gap;
 - status;
 - what changed;
-- validation result;
+- kết quả kiểm chứng;
 - blockers;
 - risk;
 - next action;

@@ -5,6 +5,10 @@ mode: agent
 
 # Implement Ginsengfood V2 Phase
 
+## Response Language
+
+Tra loi bang tieng Viet cho moi phan phan tich, tien do, review, validation, handoff va final report. Giu nguyen tieng Anh cho technical terms va exact identifiers nhu file paths, code symbols, route paths, API methods, DTO/table/column/enum names, commands, package names, JSON/YAML/TOML keys, HTTP status codes, framework/tool names va original log/error text.
+
 ## Input
 
 Phase/requirement to implement: `$PHASE_ID - $PHASE_TITLE`
@@ -104,23 +108,23 @@ Update `docs/v2-handoff/` or the active task document with source requirement, f
 
 Stop only long-lived processes started by this agent before final response. Use `tools/agent/Stop-AgentOwnedProcesses.ps1 -IncludeDescendants` for tracked PIDs. Run `dotnet build-server shutdown` after agent-run .NET build/test/EF commands.
 
-## Final Response Format
+## Format phan hoi cuoi
 
 ```markdown
-## Summary
-## Requirement Source
-## Evidence Found
-## Files Changed
-## Commands Run
-## Test Result
-## Backend Build Result
-## Frontend Build Result
-## Process Cleanup Result
-## Database Migration/Update Result
-## Seed Validation Result
-## Smoke/E2E Result
-## Handoff Updated
-## Files Blocked By Permissions
-## Remaining Risks
-## Next Phase Prompt
+## Tom tat
+## Nguon yeu cau
+## Evidence da tim thay
+## File da sua
+## Lenh da chay
+## Ket qua test
+## Ket qua backend build
+## Ket qua frontend build
+## Ket qua cleanup process
+## Ket qua database migration/update
+## Ket qua seed validation
+## Ket qua smoke/e2e
+## Handoff da cap nhat
+## File bi chan boi quyen
+## Rui ro con lai
+## Prompt phase tiep theo
 ```

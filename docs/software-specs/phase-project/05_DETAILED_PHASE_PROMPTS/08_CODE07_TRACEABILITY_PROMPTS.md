@@ -12,7 +12,7 @@ Mission: Audit traceability implementation. Do not edit files.
 Read first: modules/12_TRACEABILITY.md, data/public_trace_policy.csv, workflows/08_SMOKE_WORKFLOW.md, api, database, ui, testing.
 Owner blockers: OD-11 trace query SLA, OD-14 public trace i18n.
 Hard locks: public trace must not expose supplier/internal personnel/costing/QC defect/loss/MISA data.
-Output: gap map, public leakage risk, SLA/i18n blockers, first gap, progress update.
+Đầu ra: gap map, public leakage risk, SLA/i18n blockers, first gap, cập nhật tiến độ.
 ```
 
 ## Prompt 08.02 - Internal Genealogy Plan
@@ -21,7 +21,7 @@ Output: gap map, public leakage risk, SLA/i18n blockers, first gap, progress upd
 Role: Trace Planner.
 Mission: Plan internal genealogy and trace search.
 Workflow: map source/raw lot -> material issue -> production/batch -> packaging/QR -> warehouse -> recall exposure.
-Output: DB/view/index/API/UI/test plan, SLA owner blockers, progress update.
+Đầu ra: DB/view/index/API/UI/test plan, SLA owner blockers, cập nhật tiến độ.
 ```
 
 ## Prompt 08.03 - Internal Trace Backend/API
@@ -32,7 +32,7 @@ Mission: Implement internal trace/genealogy.
 Rules:
 - Trace must reuse operational truth; do not create duplicate trace truth.
 - Backward and forward trace must include source/raw/material/batch/packaging/warehouse links.
-Output: service/API/views/tests, performance note, progress update.
+Đầu ra: service/API/views/tests, performance note, cập nhật tiến độ.
 ```
 
 ## Prompt 08.04 - Public Trace Whitelist
@@ -44,7 +44,7 @@ Rules:
 - Use public_trace_policy.csv.
 - Public-friendly batch code must preserve customer traceability; do not mask beyond usability.
 - VOID/FAILED QR invalid for public trace.
-Output: public API, whitelist enforcement tests, leakage tests, progress update.
+Đầu ra: public API, whitelist enforcement tests, leakage tests, cập nhật tiến độ.
 ```
 
 ## Prompt 08.05 - Trace Admin/Public UI
@@ -55,7 +55,7 @@ Mission: Implement internal trace search, genealogy view and public trace previe
 Rules:
 - Internal view may show allowed operational evidence by permission.
 - Public preview must use public API/whitelist only.
-Output: UI/API client/tests, progress update.
+Đầu ra: UI/API client/tests, cập nhật tiến độ.
 ```
 
 ## Prompt 08.06 - Trace Performance/SLA Decision
@@ -63,7 +63,7 @@ Output: UI/API client/tests, progress update.
 ```text
 Role: Performance/Owner Decision Agent.
 Mission: Prepare OD-11 trace query SLA decision and implementation impact.
-Output: options, recommendation, DB/API/index/test impact, blocking phase, progress update.
+Đầu ra: options, recommendation, DB/API/index/test impact, blocking phase, cập nhật tiến độ.
 ```
 
 ## Prompt 08.07 - CODE07 Review/Validate/Handoff
@@ -72,6 +72,6 @@ Output: options, recommendation, DB/API/index/test impact, blocking phase, progr
 Role: QA + Security Reviewer.
 Mission: Validate traceability.
 Required tests: backward/forward genealogy; public denylist; invalid QR; no supplier/personnel/costing/QC defect/loss/MISA leakage; performance test if OD-11 closed.
-Output: verdict, findings, owner blockers, progress update.
+Đầu ra: verdict, findings, owner blockers, cập nhật tiến độ.
 ```
 

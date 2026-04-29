@@ -98,7 +98,7 @@ Operational Domain không sở hữu master data ngoài phạm vi vận hành nh
 | M10 Packaging Printing | Packaging, print, QR, GTIN handoff | Batch release |
 | M11 Warehouse Inventory | Receipt, ledger, balance, allocation reference | Order master |
 | M12 Traceability | Internal/public trace, genealogy | Recall decision workflow |
-| M13 Recall | Incident, recall case, hold, sale lock, recovery, CAPA | Notification delivery engine |
+| M13 Recall | Incident, recall case, hold, sale lock, recovery, CAPA, CAPA evidence metadata | Notification delivery engine, binary evidence storage server operation |
 | M14 MISA Integration | Mapping, sync, retry, reconcile | MISA master accounting ownership |
 | M15 Reporting Dashboard | Operational dashboard/health/KPI | BI/AI analytics full platform |
 | M16 Admin UI | Screens, menus, forms, tables, API client contract | Native app implementation if not approved |

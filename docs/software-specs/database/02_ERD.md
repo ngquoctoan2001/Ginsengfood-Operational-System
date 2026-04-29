@@ -145,13 +145,21 @@ erDiagram
     uuid sku_id FK
     text formula_code
     text formula_version
+    text formula_kind
     text formula_status
+    uuid anchor_ingredient_id FK
+    numeric anchor_baseline_quantity
+    text anchor_uom_code
+    numeric anchor_ratio_percent
   }
   op_recipe_ingredient {
     uuid recipe_line_id PK
     uuid recipe_id FK
     uuid ingredient_id FK
     text group_code FK
+    bool is_anchor
+    numeric quantity_per_batch_400
+    numeric ratio_percent
   }
   ref_sku_operational_config {
     uuid sku_operational_config_id PK
@@ -174,6 +182,11 @@ erDiagram
     uuid evidence_id PK
     uuid source_origin_id FK
     text evidence_type
+    text evidence_uri
+    text mime_type
+    bigint file_size_bytes
+    text scan_status
+    text original_filename
   }
   op_source_origin_verification {
     uuid verification_id PK
@@ -217,7 +230,11 @@ erDiagram
     uuid production_order_id FK
     uuid ingredient_id FK
     text formula_version
+    text formula_kind_snapshot
     text recipe_line_group_code
+    bool is_anchor
+    numeric snapshot_quantity
+    text snapshot_basis
   }
   op_work_order {
     uuid work_order_id PK
@@ -283,15 +300,25 @@ erDiagram
     uuid trade_item_id PK
     uuid sku_id FK
     text packaging_level
+    int units_per_box
+    int boxes_per_carton
+    bool carton_enabled
   }
   op_trade_item_gtin {
     uuid trade_item_gtin_id PK
     uuid trade_item_id FK
-    text gtin UK
+    text identifier_type
+    text identifier_value
+    bool is_test_fixture
   }
   op_packaging_job {
     uuid packaging_job_id PK
     uuid batch_id FK
+    uuid trade_item_id FK
+    text packaging_level
+    bool carton_requested
+    int units_per_box_snapshot
+    int boxes_per_carton_snapshot
     text packaging_status
   }
   op_packaging_unit {
@@ -481,6 +508,15 @@ erDiagram
     uuid recall_case_id FK
     text capa_status
   }
+  op_recall_capa_evidence {
+    uuid evidence_id PK
+    uuid capa_id FK
+    text evidence_type
+    text evidence_uri
+    text mime_type
+    bigint file_size_bytes
+    text scan_status
+  }
   op_recall_timeline {
     uuid timeline_id PK
     uuid recall_case_id FK
@@ -644,6 +680,7 @@ erDiagram
   op_recall_case ||--o{ op_recall_recovery_item : recovers
   op_recall_case ||--o{ op_recall_disposition_record : disposes
   op_recall_case ||--o{ op_recall_capa : capa
+  op_recall_capa ||--o{ op_recall_capa_evidence : evidence
   op_recall_case ||--o{ op_recall_timeline : timeline
 
   outbox_event ||--o{ misa_sync_event : consumed_by

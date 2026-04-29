@@ -37,6 +37,7 @@ R-QA-REL,RECIPE_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PER
 R-QA-REL,BATCH_RELEASE_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
 R-QA-REL,BATCH_RELEASE_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
 R-QA-REL,SOURCE_ORIGIN_VERIFY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
+R-QA-REL,RECALL_CAPA_EVIDENCE_ADD,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,QA can attach/verify CAPA evidence metadata for recall close gate
 R-QA-REL,RAW_LOT_MARK_READY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,QA release role can mark QC_PASS raw lot READY_FOR_PRODUCTION after readiness checks
 R-PACK-OP,PACKAGING_JOB_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
 R-PACK-OP,PACKAGING_JOB_EXECUTE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
@@ -50,6 +51,7 @@ R-RECALL-MGR,RECALL_CASE_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE
 R-RECALL-MGR,RECALL_IMPACT_ANALYSIS,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
 R-RECALL-MGR,RECALL_HOLD_APPLY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
 R-RECALL-MGR,RECALL_SALE_LOCK_APPLY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
+R-RECALL-MGR,RECALL_CAPA_EVIDENCE_ADD,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Recall manager can attach CAPA evidence metadata; close still requires clean scan
 R-RECALL-MGR,RECALL_CLOSE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
 R-ACC-INT,MISA_MAPPING_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
 R-ACC-INT,MISA_MAPPING_UPDATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
