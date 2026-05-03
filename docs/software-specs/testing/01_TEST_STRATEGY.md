@@ -101,6 +101,6 @@ Các file có thể bổ sung cột `requirement_id`, `business_rule`, `api`, `u
 
 | item_id | Nội dung | Impact | Trạng thái |
 |---|---|---|---|
-| TS-OI-001 | Exact command/test runner chưa được chốt vì batch này không đọc source code. | DevOps cần bổ sung lệnh cụ thể trong implementation handoff. | OWNER DECISION NEEDED |
-| TS-OI-002 | MISA sandbox/credential thật chưa có trong tài liệu nguồn đã được phép dùng. | Integration test chấp nhận missing mapping/reconcile pending nếu chưa có sandbox. | OWNER DECISION NEEDED |
-| TS-OI-003 | SLA performance trace/recall/backup chưa được owner chốt. | Performance test chỉ định scope nhưng chưa có threshold cuối cùng. | OWNER DECISION NEEDED |
+| TS-OI-001 | Exact command/test runner sẽ được chốt khi scaffold có package/project scripts. | DevOps bổ sung lệnh cụ thể trong implementation handoff; không block contract freeze. | DEFERRED_WITH_ACCEPTED_RISK |
+| TS-OI-002 | MISA sandbox/credential thật được bind bằng PF-02 config/secret refs. | Integration test dùng `DryRun` hoặc sandbox refs; missing mapping/reconcile pending vẫn là negative test hợp lệ. | RESOLVED_PF02 |
+| TS-OI-003 | SLA performance trace/recall/backup đã có baseline PF-01/PF-02. | Performance/backup tests dùng baseline đã freeze, threshold vẫn configurable theo môi trường. | RESOLVED_PF02 |

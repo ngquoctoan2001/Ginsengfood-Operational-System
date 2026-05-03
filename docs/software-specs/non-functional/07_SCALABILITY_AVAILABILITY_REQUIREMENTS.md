@@ -33,7 +33,7 @@
 |---|---|---|---|
 | CONC-001 | Duplicate material issue execution | One ledger debit only; exact duplicate idempotency replay returns original successful result, not a new debit or ambiguous failure. | TC-INT-INV-002 |
 | CONC-002 | Concurrent warehouse receipt for same batch | Prevent duplicate receipt/ledger credit unless split receipt is explicitly designed. | TC-M11-WH-001 variant |
-| CONC-003 | Concurrent recipe activation | Only one active operational recipe per SKU/scope/effective window. | TC-M04-REC-006 |
+| CONC-003 | Concurrent recipe activation | Only one active operational recipe per `(sku_id, formula_kind)`/effective window; G1 PILOT and G2 FIXED may coexist for the same SKU. | TC-M04-REC-006 |
 | CONC-004 | Concurrent QR generated/queued/reprint/void | State machine serializes `GENERATED -> QUEUED` claim and prevents invalid reprint/void transition; history append-only. | TC-M10-QR-003 |
 | CONC-005 | Concurrent MISA retry/reconcile | Lock sync event or use version check; no duplicate external sync side effects. | TC-M14-MISA-002 |
 

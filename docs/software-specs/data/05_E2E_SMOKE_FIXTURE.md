@@ -1,5 +1,7 @@
 # 05 - E2E Smoke Fixture
 
+PF-02 marker: smoke fixture trong file này là `DEV_TEST_ONLY`; production data/config thật phải đi qua owner-provided imports, config refs hoặc secret refs.
+
 ## Mục Lục
 
 - [1. Mục đích](#1-mục-đích)
@@ -17,40 +19,40 @@ SKU smoke được chọn là `A1/CS/DM/HS` vì đây là SKU vegan, công thứ
 
 ## 2. Fixture Chính
 
-| fixture_key                | value                                            |
-| -------------------------- | ------------------------------------------------ |
-| `sku_code`                 | `A1/CS/DM/HS`                                    |
-| `formula_code`             | `FML-A1-G1`                                      |
-| `formula_version`          | `G1`                                             |
-| `formula_kind`             | `PILOT_PERCENT_BASED`                            |
-| `anchor_ingredient_code`   | `HRB_SAM_SAVIGIN`                                |
-| `anchor_baseline_quantity` | theo seed canonical                              |
-| `anchor_uom_code`          | `kg`                                             |
-| `anchor_ratio_percent`     | theo seed canonical                              |
-| `batch_size_standard`      | `400`                                            |
-| Recipe line count          | 23                                               |
-| Special component lines    | 7                                                |
-| Nutrition base lines       | 5                                                |
-| Broth extract lines        | 5                                                |
-| Seasoning flavor lines     | 6                                                |
-| Raw warehouse              | `WH_RAW_MAIN`                                    |
-| Finished goods warehouse   | `WH_FG_MAIN`                                     |
-| Source zone                | `SRC_ZONE_SMOKE_001`                             |
-| Source origin              | `SRC_ORIGIN_SMOKE_001`                           |
-| Purchased supplier         | `SUP_SMOKE_001`                                  |
-| Production order           | `PO-SMOKE-G1-A1-001`                             |
-| Batch                      | `BATCH-SMOKE-G1-A1-001`                          |
-| Material request           | `MR-SMOKE-G1-A1-001`                             |
-| Material issue             | `MI-SMOKE-G1-A1-001`                             |
-| Material receipt           | `MRC-SMOKE-G1-A1-001`                            |
-| QC inspection              | `QC-SMOKE-G1-A1-001`                             |
-| Batch release              | `REL-SMOKE-G1-A1-001`                            |
-| Packaging job              | `PKG-SMOKE-G1-A1-001`                            |
-| Print job                  | `PRINT-SMOKE-G1-A1-001`                          |
-| QR code                    | `QR-SMOKE-G1-A1-001`                             |
-| Warehouse receipt          | `WR-SMOKE-G1-A1-001`                             |
-| Recall dry-run             | `RCL-SMOKE-G1-A1-001`                            |
-| Required process steps     | `PREPROCESSING` -> `FREEZING` -> `FREEZE_DRYING` |
+| fixture_key                | value                                                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| `sku_code`                 | `A1/CS/DM/HS`                                                                                      |
+| `formula_code`             | `FML-A1-G1`                                                                                        |
+| `formula_version`          | `G1`                                                                                               |
+| `formula_kind`             | `PILOT_PERCENT_BASED`                                                                              |
+| `anchor_ingredient_code`   | `HRB_SAM_SAVIGIN`                                                                                  |
+| `anchor_baseline_quantity` | theo seed canonical                                                                                |
+| `anchor_uom_code`          | `kg`                                                                                               |
+| `anchor_ratio_percent`     | theo seed canonical                                                                                |
+| `batch_size_standard`      | `null` (G1 `PILOT_PERCENT_BASED` không dùng batch cố định; chỉ `FIXED_QUANTITY_BATCH` mới set 400) |
+| Recipe line count          | 23                                                                                                 |
+| Special component lines    | 7                                                                                                  |
+| Nutrition base lines       | 5                                                                                                  |
+| Broth extract lines        | 5                                                                                                  |
+| Seasoning flavor lines     | 6                                                                                                  |
+| Raw warehouse              | `WH_RAW_MAIN`                                                                                      |
+| Finished goods warehouse   | `WH_FG_MAIN`                                                                                       |
+| Source zone                | `SRC_ZONE_SMOKE_001`                                                                               |
+| Source origin              | `SRC_ORIGIN_SMOKE_001`                                                                             |
+| Purchased supplier         | `SUP_DEV_001`                                                                                      |
+| Production order           | `PO-SMOKE-G1-A1-001`                                                                               |
+| Batch                      | `BATCH-SMOKE-G1-A1-001`                                                                            |
+| Material request           | `MR-SMOKE-G1-A1-001`                                                                               |
+| Material issue             | `MI-SMOKE-G1-A1-001`                                                                               |
+| Material receipt           | `MRC-SMOKE-G1-A1-001`                                                                              |
+| QC inspection              | `QC-SMOKE-G1-A1-001`                                                                               |
+| Batch release              | `REL-SMOKE-G1-A1-001`                                                                              |
+| Packaging job              | `PKG-SMOKE-G1-A1-001`                                                                              |
+| Print job                  | `PRINT-SMOKE-G1-A1-001`                                                                            |
+| QR code                    | `QR-SMOKE-G1-A1-001`                                                                               |
+| Warehouse receipt          | `WR-SMOKE-G1-A1-001`                                                                               |
+| Recall dry-run             | `RCL-SMOKE-G1-A1-001`                                                                              |
+| Required process steps     | `PREPROCESSING` -> `FREEZING` -> `FREEZE_DRYING`                                                   |
 
 ## 3. Smoke Workflow
 
@@ -61,7 +63,7 @@ Route examples in this workflow follow `docs/software-specs/api/02_API_ENDPOINT_
 |   01 | Seed UOM, role/action, warehouse, source fixture, SKU, ingredient, G1 recipe, GTIN, public trace policy, event schema, MISA, UI fixture | Seed script                                                                                | SV-001 đến SV-018 pass                                                                                                                                                     |
 |   02 | Create source zone                                                                                                                      | `POST /api/admin/source-zones`                                                             | `SRC_ZONE_SMOKE_001` active                                                                                                                                                |
 |   03 | Create and verify source origin                                                                                                         | `POST /api/admin/source-origins`, `POST /api/admin/source-origins/{sourceOriginId}/verify` | `SRC_ORIGIN_SMOKE_001` = `VERIFIED`                                                                                                                                        |
-|   04 | Raw material intake for A1 recipe ingredients                                                                                           | `POST /api/admin/raw-material/intakes`                                                     | `SELF_GROWN` uses verified source origin; alternate `PURCHASED` path uses `SUP_SMOKE_001` + COA and no source zone                                                         |
+|   04 | Raw material intake for A1 recipe ingredients                                                                                           | `POST /api/admin/raw-material/intakes`                                                     | `SELF_GROWN` uses verified source origin; alternate `PURCHASED` path uses `SUP_DEV_001` + COA and no source zone                                                           |
 |   05 | Raw material QC pass                                                                                                                    | `POST /api/admin/raw-material/lots/{lotId}/qc-inspections`                                 | QC result `QC_PASS`; lot is not issue-ready until mark-ready                                                                                                               |
 |   06 | Mark raw lot ready for production                                                                                                       | `POST /api/admin/raw-material/lots/{lotId}/readiness`                                      | lot status `READY_FOR_PRODUCTION`; event `RAW_LOT_READY_FOR_PRODUCTION`                                                                                                    |
 |   07 | Create production order                                                                                                                 | `POST /api/admin/production/orders`                                                        | PO created with immutable G1 PILOT snapshot (`formula_kind_snapshot=PILOT_PERCENT_BASED`, anchor metadata, `total_batch_quantity`, `snapshot_basis=PILOT_RATIO_OF_ANCHOR`) |
@@ -84,21 +86,21 @@ Route examples in this workflow follow `docs/software-specs/api/02_API_ENDPOINT_
 
 ## 4. Expected State Chain
 
-| entity            | expected states                                                                                                  |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Source origin     | `DRAFT` -> `SUBMITTED` -> `VERIFIED`                                                                             |
-| Raw material lot  | `RECEIVED` -> `QC_PENDING` -> `QC_PASS_RECORDED` -> `READY_FOR_PRODUCTION` -> `RESERVED/ALLOCATED` -> `CONSUMED` |
-| Production order  | `DRAFT` -> `SUBMITTED` -> `APPROVED` -> `IN_PROGRESS` -> `COMPLETED`                                             |
-| Material request  | `DRAFT` -> `SUBMITTED` -> `APPROVED`                                                                             |
-| Material issue    | `DRAFT` -> `APPROVED` -> `EXECUTED`                                                                              |
-| Material receipt  | `PENDING` -> `CONFIRMED`                                                                                         |
-| QC inspection     | `DRAFT` -> `SIGNED` with result `QC_PASS`                                                                        |
-| Batch release     | `PENDING` -> `RELEASED`                                                                                          |
-| QR lifecycle      | `GENERATED` -> `QUEUED` -> `PRINTED`                                                                             |
-| Warehouse receipt | `DRAFT` -> `CONFIRMED`                                                                                           |
-| MISA sync         | `PENDING` -> `FAILED_RETRYABLE` hoặc `RECONCILE_PENDING` theo fixture                                            |
+| entity                   | expected states                                                                                                                                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Source origin            | `DRAFT` -> `SUBMITTED` -> `VERIFIED`                                                                                                                                                            |
+| Raw material receipt/lot | Receipt `RECEIVED_PENDING_QC` -> lot `CREATED` -> lot `IN_QC` + `lot_qc_status = QC_PASS` -> lot `READY_FOR_PRODUCTION` -> allocation/balance `RESERVED` or allocation record -> lot `CONSUMED` |
+| Production order         | `DRAFT` -> `SUBMITTED` -> `APPROVED` -> `IN_PROGRESS` -> `COMPLETED`                                                                                                                            |
+| Material request         | `DRAFT` -> `SUBMITTED` -> `APPROVED`                                                                                                                                                            |
+| Material issue           | `DRAFT` -> `APPROVED` -> `EXECUTED`                                                                                                                                                             |
+| Material receipt         | `PENDING` -> `CONFIRMED`                                                                                                                                                                        |
+| QC inspection            | `DRAFT` -> `SIGNED` with result `QC_PASS`                                                                                                                                                       |
+| Batch release            | `PENDING` -> `RELEASED`                                                                                                                                                                         |
+| QR lifecycle             | `GENERATED` -> `QUEUED` -> `PRINTED`                                                                                                                                                            |
+| Warehouse receipt        | `DRAFT` -> `CONFIRMED`                                                                                                                                                                          |
+| MISA sync                | `PENDING` -> `FAILED_RETRYABLE` hoặc `RECONCILE_PENDING` theo fixture                                                                                                                           |
 
-`RESERVED/ALLOCATED` có thể được implementation lưu bằng lot state hoặc bằng allocation/reservation record riêng, nhưng không được thay thế gate `READY_FOR_PRODUCTION` trước material issue.
+`RESERVED/ALLOCATED` không phải `op_raw_material_lot.lot_status` trong V2; lưu bằng `op_inventory_allocation` hoặc `op_inventory_lot_balance`. Gate `READY_FOR_PRODUCTION` vẫn bắt buộc trước material issue.
 
 ## 5. Data Required
 

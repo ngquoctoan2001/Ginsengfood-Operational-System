@@ -49,7 +49,7 @@ Production quản lý production order, work order, batch creation, process exec
 | `op_production_order_item` | snapshot | Immutable recipe/material snapshot line. | M07 | Source for M08 request. |
 | `op_work_order` | transaction | Work order and step/task container. | M07 | May map to batch. |
 | `op_production_process_event` | history | Process event append-only. | M07 | Step order and evidence. |
-| `op_batch` | transaction/lot | Batch identity and status. | M07 | Includes `batch_status`: `CREATED`, `IN_PROGRESS`, `PROCESS_COMPLETED`, `QC_PENDING`, `QC_PASS`, `QC_HOLD`, `QC_REJECT`, `PACKAGED`, `BLOCKED`; release remains M09. |
+| `op_batch` | transaction/lot | Batch identity and status. | M07 | Includes canonical `batch_status`: `CREATED`, `IN_PROCESS`, `PACKAGED`, `QC_PENDING`, `QC_PASS`, `QC_HOLD`, `QC_REJECT`, `RELEASED`, `BLOCKED`, `CLOSED`; `PROCESS_COMPLETED` is an event/queue signal, not a persisted `batch_status`; release approval remains M09. |
 | `op_batch_material_usage` | mapping/history | Batch material usage summary. | M07/M08 | Derived from material issue. |
 
 ## 7. APIs
@@ -105,6 +105,8 @@ stateDiagram-v2
     CANCELLED --> [*]
     CLOSED --> [*]
 ```
+
+Batch/process state machines are canonical in `workflows/04_STATE_MACHINES.md` sections 7 and 7A. M07 must enforce `process_step` order `PREPROCESSING -> FREEZING -> FREEZE_DRYING` with `process_status` values `NOT_STARTED`, `IN_PROGRESS`, `DONE`, `HALTED`, `REJECTED`, `CORRECTED`; batch `PROCESS_COMPLETED` is emitted as `BATCH_PROCESS_COMPLETED` event after all required steps are `DONE`, not stored as `op_batch.batch_status`.
 
 ## 12. Sequence / Activity Flow
 

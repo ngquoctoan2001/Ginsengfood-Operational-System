@@ -10,12 +10,15 @@
     "recipe_lines": 433,
     "ingredients": 52,
     "recipe_groups": 4,
-    "roles_permissions": 66,
+    "roles_permissions": 101,
+    "suppliers": 2,
+    "supplier_users": 2,
+    "op_supplier_ingredient": 3,
     "warehouses_locations": 4,
     "source_origin_fixture": 2,
     "gtin_fixture": 40,
-    "event_schema_registry": 18,
-    "ui_registry_fixture": 16,
+    "event_schema_registry": 29,
+    "ui_registry_fixture": 23,
     "misa_mapping_fixture": 5,
     "public_trace_policy": 17
   },
@@ -27,9 +30,14 @@
   },
   "notes": [
     "Ingredient codes not explicitly locked by source are generated from Vietnamese ingredient names and require owner/code review before production seed.",
+    "G1 recipe CSV is scaffold-ready as PILOT_PERCENT_BASED: anchor fields and is_anchor are derived mechanically from the largest source quantity per recipe; owner_review_required remains true for production formula approval.",
+    "quantity_per_batch_400 is retained as source quantity evidence for G1 owner review, while ratio_percent is normalized to SUM approximately 100 per recipe for PILOT seed validation.",
+    "M03A supplier fixtures are DEV_TEST_ONLY and seed R-SUPPLIER scoped permissions, M03A admin supplier permissions, plus op_supplier_ingredient allowlist data for Supplier Portal smoke.",
     "effective_from is a technical seed date for dev/QA; production go-live effective date remains owner-controlled.",
     "UOM, source/procurement, GTIN, event schema, and UI registry fixtures were added to cover required seed groups from database/07_SEED_DATA_SPECIFICATION.md.",
     "RAW_LOT_READY_FOR_PRODUCTION and RAW_LOT_MARK_READY are included so QC_PASS remains distinct from READY_FOR_PRODUCTION before material issue.",
-    "GTIN and MISA rows are dev/test fixtures only and must be replaced/configured before production go-live."
+    "GTIN and MISA rows are DEV_TEST_ONLY fixtures and must be replaced/configured before production go-live. GTIN fixture status uses is_test_fixture=true, not identifier_type=TEST_FIXTURE; production rows must use is_test_fixture=false.",
+    "PF-02 production config values for MISA, printer/device, evidence storage, backup/DR, notification outbox consumer, and production user assignment are config/secret/data imports with owners; no real secret is stored in this manifest.",
+    "QR_VOID is seeded as a distinct permission for audited QR void workflow; do not reuse QR_REPRINT or PRINT_JOB_CREATE for void."
   ]
 }

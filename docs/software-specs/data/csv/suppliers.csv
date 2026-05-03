@@ -1,0 +1,3 @@
+supplier_code,supplier_name,tax_code,contact_email,contact_phone,status,is_dev_fixture,source_document,owner_review_required,notes
+SUP_DEV_001,Dev Supplier 001,DEV-TAX-001,sup-dev-001@example.invalid,+84000000001,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,true,DEV_TEST_ONLY; fixture for M03A supplier portal and M06 purchased intake
+SUP_DEV_002,Dev Supplier 002,DEV-TAX-002,sup-dev-002@example.invalid,+84000000002,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,true,DEV_TEST_ONLY; fixture for supplier scope and negative access tests

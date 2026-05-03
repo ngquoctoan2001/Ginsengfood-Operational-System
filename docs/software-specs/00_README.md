@@ -165,7 +165,7 @@ Thư mục `data/` là artifact Part 12, dùng để triển khai seed/migration
 - `data/csv/*.csv`
 - `data/seed_manifest.json`
 
-Data pack hiện có 20 SKU, 20 G1 recipe headers, 433 G1 recipe lines, 52 ingredients, 4 recipe groups, starter RBAC, warehouse fixture, MISA fixture và public trace policy.
+Data pack hiện có 20 SKU, 20 G1 recipe headers, 433 G1 recipe lines, 52 ingredients, 4 recipe groups, starter RBAC, warehouse fixture, MISA fixture và public trace policy. Count `433` được xác nhận từ `data/csv/g1_recipe_lines.csv` row count và `data/seed_manifest.json`, không suy ra từ công thức 20 SKU × số line cố định.
 
 ## 9. Trạng Thái Part 2
 

@@ -19,9 +19,9 @@
 | SEC-MISA-001 | Business modules must not call MISA directly. | M14, M01 | Outbox, MISA sync | Events go through integration layer; missing mapping becomes review/reconcile pending. | P0 | TC-M14-MISA-001, TC-M14-MISA-002 |
 | SEC-BREAKGLASS-001 | Break-glass override is a time-bound security control, not a permanent permission. | M01, M02, M15 | Override console, high-risk command middleware | Level 3 break-glass requires reason, scope, dual approval, expiry timestamp <= 15 minutes and append-only audit; expired override cannot be used. | P0 | TC-APP-OVR-001 |
 | SEC-GTIN-001 | Commercial barcode integrity must enforce GTIN/trade item uniqueness. | M10 | Trade item config, print payload, packaging UI | One active commercial barcode/GTIN per trade item/package level; no fallback to SKU code or user-entered second barcode. | P0 | TC-M10-GTIN-002 |
-| SEC-RATE-001 | Public trace endpoint must have mandatory abuse/rate-limit protection. | M12 | `/api/public/trace/{qrCode}` | Exact threshold is owner decision, but absence of rate limiting blocks public release. | P0 | TC-M12-PTRACE-RATE |
-| SEC-DEVICE-001 | Device/printer callbacks must authenticate device identity and never bypass business approval. | M10, M15 | Device registry, print callback, heartbeat/error ingest | Unregistered/inactive device or invalid token is rejected; callback cannot directly mark inventory, QC or release. | P0 | TC-M10-DEVICE-SEC |
-| SEC-EVIDENCE-001 | Evidence upload must use allowlist MIME/size validation, storage adapter indirection and malware scan before the file can satisfy verify/close gates. | M05, M13 | Source origin evidence, CAPA evidence, storage adapter | Dev/test stores binary on local filesystem; production stores binary on company storage server by configuration; DB stores metadata only. `PENDING_SCAN`, `SCAN_FAILED` and `INFECTED` evidence cannot verify source origin or close CAPA/recall. | P0 | TC-NFR-SEC-EVIDENCE |
+| SEC-RATE-001 | Public trace, login/admin command, PWA submit and integration callback endpoints must have mandatory abuse/rate-limit protection. | M02, M10, M12, M14, M16 | `/api/public/trace/{qrCode}`, `/api/admin/*` commands, `/api/supplier/*`, MISA/device callbacks | PF-02 default thresholds configurable per route family; absence of rate limiting blocks public/integration release. | P0 | TC-M12-PTRACE-RATE |
+| SEC-DEVICE-001 | Device/printer callbacks must authenticate device identity and never bypass business approval. | M10, M15 | Device registry, print callback, heartbeat/error ingest | Unregistered/inactive device or invalid HMAC callback is rejected; callback cannot directly mark inventory, QC or release. | P0 | TC-M10-DEVICE-SEC |
+| SEC-EVIDENCE-001 | Evidence upload must use allowlist MIME/size validation, storage adapter indirection and malware scan before the file can satisfy verify/close gates. | M05, M06, M13 | Source origin evidence, raw receipt evidence, CAPA evidence, storage adapter | Dev/test stores binary on local filesystem `DEV_TEST_ONLY`; production stores binary on company storage server by configuration; DB stores metadata only. `PENDING_SCAN`, `SCAN_FAILED` and `INFECTED` evidence cannot verify source origin, satisfy supplier receive policy or close CAPA/recall. | P0 | TC-NFR-SEC-EVIDENCE |
 
 ## 3. Public/Internal Field Policy
 
@@ -52,13 +52,15 @@
 - Audit/state logs exist for approval, release, hold, recall, MISA retry/reconcile and override.
 - Append-only tables cannot be edited through normal UI/API.
 
-## 5. Owner Decisions
+## 5. PF-02 Security Config Closure
 
-| decision | Needed for |
+| decision | PF-02 status |
 |---|---|
-| Auth session/token implementation detail | Exact token/cookie/SSO strategy if current stack is not fixed |
-| Rate limit thresholds | Exact thresholds for public trace, admin command, login, MISA callback; rate limiting itself is mandatory |
-| Secret manager/tooling | Production secret storage and rotation |
-| Security scan/SBOM process | Dependency and CVE governance |
-| Evidence scan engine | AV/malware scanner implementation and production storage server connection details |
-| Device onboarding/credential rotation | Printer/device registration, token rotation and callback trust boundary |
+| Auth session/token implementation detail | Stack-level detail remains implementation choice; security invariant unchanged: authenticated `/api/admin/*` and scoped `/api/supplier/*`, no production password/secret in seed. |
+| Rate limit thresholds | RESOLVED_PF02 as configurable defaults: public trace 60/min/IP + 600/hour/IP; login/supplier login 10/min/IP; admin commands 120/min/user; PWA submit 300/min/device/user; MISA/device callbacks 600/min/source with signature required. |
+| Secret manager/tooling | RESOLVED_PF02: real values live in environment/platform secret manager; repo stores only `*SecretRef`/config key names. |
+| Security scan/SBOM process | Required before production release; tooling can be selected by DevOps without changing domain/API contracts. |
+| Evidence scan engine | RESOLVED_PF02: scan provider is pluggable worker; production can use ClamAV/Defender/storage antivirus equivalent; scan retry records result and does not make infected evidence valid. |
+| Device onboarding/credential rotation | RESOLVED_PF02: device registry + HMAC-SHA256 callback auth; `DeviceSecretRef` rotated by DevOps, physical model owned by Packaging Ops. |
+
+PF-02 secret/config rule: production values for MISA, printer/device, evidence storage, DB/JWT/session and backup encryption must be references or environment-injected values. No literal secret, token, private key, endpoint credential or password hash seed intended for production may be committed.

@@ -34,24 +34,24 @@ Tài liệu này định nghĩa hợp đồng FE API client để backend/fronte
 
 FE phải dùng route family đã chuẩn hóa trong `api/02_API_ENDPOINT_CATALOG.md`.
 
-| Domain                             | FE route group                             | API route family                                                                                                                                                                |
-| ---------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------- |
-| Source Origin                      | `/admin/source-origin/*`                   | `/api/admin/source-zones`, `/api/admin/source-origins`                                                                                                                          |
-| Raw Material                       | `/admin/raw-material/*`                    | `/api/admin/raw-material/intakes`, `/api/admin/raw-material/lots`, `/api/admin/raw-material/lots/{lotId}/readiness`                                                             |
-| SKU/Recipe                         | `/admin/catalog/*`                         | `/api/admin/skus`, `/api/admin/ingredients`, `/api/admin/recipes`                                                                                                               |
-| Production                         | `/admin/production/*`                      | `/api/admin/production-orders`, `/api/admin/work-orders`, `/api/admin/batch-executions`                                                                                         |
-| Material Flow                      | `/admin/material/*`                        | `/api/admin/material-requests`, `/api/admin/material-issues`, `/api/admin/material-receipts`                                                                                    |
-| QC/Release                         | `/admin/qc/*`, `/admin/release/*`          | `/api/admin/qc-inspections`, `/api/admin/batch-releases`, `/api/admin/batches/{id}/release`                                                                                     |
-| Packaging/Printing                 | `/admin/packaging/*`, `/admin/printing/*`  | `/api/admin/trade-items`, `/api/admin/packaging-jobs`, `/api/admin/qr-registry`, `/api/admin/print-jobs`                                                                        |
-| Warehouse/Inventory                | `/admin/warehouse/*`, `/admin/inventory/*` | `/api/admin/warehouse-receipts`, `/api/admin/inventory-ledger`, `/api/admin/lot-balances`, `/api/admin/inventory-adjustments`                                                   |
-| Traceability                       | `/admin/traceability/*`                    | `/api/admin/trace/*`                                                                                                                                                            |
-| Public Trace                       | `/trace/{qrCode}`                          | `/api/public/trace/{qrCode}`                                                                                                                                                    |
-| Recall                             | `/admin/recall/*`                          | `/api/admin/incidents`, `/api/admin/recall-cases`, `/api/admin/recall-holds`                                                                                                    |
-| MISA Integration                   | `/admin/integrations/misa/*`               | `/api/admin/integrations/misa/*`                                                                                                                                                |
-| System                             | `/admin/system/*`                          | `/api/admin/users`, `/api/admin/roles`, `/api/admin/audit-logs`, `/api/admin/ui/screens`                                                                                        |
-| Supplier Master (M03A)             | `/admin/master-data/suppliers/*`           | `/api/admin/suppliers`, `/api/admin/suppliers/{id}/suspend`, `/api/admin/suppliers/{id}/reactivate`, `/api/admin/suppliers/{id}/ingredients`, `/api/admin/suppliers/{id}/users` |
-| Supplier Collaboration (M06 admin) | `/admin/raw-material/intakes/*`            | `/api/admin/raw-material/intakes/{id}`, `.../receive`, `.../lines/{lineId}/accept                                                                                               | reject | return`, `.../close`, `.../evidence`, `.../feedback` |
-| Supplier Portal (M06 + M03A self)  | `/supplier/*`                              | `/api/supplier/auth/login`, `/api/supplier/me`, `/api/supplier/raw-material/intakes`, `.../{id}/confirm`, `.../{id}/decline`, `.../{id}/evidence`                               |
+| Domain                             | FE route group                             | API route family                                                                                                                                                                          |
+| ---------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Source Origin                      | `/admin/source-origin/*`                   | `/api/admin/source-zones`, `/api/admin/source-origins`                                                                                                                                    |
+| Raw Material                       | `/admin/raw-material/*`                    | `/api/admin/raw-material/intakes`, `/api/admin/raw-material/lots`, `/api/admin/raw-material/lots/{lotId}/readiness`                                                                       |
+| SKU/Recipe                         | `/admin/catalog/*`                         | `/api/admin/skus`, `/api/admin/ingredients`, `/api/admin/recipes`                                                                                                                         |
+| Production                         | `/admin/production/*`                      | `/api/admin/production/orders`, `/api/admin/production/work-orders`, `/api/admin/production/process-events`                                                                               |
+| Material Flow                      | `/admin/material/*`                        | `/api/admin/production/material-requests`, `/api/admin/production/material-issues`, `/api/admin/production/material-receipts`                                                             |
+| QC/Release                         | `/admin/qc/*`, `/admin/release/*`          | `/api/admin/qc/inspections`, `/api/admin/qc/releases`, `/api/admin/qc/releases/{id}/approve`                                                                                              |
+| Packaging/Printing                 | `/admin/packaging/*`, `/admin/printing/*`  | `/api/admin/trade-items`, `/api/admin/packaging/jobs`, `/api/admin/qr/generate`, `/api/admin/printing/jobs`                                                                               |
+| Warehouse/Inventory                | `/admin/warehouse/*`, `/admin/inventory/*` | `/api/admin/warehouse/receipts`, `/api/admin/inventory/ledger`, `/api/admin/inventory/balances`, `/api/admin/inventory/adjustments`                                                       |
+| Traceability                       | `/admin/traceability/*`                    | `/api/admin/trace/*`                                                                                                                                                                      |
+| Public Trace                       | `/trace/{qrCode}`                          | `/api/public/trace/{qrCode}`                                                                                                                                                              |
+| Recall                             | `/admin/recall/*`                          | `/api/admin/incidents`, `/api/admin/recall/cases`, `/api/admin/recall/cases/{recallCaseId}/hold`                                                                                          |
+| MISA Integration                   | `/admin/integrations/misa/*`               | `/api/admin/integrations/misa/*`                                                                                                                                                          |
+| System                             | `/admin/system/*`                          | `/api/admin/users`, `/api/admin/roles`, `/api/admin/audit/logs`, `/api/admin/ui/screens`                                                                                                  |
+| Supplier Master (M03A)             | `/admin/master-data/suppliers/*`           | `/api/admin/suppliers`, `/api/admin/suppliers/{id}/suspend`, `/api/admin/suppliers/{id}/reactivate`, `/api/admin/suppliers/{id}/ingredients`, `/api/admin/suppliers/{id}/users`           |
+| Supplier Collaboration (M06 admin) | `/admin/raw-material/intakes/*`            | `/api/admin/raw-material/intakes/{id}`, `.../receive`, `.../lines/{lineId}/accept`, `.../lines/{lineId}/reject`, `.../lines/{lineId}/return`, `.../close`, `.../evidence`, `.../feedback` |
+| Supplier Portal (M06 + M03A self)  | `/supplier/*`                              | `/api/supplier/auth/login`, `/api/supplier/me`, `/api/supplier/raw-material/intakes`, `.../{id}/confirm`, `.../{id}/decline`, `.../{id}/evidence`                                         |
 
 Legacy/generated route families như `/api/admin/raw-material/source-zones` hoặc `/api/admin/master-data/skus` không được thêm vào FE client mới nếu chưa có route impact analysis và owner approval.
 
@@ -136,27 +136,24 @@ type ListParams = {
 ## 7. Public Trace DTO
 
 ```ts
-export type PublicTraceResponse = {
-  qr_code: string;
-  qr_status:
-    | "GENERATED"
-    | "QUEUED"
-    | "PRINTED"
-    | "FAILED"
-    | "VOID"
-    | "REPRINTED";
-  public_status: "VALID" | "VOID" | "RECALLED" | "UNKNOWN";
-  sku: {
-    sku_code: string;
-    public_name: string;
+export type PublicTracePublicResponse = {
+  schemaVersion: "public-trace.v1";
+  traceStatus: "VALID" | "NOT_PUBLIC" | "INVALID_QR";
+  qr: {
+    qrStatusPublic: "PRINTED";
   };
-  batch?: {
-    public_batch_code: string;
-    release_status?: "RELEASED";
-    manufacture_date?: string;
+  product: {
+    productName: string;
   };
-  origin_summary?: {
-    display_text: string;
+  batch: {
+    batchPublicCode: string;
+    releasePublicStatus: "RELEASED" | "NOT_RELEASED" | "HELD" | "RECALLED";
+  };
+  source: {
+    sourceZoneName?: string;
+    province?: string;
+    ward?: string;
+    addressDetail?: string;
   };
   messages?: Array<{
     type: "INFO" | "WARNING";
@@ -165,15 +162,17 @@ export type PublicTraceResponse = {
 };
 ```
 
-Forbidden in `PublicTraceResponse` and public UI:
+Forbidden in `PublicTracePublicResponse` and public UI:
 
-- supplier internal identifier/detail;
+- supplier internal identifier/detail, including `supplier_id` and `supplier_name`;
 - personnel/operator/QC inspector;
 - cost/price/costing;
 - QC defect detail/internal QC note;
 - loss/variance;
 - MISA document/status/error;
-- internal audit payload.
+- internal audit payload;
+- evidence URI/hash/original filename/storage path/scan payload;
+- formula details, internal batch id, raw material lot internal code, customer/order/shipment data.
 
 ## 8. Idempotency Contract
 
@@ -281,6 +280,6 @@ Backend must still enforce the same rule. FE gating is only UX.
 - Every command endpoint in UI uses typed request, typed response and error handling.
 - Every critical command sends `Idempotency-Key`.
 - No FE client calls legacy/parallel route family without route impact analysis.
-- Public trace uses `publicTraceClient` and `PublicTraceResponse` only.
+- Public trace uses `publicTraceClient` and `PublicTracePublicResponse` only.
 - MISA sync actions are exposed only through integration layer endpoints.
 - Query keys and invalidation cover affected list/detail screens after command success.

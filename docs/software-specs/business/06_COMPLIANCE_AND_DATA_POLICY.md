@@ -1,6 +1,6 @@
 # Compliance And Data Policy
 
-> Mục đích: xác định chính sách dữ liệu, public/internal boundary, retention/backup decision còn mở, và các nguyên tắc compliance để thiết kế DB/API/UI/test không lộ dữ liệu hoặc phá audit.
+> Mục đích: xác định chính sách dữ liệu, public/internal boundary, retention/backup baseline PF-02, và các nguyên tắc compliance để thiết kế DB/API/UI/test không lộ dữ liệu hoặc phá audit.
 
 ## 1. Data Classification
 
@@ -9,7 +9,7 @@
 | `PUBLIC_TRACE` | SKU display name, batch public status, source zone public fields, production/release public summary | Public API | Whitelist-only, không suy ra từ internal view. |
 | `INTERNAL_OPERATIONAL` | Raw lot, production order, material issue, QC result summary, warehouse receipt, trace graph | Internal users | Role-gated; audit sensitive actions. |
 | `SENSITIVE_INTERNAL` | Supplier internal detail, personnel/user data, QC defect detail, loss/waste, costing, MISA/accounting data | Restricted internal | Không expose public; export cần permission riêng. |
-| `AUDIT_HISTORY` | Audit log, state transition, approval log, override log | Restricted read-only | Append-only; retention owner chốt. |
+| `AUDIT_HISTORY` | Audit log, state transition, approval log, override log | Restricted read-only | Append-only; retention theo PF-02. |
 | `LEDGER_HISTORY` | Inventory ledger, reversal, adjustment, lot balance projection | Restricted operational | Append-only ledger; balance derived/projection. |
 | `INTEGRATION_DATA` | MISA mapping, sync log, retry/reconcile, external IDs | Restricted integration/accounting | Không để module nghiệp vụ sync trực tiếp. |
 | `RECONCILE_DATA` | MISA reconcile record, manual retry reason, mismatch evidence, correction note | Restricted integration/accounting/audit | Append-only hoặc correction-linked; không xóa mismatch sau khi reconcile. |
@@ -52,12 +52,12 @@
 
 | area | Policy status | Default documentation stance | Owner decision |
 | --- | --- | --- | --- |
-| Audit log retention | Chưa đủ thông tin | Không hard-code duration; design configurable. | OD-RETENTION |
-| Inventory ledger retention | Chưa đủ thông tin | Treat as long-lived operational history; archive/search boundary cần chốt. | OD-RETENTION |
-| Trace/recall history | Chưa đủ thông tin | Keep immutable snapshots; archive only with searchable index. | OD-RETENTION |
-| MISA sync log | Chưa đủ thông tin | Retain enough for reconcile/audit; exact duration owner/devops chốt. | OD-RETENTION |
-| Backup frequency | Chưa đủ thông tin | Require backup/restore runbook before release readiness. | OD-BACKUP-RTO |
-| RPO/RTO | Chưa đủ thông tin | Mark as release blocker for CODE16/CODE17. | OD-BACKUP-RTO |
+| Audit log retention | RESOLVED_PF02 | Retain 7 years minimum; recall/CAPA/high-risk audit 10 years; design remains configurable above floor. | OD-RETENTION |
+| Inventory ledger retention | RESOLVED_PF02 | Append-only, searchable 7 years minimum, then archive with approved keys. | OD-RETENTION |
+| Trace/recall history | RESOLVED_PF02 | Trace/public projection 7 years minimum; recall/CAPA/evidence metadata 10 years; archive only with searchable index. | OD-RETENTION |
+| MISA sync log | RESOLVED_PF02 | Retain 5 years for reconcile/accounting audit; payload redacted. | OD-RETENTION |
+| Backup frequency | RESOLVED_PF02 | DB continuous/PITR target RPO 15m + daily snapshot; evidence storage hourly backup; audit/outbox tighter replication target. | OD-BACKUP-RTO |
+| RPO/RTO | RESOLVED_PF02 | DB RPO 15m/RTO 4h; evidence RPO 1h/RTO 8h; audit/outbox RPO 5m/RTO 2h. | OD-BACKUP-RTO |
 
 ## 5. Compliance Rules
 
@@ -73,8 +73,8 @@
 | DP-008 | PWA/offline submissions phải có idempotency và user/device/session metadata. | M16, M01 | Duplicate submit test. | Không có exception với issue/receipt. |
 | DP-009 | Device token/secret và printer callback data là sensitive; không log plaintext và không trả qua public/admin list response nếu không cần. | M10, M14, M15 | Device security test kiểm token absent/masked; callback audit có correlation. | Debug tạm thời phải dùng secret reference và audit. |
 | DP-010 | Reconcile data là evidence kế toán/tích hợp, không được hard delete sau khi resolved. | M14, M01 | Reconcile audit test kiểm original mismatch còn truy vết được. | Archive theo retention policy sau khi owner chốt. |
-| DP-011 | Một trade item/package level chỉ có một active barcode/GTIN; barcode conflict không được in hoặc public trace. | M10, M12 | GTIN/barcode uniqueness test; print conflict test. | Fixture dev phải flag `TEST_ONLY_DEV_FIXTURE`. |
-| DP-012 | Evidence binary không lưu trong DB; source verification và CAPA/recall close chỉ dùng evidence metadata có `scan_status = CLEAN`. | M05, M13 | Evidence upload/scan/close negative tests. | Local/dev/test có thể dùng mock/dev-skip scanner để tạo `CLEAN`; production phải dùng scanner thật. |
+| DP-011 | Một trade item/package level chỉ có một active barcode/GTIN; barcode conflict không được in hoặc public trace. | M10, M12 | GTIN/barcode uniqueness test; print conflict test. | Fixture dev phải flag `DEV_TEST_ONLY` và `is_test_fixture=true`; production print block fixture. |
+| DP-012 | Evidence binary không lưu trong DB; source verification, supplier receive policy và CAPA/recall close chỉ dùng evidence metadata có `scan_status = CLEAN`. | M05, M06, M13 | Evidence upload/scan/close negative tests. | Local/dev/test có thể dùng mock/dev scanner để tạo `CLEAN` fixture; production phải dùng scanner thật hoặc approved storage antivirus worker. |
 
 ## 6. Testable Compliance Checks
 
@@ -87,6 +87,6 @@
 | TC-DP-004 | Thử xóa ingredient đã dùng trong recipe/lot. | Reject; cho inactive nếu business cho phép. |
 | TC-DP-005 | Thử sửa posted inventory ledger. | Reject; hướng dùng adjustment/reversal. |
 | TC-DP-006 | MISA mapping missing khi sync event phát sinh. | Event vào trạng thái failed/pending review; nghiệp vụ không gọi MISA trực tiếp. |
-| TC-DP-007 | Backup/restore gate trước release. | Nếu OD-BACKUP-RTO chưa chốt thì CODE16/CODE17 không thể close hoàn toàn. |
+| TC-DP-007 | Backup/restore gate trước release. | PF-02 RPO/RTO và restore drill evidence phải có trước production readiness. |
 | TC-DP-008 | Unregistered device hoặc device token failure gọi print callback. | Reject callback, audit security event, không đổi trạng thái print/QR thành công. |
 | TC-DP-009 | Trade item có hai active barcode cùng package level. | Reject với `PRINT_TRADE_ITEM_BARCODE_CONFLICT`; không tạo print job. |

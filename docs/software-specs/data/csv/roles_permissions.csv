@@ -1,69 +1,102 @@
-role_code,action_code,is_allowed,permission_scope,seed_status,source_document,notes
-R-ADMIN,USER_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ADMIN,ROLE_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ADMIN,ROLE_PERMISSION_UPDATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ADMIN,MASTER_DATA_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ADMIN,AUDIT_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ADMIN,EVENT_OUTBOX_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ADMIN,UI_SCREEN_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ADMIN,UI_MENU_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-OPS-MGR,SOURCE_ORIGIN_VERIFY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-OPS-MGR,RECIPE_ACTIVATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-OPS-MGR,PRODUCTION_ORDER_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-OPS-MGR,BATCH_RELEASE_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-OPS-MGR,RECALL_HOLD_APPLY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-OPS-MGR,OVERRIDE_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-OPS-MGR,RAW_LOT_MARK_READY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,OPS manager can mark QC_PASS raw lot READY_FOR_PRODUCTION after readiness checks
-R-PROD-MGR,PRODUCTION_ORDER_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PROD-MGR,PRODUCTION_ORDER_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PROD-MGR,MATERIAL_REQUEST_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PROD-MGR,WORK_ORDER_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PROD-OP,MATERIAL_REQUEST_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PROD-OP,MATERIAL_RECEIPT_CONFIRM,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PROD-OP,PROCESS_EVENT_RECORD,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PROD-OP,WORK_ORDER_EXECUTE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-WH-RAW,RAW_INTAKE_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-WH-RAW,RAW_LOT_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-WH-RAW,MATERIAL_ISSUE_EXECUTE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-WH-RAW,INVENTORY_LEDGER_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-WH-FG,WAREHOUSE_RECEIPT_CONFIRM,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-WH-FG,INVENTORY_BALANCE_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-WH-FG,INVENTORY_LEDGER_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QC-RAW,RAW_QC_SIGN,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QC-RAW,QC_INSPECTION_SIGN,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QC-PROD,QC_INSPECTION_SIGN,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QC-PROD,BATCH_RELEASE_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QA-REL,RECIPE_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QA-REL,BATCH_RELEASE_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QA-REL,BATCH_RELEASE_APPROVE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QA-REL,SOURCE_ORIGIN_VERIFY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-QA-REL,RECALL_CAPA_EVIDENCE_ADD,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,QA can attach/verify CAPA evidence metadata for recall close gate
-R-QA-REL,RAW_LOT_MARK_READY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,QA release role can mark QC_PASS raw lot READY_FOR_PRODUCTION after readiness checks
-R-PACK-OP,PACKAGING_JOB_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PACK-OP,PACKAGING_JOB_EXECUTE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PRINT-OP,QR_GENERATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PRINT-OP,PRINT_JOB_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-PRINT-OP,QR_REPRINT,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-TRACE,TRACE_INTERNAL_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-TRACE,PUBLIC_TRACE_PREVIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-RECALL-MGR,INCIDENT_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-RECALL-MGR,RECALL_CASE_CREATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-RECALL-MGR,RECALL_IMPACT_ANALYSIS,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-RECALL-MGR,RECALL_HOLD_APPLY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-RECALL-MGR,RECALL_SALE_LOCK_APPLY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-RECALL-MGR,RECALL_CAPA_EVIDENCE_ADD,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Recall manager can attach CAPA evidence metadata; close still requires clean scan
-R-RECALL-MGR,RECALL_CLOSE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ACC-INT,MISA_MAPPING_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ACC-INT,MISA_MAPPING_UPDATE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ACC-INT,MISA_SYNC_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ACC-INT,MISA_MANUAL_RETRY,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-ACC-INT,MISA_RECONCILE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-DEVOPS,EVENT_OUTBOX_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-DEVOPS,HEALTH_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-DEVOPS,BACKUP_RUN,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-DEVOPS,ALERT_ACKNOWLEDGE,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-AUDITOR,AUDIT_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-AUDITOR,TRACE_INTERNAL_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-AUDITOR,INVENTORY_LEDGER_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-AUDITOR,BATCH_RELEASE_VIEW,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
-R-AUDITOR,READ_ONLY_ALL,true,ADMIN_OPERATIONAL,BASELINE,business/04_ROLE_AND_PERMISSION_MODEL.md,Starter seed; enforce backend permission by action_code
+"role_code","action_code","is_allowed","permission_scope","seed_status","source_document","notes"
+"R-ADMIN","USER_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","ROLE_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","ROLE_PERMISSION_UPDATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","MASTER_DATA_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","AUDIT_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","EVENT_OUTBOX_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","UI_SCREEN_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","UI_MENU_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ADMIN","supplier.read","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Production action baseline; M03A admin supplier read permission; user assignment may differ by environment"
+"R-ADMIN","supplier.write","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Production action baseline; M03A admin supplier write alias used by UI specs; user assignment may differ by environment"
+"R-ADMIN","supplier.create","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Production action baseline; M03A admin supplier create permission; user assignment may differ by environment"
+"R-ADMIN","supplier.update","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Production action baseline; M03A admin supplier update permission; user assignment may differ by environment"
+"R-ADMIN","supplier.suspend","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Production action baseline; M03A admin supplier suspend/reactivate permission; user assignment may differ by environment"
+"R-ADMIN","supplier.reactivate","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Production action baseline; M03A admin supplier reactivate permission; user assignment may differ by environment"
+"R-ADMIN","supplier.user.manage","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Production action baseline; M03A admin supplier user lifecycle permission; user assignment may differ by environment"
+"R-OPS-MGR","SOURCE_ORIGIN_VERIFY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-OPS-MGR","RECIPE_ACTIVATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-OPS-MGR","PRODUCTION_ORDER_APPROVE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-OPS-MGR","BATCH_RELEASE_APPROVE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-OPS-MGR","BATCH_RELEASE_REVOKE","true","ADMIN_OPERATIONAL","BASELINE","modules/09_QC_RELEASE.md","Manager can revoke approved release through audited workflow when policy permits"
+"R-OPS-MGR","RECALL_HOLD_APPLY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-OPS-MGR","OVERRIDE_APPROVE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-OPS-MGR","RAW_LOT_MARK_READY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","OPS manager can mark QC_PASS raw lot READY_FOR_PRODUCTION after readiness checks"
+"R-OPS-MGR","QR_VOID","true","ADMIN_OPERATIONAL","BASELINE","modules/10_PACKAGING_PRINTING.md","OPS manager can void QR through audited workflow when policy permits"
+"R-OPS-MGR","supplier.read","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Operations manager can review supplier governance"
+"R-OPS-MGR","supplier.write","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Operations manager supplier write alias used by UI specs"
+"R-OPS-MGR","supplier.suspend","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Operations manager can suspend supplier with audit"
+"R-OPS-MGR","supplier.reactivate","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Operations manager can reactivate supplier with audit"
+"R-OPS-MGR","supplier.user.manage","true","ADMIN_OPERATIONAL","BASELINE","modules/03A_SUPPLIER_MANAGEMENT.md","Operations manager can manage supplier user lifecycle where policy permits"
+"R-PROD-MGR","PRODUCTION_ORDER_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PROD-MGR","PRODUCTION_ORDER_APPROVE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PROD-MGR","MATERIAL_REQUEST_APPROVE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PROD-MGR","WORK_ORDER_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PROD-OP","MATERIAL_REQUEST_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PROD-OP","MATERIAL_RECEIPT_CONFIRM","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PROD-OP","PROCESS_EVENT_RECORD","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PROD-OP","WORK_ORDER_EXECUTE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-WH-RAW","RAW_INTAKE_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-WH-RAW","RAW_INTAKE_RECEIVE","true","ADMIN_OPERATIONAL","BASELINE","api/02_API_ENDPOINT_CATALOG.md","M06 receive action — confirms physical delivery per line and creates raw lots; UPPER_SNAKE per namespace policy"
+"R-WH-RAW","RAW_INTAKE_LINE_ACCEPT","true","ADMIN_OPERATIONAL","BASELINE","api/02_API_ENDPOINT_CATALOG.md","M06 line accept action — marks receipt line ACCEPTED; UPPER_SNAKE per namespace policy"
+"R-WH-RAW","RAW_INTAKE_LINE_REJECT","true","ADMIN_OPERATIONAL","BASELINE","api/02_API_ENDPOINT_CATALOG.md","M06 line reject action — marks receipt line REJECTED; UPPER_SNAKE per namespace policy"
+"R-WH-RAW","RAW_INTAKE_LINE_RETURN","true","ADMIN_OPERATIONAL","BASELINE","api/02_API_ENDPOINT_CATALOG.md","M06 line return action — records returned_quantity for rejected lines; UPPER_SNAKE per namespace policy"
+"R-WH-RAW","RAW_INTAKE_CLOSE","true","ADMIN_OPERATIONAL","BASELINE","api/02_API_ENDPOINT_CATALOG.md","M06 close receipt action — closes receipt after receive/accept/reject/return; UPPER_SNAKE per namespace policy"
+"R-WH-RAW","RAW_INTAKE_EVIDENCE_UPLOAD","true","ADMIN_OPERATIONAL","BASELINE","api/02_API_ENDPOINT_CATALOG.md","M06 admin evidence upload — internal side evidence attachment; UPPER_SNAKE per namespace policy"
+"R-WH-RAW","RAW_INTAKE_FEEDBACK_WRITE","true","ADMIN_OPERATIONAL","BASELINE","api/02_API_ENDPOINT_CATALOG.md","M06 admin feedback reply — admin replies to supplier feedback thread; UPPER_SNAKE per namespace policy"
+"R-WH-RAW","RAW_LOT_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-WH-RAW","MATERIAL_ISSUE_EXECUTE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-WH-RAW","INVENTORY_LEDGER_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-WH-FG","WAREHOUSE_RECEIPT_CONFIRM","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-WH-FG","INVENTORY_BALANCE_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-WH-FG","INVENTORY_LEDGER_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QC-RAW","RAW_QC_SIGN","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QC-RAW","QC_INSPECTION_SIGN","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QC-PROD","QC_INSPECTION_SIGN","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QC-PROD","BATCH_RELEASE_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QA-REL","RECIPE_APPROVE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QA-REL","BATCH_RELEASE_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QA-REL","BATCH_RELEASE_APPROVE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QA-REL","BATCH_RELEASE_REVOKE","true","ADMIN_OPERATIONAL","BASELINE","modules/09_QC_RELEASE.md","QA release authority can revoke approved release through audited workflow when policy permits"
+"R-QA-REL","SOURCE_ORIGIN_VERIFY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-QA-REL","RECALL_CAPA_EVIDENCE_ADD","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","QA can attach/verify CAPA evidence metadata for recall close gate"
+"R-QA-REL","RAW_LOT_MARK_READY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","QA release role can mark QC_PASS raw lot READY_FOR_PRODUCTION after readiness checks"
+"R-PACK-OP","PACKAGING_JOB_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PACK-OP","PACKAGING_JOB_EXECUTE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PRINT-OP","QR_GENERATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PRINT-OP","PRINT_JOB_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PRINT-OP","QR_REPRINT","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-PRINT-OP","QR_VOID","true","ADMIN_OPERATIONAL","BASELINE","modules/10_PACKAGING_PRINTING.md","Print operator can void QR with reason and audit"
+"R-TRACE","TRACE_INTERNAL_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-TRACE","PUBLIC_TRACE_PREVIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-RECALL-MGR","INCIDENT_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-RECALL-MGR","RECALL_CASE_CREATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-RECALL-MGR","RECALL_IMPACT_ANALYSIS","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-RECALL-MGR","RECALL_HOLD_APPLY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-RECALL-MGR","RECALL_SALE_LOCK_APPLY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-RECALL-MGR","RECALL_CAPA_EVIDENCE_ADD","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Recall manager can attach CAPA evidence metadata; close still requires clean scan"
+"R-RECALL-MGR","RECALL_CLOSE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ACC-INT","MISA_MAPPING_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ACC-INT","MISA_MAPPING_UPDATE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ACC-INT","MISA_SYNC_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ACC-INT","MISA_MANUAL_RETRY","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-ACC-INT","MISA_RECONCILE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-DEVOPS","EVENT_OUTBOX_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-DEVOPS","HEALTH_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-DEVOPS","BACKUP_RUN","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-DEVOPS","DEVICE_CALLBACK","true","DEVICE_CALLBACK","BASELINE","api/02_API_ENDPOINT_CATALOG.md","Device callback action baseline; real device auth uses HMAC credential/secret ref, not a human login"
+"R-DEVOPS","ALERT_ACKNOWLEDGE","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-AUDITOR","AUDIT_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-AUDITOR","TRACE_INTERNAL_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-AUDITOR","INVENTORY_LEDGER_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-AUDITOR","BATCH_RELEASE_VIEW","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-AUDITOR","READ_ONLY_ALL","true","ADMIN_OPERATIONAL","BASELINE","business/04_ROLE_AND_PERMISSION_MODEL.md","Production action baseline; enforce backend permission by action_code; user assignment may differ by environment"
+"R-SUPPLIER","supplier.self.read","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.read","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.create","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.submit","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.confirm","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.decline","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.evidence.upload","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.cancel-draft","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"
+"R-SUPPLIER","supplier.receipt.feedback.write","true","SUPPLIER_PORTAL","BASELINE","database/07_SEED_DATA_SPECIFICATION.md","Supplier portal scoped permission; must resolve supplier_id from session"

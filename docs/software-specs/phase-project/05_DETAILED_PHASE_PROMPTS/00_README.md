@@ -20,12 +20,13 @@ Khac voi `../02_AGENT_PROMPT_SEQUENCE.md` chi la khung phase-level, moi file o d
 
 ## 2. Thu Tu Doc
 
-Thu tu nay phu hop dependency trong `docs/software-specs/07_PHASE_PLAN.md`: `CODE01 -> CODE02 -> MX-GATE-G1 -> CODE03 -> ... -> CODE17`.
+Thu tu nay phu hop dependency trong `docs/software-specs/07_PHASE_PLAN.md`: `CODE01 -> CODE01A -> CODE02 -> MX-GATE-G1 -> CODE03 -> ... -> CODE17`.
 
 | Thu tu | File | Phase |
 | --- | --- | --- |
 | 00 | `00_README.md` | Huong dan dung detailed prompt pack |
 | 01 | `01_CODE01_FOUNDATION_SOURCE_ORIGIN_PROMPTS.md` | CODE01 |
+| 01A | `01A_CODE01A_M03A_SUPPLIER_MANAGEMENT_PROMPTS.md` | CODE01A |
 | 02 | `02_CODE02_RAW_MATERIAL_PROMPTS.md` | CODE02 |
 | 03 | `03_MX_GATE_G1_MASTER_DATA_RECIPE_PROMPTS.md` | MX-GATE-G1 |
 | 04 | `04_CODE03_PRODUCTION_MATERIAL_BATCH_PROMPTS.md` | CODE03 |

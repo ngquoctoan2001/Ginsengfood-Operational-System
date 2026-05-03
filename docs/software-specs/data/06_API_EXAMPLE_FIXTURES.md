@@ -54,7 +54,8 @@ Các payload dưới đây là ví dụ triển khai theo API catalog, không th
     "receipt_no": "RM-SMOKE-SELF-GROWN-001",
     "procurement_type": "SELF_GROWN",
     "source_origin_status": "VERIFIED",
-    "raw_lots_created": true
+    "raw_receipt_status": "DRAFT",
+    "raw_lots_created": false
   },
   "purchased_request": {
     "method": "POST",
@@ -66,7 +67,7 @@ Các payload dưới đây là ví dụ triển khai theo API catalog, không th
       "receipt_no": "RM-SMOKE-PURCHASED-001",
       "procurement_type": "PURCHASED",
       "warehouse_code": "WH_RAW_MAIN",
-      "supplier_code": "SUP_SMOKE_001",
+      "supplier_code": "SUP_DEV_001",
       "coa_reference": "COA-SMOKE-001",
       "lines": [
         {
@@ -81,7 +82,8 @@ Các payload dưới đây là ví dụ triển khai theo API catalog, không th
     "receipt_no": "RM-SMOKE-PURCHASED-001",
     "procurement_type": "PURCHASED",
     "source_zone_required": false,
-    "raw_lots_created": true
+    "raw_receipt_status": "DRAFT",
+    "raw_lots_created": false
   }
 }
 ```
@@ -348,8 +350,8 @@ Các payload dưới đây là ví dụ triển khai theo API catalog, không th
     },
     "body": {
       "internal_object_type": "NEGATIVE_TEST",
-      "internal_object_key": "MISSING_MAPPING_FIXTURE",
-      "retry_reason": "Smoke negative case"
+      "internal_object_id": "00000000-0000-0000-0000-000000000001",
+      "retry_reason": "Smoke negative case (DEV_TEST_ONLY - placeholder uuid for missing-mapping path)"
     }
   },
   "expected_response": {

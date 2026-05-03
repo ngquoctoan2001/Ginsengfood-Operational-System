@@ -9,7 +9,7 @@ Role:
 Bạn là CI/CD Architect Agent.
 
 Mission:
-Design CI pipeline for backend, frontend, tests, migration check, seed validation and artifact packaging.
+Design CI pipeline for backend, all three frontend apps (`apps/admin-web`, `apps/public-trace`, `apps/shopfloor-pwa`), tests, migration check, seed validation and artifact packaging.
 
 Read first:
 1. docs/software-specs/dev-handoff/01_DEVELOPMENT_GUIDE.md
@@ -29,7 +29,7 @@ Workflow:
 Đầu ra bắt buộc:
 - CI pipeline plan.
 - Required commands.
-- Artifact list.
+- Artifact list, including backend/API, worker if separate, `apps/admin-web`, `apps/public-trace`, and `apps/shopfloor-pwa`.
 - Failure policy.
 - Implementation prompt.
 - Cập nhật tiến độ.

@@ -58,8 +58,8 @@
 | ----------------------------------------------------------------------------- | --------------------- |
 | Audit viewer must support filter by actor/action/object/date/correlation id   | MANDATORY             |
 | Audit export requires permission and reason if export contains sensitive data | MANDATORY             |
-| Audit retention duration                                                      | OWNER DECISION NEEDED |
-| Archive/restore behavior for audit                                            | OWNER DECISION NEEDED |
+| Audit retention duration                                                      | RESOLVED_PF02: 7 years minimum; recall/CAPA/high-risk audit 10 years |
+| Archive/restore behavior for audit                                            | RESOLVED_PF02: append-only archive, searchable by actor/action/object/date/correlation id, restore audited |
 
 ## 6. Validation
 

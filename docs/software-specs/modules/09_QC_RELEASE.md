@@ -95,11 +95,14 @@ stateDiagram-v2
     IN_REVIEW --> QC_HOLD: hold with note
     IN_REVIEW --> QC_REJECT: reject with note
     QC_HOLD --> IN_REVIEW: retest
-    QC_PASS --> RELEASE_PENDING: create release request
-    RELEASE_PENDING --> APPROVED_RELEASED: approve release
-    RELEASE_PENDING --> REJECTED: reject release
+    QC_PASS --> [*]: inspection signed
+    [*] --> PENDING: create release request
+    PENDING --> APPROVED_RELEASED: approve release
+    PENDING --> REJECTED: reject release
     APPROVED_RELEASED --> REVOKED: revoke with approval
 ```
+
+`RELEASE_PENDING` is not a persisted V2 enum. The release queue uses `op_batch_release.release_status = PENDING`; batch itself remains `QC_PASS` until `APPROVED_RELEASED` moves `op_batch.batch_status` to `RELEASED`.
 
 ## 12. Sequence / Activity Flow
 

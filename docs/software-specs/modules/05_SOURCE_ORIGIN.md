@@ -195,16 +195,27 @@ sequenceDiagram
 - Raw intake can validate verified source origin.
 - Public-safe origin summary policy enforced.
 - UI screens cover list/detail/evidence/verification/error states.
+- Evidence storage adapter uses PF-02 object key/scan policy and blocks verify until `scan_status=CLEAN`.
 
 ## 20. Risks
 
 | risk                                    | Impact                  | Mitigation                                                                                                       |
 | --------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Public origin detail not owner-approved | Public trace leakage    | Keep public summary optional and whitelist-only.                                                                 |
-| Evidence storage server not configured for production | Verification incomplete | Dev/test dùng local filesystem storage; production dùng server lưu trữ của công ty qua cấu hình. Store object reference/checksum/retention/scan metadata in DB. |
+| Evidence storage config missing | Verification incomplete | PF-02 freezes company storage server via `EvidenceStorage.*` config/secret refs; dev/test local filesystem is `DEV_TEST_ONLY`. Store object reference/checksum/retention/scan metadata in DB. |
 | Source/supplier overlap                 | Data duplication        | Supplier belongs M03; verification belongs M05.                                                                  |
 
-## 21. Phase triển khai
+## 21. PF-02 Evidence Storage Closure
+
+| area | frozen decision |
+|---|---|
+| Storage owner | DevOps owns company storage server connection; Security owns encryption/access-log policy; M05 owns evidence metadata and verification gate. |
+| Object key | Source-origin evidence object key format: `evidence/source-origin/{source_origin_id}/{evidence_id}/{safe_filename}`. |
+| Dev/test | Local filesystem adapter is `DEV_TEST_ONLY`; it must still write metadata compatible with production object keys. |
+| Production | Production uses `EvidenceStorage.Provider=COMPANY_SERVER`, `BasePathOrBucket`, `EncryptionKeyRef`, `AccessLogSinkRef`; no binary blob in DB. |
+| Scan gate | `PENDING_SCAN`, `SCAN_FAILED` and `INFECTED` cannot satisfy source verification; retry upload creates a new evidence record or new scan attempt record, not silent mutation of verified evidence. |
+
+## 22. Phase triển khai
 
 | Phase/CODE | Scope in phase                           | Dependency | Done gate                                 |
 | ---------- | ---------------------------------------- | ---------- | ----------------------------------------- |

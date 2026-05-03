@@ -41,7 +41,7 @@ Recall quản lý incident, recall case, impact analysis, hold, sale lock, recov
 | BR-M13-002 | Hold/sale lock requires reason and target.                                                                                                                                                                                                                                                                                                                                                               | hold/sale lock tables            | hold/sale-lock APIs     | SCR-RECALL-HOLD          | reason/target check       | `REASON_REQUIRED`                                                           | TC-UI-HOLD-001    |
 | BR-M13-003 | Recall close blocked while recovery/CAPA open.                                                                                                                                                                                                                                                                                                                                                           | recall/capa                      | close API               | SCR-RECALL-RECOVERY-CAPA | open item check           | `RECOVERY_OPEN`, `CAPA_REQUIRED`                                            | TC-UI-CAPA-001    |
 | BR-M13-004 | Re-run impact creates new snapshot version, not overwrite.                                                                                                                                                                                                                                                                                                                                               | exposure snapshot                | impact API              | SCR-RECALL-IMPACT        | snapshot version          | preserve history                                                            | TC-UI-RCL-002     |
-| BR-M13-005 | Public/customer notification references do not make Recall owner of CRM/customer master.                                                                                                                                                                                                                                                                                                                 | recall refs                      | notification ref fields | Recall UI                | reference-only            | external integration                                                        | TC-M13-EXT-001    |
+| BR-M13-005 | Public/customer notification references do not make Recall owner of CRM/customer master. PF-02 boundary: Operational creates `notification_job_id` and outbox event `NOTIFICATION_REQUESTED`; delivery, channel retry and customer messaging SLA are owned by the sales/notification system. Operational SLA is measured at job/outbox creation time.                                                                 | recall refs                      | notification ref fields | Recall UI                | reference-only            | external integration                                                        | TC-M13-EXT-001    |
 | BR-M13-006 | Close type `CLOSED_WITH_RESIDUAL_RISK` requires residual note, trace gap review and explicit approval.                                                                                                                                                                                                                                                                                                   | `op_recall_case`                 | close API               | SCR-RECALL-CASES         | close type/residual check | `RECALL_RESIDUAL_RISK_NOTE_REQUIRED`, `TRACE_GAP_DETECTED`                  | TC-M13-CLOSE-004  |
 | BR-M13-007 | CAPA evidence upload tuân thủ cùng MIME/size policy với M05 source origin evidence: MIME allowlist `image/jpeg`,`image/png`,`image/webp` (≤10MB), `video/mp4`,`video/quicktime` (≤100MB). Binary lưu qua storage adapter: dev/test dùng local filesystem storage, production dùng server lưu trữ của công ty qua cấu hình; DB chỉ lưu metadata (`evidence_uri`, `evidence_hash`, `mime_type`, `file_size_bytes`, `original_filename`, `evidence_type`, `scan_status`). Evidence chỉ được tính hợp lệ khi scan sạch (`scan_status = CLEAN`); cần ít nhất 1 evidence hợp lệ trước khi close CAPA/recall. | `op_recall_capa`, `op_recall_capa_evidence` | evidence API, recall close API | SCR-RECALL-RECOVERY-CAPA | MIME/size/scan/existence check | `EVIDENCE_REQUIRED`, `EVIDENCE_MIME_NOT_ALLOWED`, `EVIDENCE_FILE_TOO_LARGE`, `EVIDENCE_SCAN_PENDING`, `EVIDENCE_SCAN_FAILED`, `EVIDENCE_MALWARE_DETECTED` | TC-UI-CAPA-001    |
 
@@ -109,9 +109,9 @@ stateDiagram-v2
     OPEN --> IMPACT_ANALYSIS: run impact
     IMPACT_ANALYSIS --> HOLD_ACTIVE: apply hold
     HOLD_ACTIVE --> SALE_LOCK_ACTIVE: apply sale lock
-    SALE_LOCK_ACTIVE --> NOTIFICATION_SENT: notify if required
-    HOLD_ACTIVE --> NOTIFICATION_SENT: skip sale lock if not applicable
-    NOTIFICATION_SENT --> RECOVERY
+    SALE_LOCK_ACTIVE --> NOTIFICATION_REQUESTED: create notification job/outbox if required
+    HOLD_ACTIVE --> NOTIFICATION_REQUESTED: skip sale lock if not applicable
+    NOTIFICATION_REQUESTED --> RECOVERY
     RECOVERY --> DISPOSITION
     DISPOSITION --> CAPA
     CAPA --> CLOSED: all actions complete
@@ -162,6 +162,7 @@ sequenceDiagram
 | `RECALL_IMPACT_SNAPSHOT_CREATED` | M13      | M11/M15           | snapshot id/version        |
 | `RECALL_HOLD_APPLIED`            | M13      | M11/M14/M15       | target, reason             |
 | `SALE_LOCK_APPLIED`              | M13      | M11/external refs | target refs                |
+| `NOTIFICATION_REQUESTED`         | M13      | External notification/sales system, M15 | notification_job_id, recall_case_id, recipients_ref, sla_due_at |
 | `RECALL_CLOSED`                  | M13      | Dashboard/audit   | case id/outcome/close type |
 
 ## 15. Audit Log
@@ -219,20 +220,32 @@ sequenceDiagram
 - Hold/sale lock affects inventory/sale actions by reference.
 - Recovery/disposition/CAPA close gate enforced.
 - Close type handling supports `CLOSED_WITH_RESIDUAL_RISK` with residual note and approval.
+- Notification boundary enforced: M13 creates outbox/job reference only; no direct customer/CRM delivery call.
+- CAPA evidence uses storage adapter object key and clean scan gate before close.
 - Recall smoke extension passes.
 
 ## 20. Risks
 
 | risk                                    | Impact                       | Mitigation                                                |
 | --------------------------------------- | ---------------------------- | --------------------------------------------------------- |
-| Notification/customer ownership unclear | Incomplete exposure workflow | Store external reference keys only until owner decides.   |
+| Notification delivery owned externally  | Delivery status may lag recall workflow | PF-02 boundary: M13 creates `notification_job_id`/`NOTIFICATION_REQUESTED`; sales/notification system owns delivery and channel retry. |
 | Trace gaps ignored                      | Wrong recall scope           | Block close or require reviewed partial snapshot.         |
 | Hold scope too broad                    | Operational deadlock         | Scope hold target precisely and require release workflow. |
 
-## 21. Phase triển khai
+## 21. PF-02 Evidence/Notification Closure
+
+| area | frozen decision |
+|---|---|
+| Evidence storage | CAPA evidence object key format: `evidence/recall-capa/{capa_id}/{evidence_id}/{safe_filename}`. Dev/test local FS is `DEV_TEST_ONLY`; production uses company storage server via `EvidenceStorage.*` config. |
+| Evidence scan | CAPA/recall close counts only evidence with `scan_status=CLEAN`; `PENDING_SCAN`, `SCAN_FAILED`, `INFECTED` stay visible but cannot satisfy close gate. |
+| Notification owner | Operational does not send SMS/email/app push directly. It creates `notification_job_id` and outbox event `NOTIFICATION_REQUESTED`; downstream sales/notification system owns delivery. |
+| SLA measurement | Recall workflow SLA for Operational is measured from recall status requiring notification to durable creation of notification job/outbox event. External channel SLA is outside Operational. |
+| Retention | Recall/CAPA/evidence metadata retained 10 years; binary evidence backed up from company storage server according to NFR-05. |
+
+## 22. Phase triển khai
 
 | Phase/CODE | Scope in phase                     | Dependency      | Done gate               |
 | ---------- | ---------------------------------- | --------------- | ----------------------- |
 | CODE08     | Incident/recall/hold/recovery/CAPA | CODE07          | Recall smoke passes     |
 | CODE15     | Override governance                | CODE10/CODE14   | Break-glass audited     |
-| CODE16     | Retention/archive                  | Owner retention | Recall records retained |
+| CODE16     | Retention/archive                  | PF-02 retention | Recall records retained |

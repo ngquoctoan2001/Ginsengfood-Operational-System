@@ -173,7 +173,7 @@ sequenceDiagram
     QrAPI->>TraceProjection: Build public-safe projection for printed QR
     Public->>PublicAPI: GET /api/public/trace/{qrCode}
     PublicAPI->>TraceProjection: Resolve whitelisted public data
-    TraceProjection-->>PublicAPI: PublicTraceResponse
+    TraceProjection-->>PublicAPI: PublicTracePublicResponse
     PublicAPI-->>Public: Public-safe trace response
 ```
 

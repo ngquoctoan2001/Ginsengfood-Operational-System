@@ -1,6 +1,7 @@
 # ERD
 
 > Mermaid ERD mục tiêu, nhóm theo module. Một số view/projection được biểu diễn như entity để thể hiện dependency dữ liệu.
+> ERD là logical dependency diagram, không phải manifest đếm bảng đầy đủ; số lượng schema object authoritative nằm ở `database/01_DATABASE_OVERVIEW.md` §2 và `database/03_TABLE_SPECIFICATION.md`.
 
 ## Mục lục
 
@@ -101,6 +102,19 @@ erDiagram
     text supplier_code UK
     text supplier_name
   }
+  op_supplier_user_link {
+    uuid supplier_user_link_id PK
+    uuid supplier_id FK
+    uuid user_id FK
+  }
+  op_supplier_ingredient {
+    uuid supplier_ingredient_id PK
+    uuid supplier_id FK
+    uuid ingredient_id FK
+    text status
+    timestamptz effective_from
+    timestamptz effective_to
+  }
   op_warehouse {
     uuid warehouse_id PK
     text warehouse_code UK
@@ -198,11 +212,32 @@ erDiagram
     uuid raw_material_receipt_id PK
     text receipt_no UK
     uuid warehouse_id FK
+    uuid supplier_id FK
+    text created_by_party
+    text supplier_collaboration_status
+    text raw_receipt_status
   }
   op_raw_material_receipt_item {
     uuid raw_material_receipt_item_id PK
     uuid raw_material_receipt_id FK
     uuid ingredient_id FK
+    numeric received_quantity
+    numeric accepted_quantity
+    numeric rejected_quantity
+    numeric returned_quantity
+  }
+  op_raw_material_receipt_evidence {
+    uuid evidence_id PK
+    uuid raw_material_receipt_id FK
+    uuid raw_material_receipt_item_id FK
+    text uploaded_by_party
+    text scan_status
+  }
+  op_raw_material_receipt_feedback {
+    uuid feedback_id PK
+    uuid raw_material_receipt_id FK
+    uuid raw_material_receipt_item_id FK
+    text created_by_party
   }
   op_raw_material_lot {
     uuid raw_material_lot_id PK
@@ -622,10 +657,18 @@ erDiagram
   op_source_zone ||--o{ op_source_origin : contains
   op_source_origin ||--o{ op_source_origin_evidence : has
   op_source_origin ||--o{ op_source_origin_verification : verifies
+  op_supplier ||--o{ op_supplier_user_link : has_users
+  op_supplier ||--o{ op_supplier_ingredient : allows
+  ref_ingredient ||--o{ op_supplier_ingredient : allowed_by
+  op_supplier ||--o{ op_raw_material_receipt : supplies
   op_supplier ||--o{ op_raw_material_lot : supplies
   op_source_origin ||--o{ op_raw_material_lot : origins
 
   op_raw_material_receipt ||--o{ op_raw_material_receipt_item : has
+  op_raw_material_receipt ||--o{ op_raw_material_receipt_evidence : has_evidence
+  op_raw_material_receipt ||--o{ op_raw_material_receipt_feedback : has_feedback
+  op_raw_material_receipt_item ||--o{ op_raw_material_receipt_evidence : item_evidence
+  op_raw_material_receipt_item ||--o{ op_raw_material_receipt_feedback : item_feedback
   op_raw_material_receipt_item ||--o{ op_raw_material_lot : creates
   ref_ingredient ||--o{ op_raw_material_receipt_item : received
   op_raw_material_lot ||--o{ op_raw_material_qc_inspection : inspected

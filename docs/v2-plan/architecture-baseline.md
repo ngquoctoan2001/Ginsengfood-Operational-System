@@ -102,7 +102,7 @@ MISA synchronization, device/printer work and public trace are boundary integrat
 
 | Conflict ID | Source A | Source B | Impact | Baseline handling |
 | --- | --- | --- | --- | --- |
-| ARCH-CONFLICT-001 | `06_MODULE_MAP.md` maps M04 to `/api/admin/master-data/skus/*`, `/api/admin/master-data/ingredients/*`, `/api/admin/master-data/recipes/*`. | `api/02_API_ENDPOINT_CATALOG.md` and `api/05_API_AUTH_PERMISSION_SPEC.md` use `/api/admin/skus`, `/api/admin/ingredients`, `/api/admin/recipes`; the catalog says duplicate `/master-data/skus/*` requires adapter/deprecation. | API/OpenAPI/frontend client drift if both families are implemented as primary routes. | Prefer the more specific API catalog for API contract baseline, but require Owner/Tech Lead confirmation before CODE10/OpenAPI freeze. |
+| ARCH-CONFLICT-001 | RESOLVED 2026-04-30: `06_MODULE_MAP.md` now maps M04 to `/api/admin/skus/*`, `/api/admin/ingredients/*`, `/api/admin/recipes/*`. | `api/02_API_ENDPOINT_CATALOG.md`, `api/05_API_AUTH_PERMISSION_SPEC.md`, and UI client contract keep `/api/admin/master-data/skus/*` only as forbidden duplicate unless adapter/deprecation is approved. | API/OpenAPI/frontend client drift risk reduced for CODE10 scaffold. | Use canonical API catalog route family when generating OpenAPI/frontend clients. |
 
 ## 8. Risks And Open Decisions
 

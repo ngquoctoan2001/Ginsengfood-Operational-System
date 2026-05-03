@@ -16,11 +16,11 @@
 
 | Integration | Direction | Owner module | Data | Pattern | Failure behavior |
 | --- | --- | --- | --- | --- | --- |
-| MISA AMIS | Outbound | M14 | Material issue accounting document, warehouse receipt, inventory/accounting relevant events, mapping status | Outbox -> mapper -> sync -> log -> reconcile | Retry, then MISA sync `FAILED_NEEDS_REVIEW`; business truth remains in Operational |
-| Printer/QR | Outbound/callback | M10 | Print job, QR code, print status, GTIN/trade item mapping | Print queue -> adapter -> callback log | `FAILED` state, QR state history, reprint flow with audit |
+| MISA AMIS | Outbound | M14 | Material issue accounting document, warehouse receipt, inventory/accounting relevant events, mapping status | Outbox -> mapper -> sync -> log -> reconcile; `DryRun` or `Production` mode by config | Retry, then MISA sync `FAILED_NEEDS_REVIEW`; business truth remains in Operational |
+| Printer/QR | Outbound/callback | M10 | Print job, QR code, print status, GTIN/trade item mapping | Print queue -> HTTP/ZPL-compatible adapter -> HMAC callback log | `FAILED` state, QR state history, reprint flow with audit |
 | Public Trace | Inbound public read | M12 | QR public trace payload | Public API -> public view/policy | Invalid QR safe response, no private leak |
 | Commerce/Order/Shipment | Reference/read downstream | M11/M12/M13 | `order_id`, `order_item_id`, `shipment_id`, `customer_id` | Reference keys only | Missing external reference detail does not block local issue/receipt/release; Operational stores reference key as-is and marks downstream detail unresolved |
-| Notification/CRM | Outbound/reference | M13 | `notification_job_id`, recall communication reference | Recall case -> notification request/reference | Store reference/status, not notification owner data |
+| Notification/CRM | Outbound/reference | M13 | `notification_job_id`, recall communication reference | Recall case -> outbox event `NOTIFICATION_REQUESTED` -> external sales/notification system | Store reference/status, not notification owner data; Operational SLA ends at durable job/outbox creation |
 | Dashboard/Monitoring | Internal | M15 | Events, metrics, health | Event/metric projection | Unknown telemetry is not success |
 
 ## 3. MISA Integration Contract
@@ -64,10 +64,14 @@ Status mapping:
 | GTIN guard | Commercial print requires active GTIN mapping for the trade item/package level; production printer must block `is_test_fixture=true` mappings and must not fallback to SKU code. |
 | No DB direct | Device/printer has no direct DB access. |
 
-## 5. Integration Open Decisions
+## 5. PF-02 Production Integration Config Closure
 
-| decision | Impact |
+| decision | PF-02 status |
 | --- | --- |
-| MISA tenant/credential production | Required for production sync; dev can use fake/placeholder secret references. |
-| Printer model/driver/protocol | Required for device adapter finalization. |
-| Retry/backoff final policy | Open technical decision `OTD-007`; no implementation should treat an unapproved retry count as final. |
+| MISA tenant/credential production | RESOLVED_WITH_SECRET_REFS. `MisaSyncOptions.BaseUrl`, `TenantId`, `ClientId`, `ClientSecretRef`, `WebhookSecretRef`, `Mode`. Dev/test can use `DryRun`; production requires refs and mapping owner sign-off. |
+| Printer model/driver/protocol | RESOLVED_WITH_DEVICE_REFS. Baseline adapter is HTTP/ZPL-compatible with HMAC-SHA256 callback auth; physical model/endpoint lives in device registry/config. |
+| Evidence storage | RESOLVED_WITH_STORAGE_REFS. Production uses company storage server through `EvidenceStorage.*`; dev/test local FS is `DEV_TEST_ONLY`. |
+| Notification delivery | RESOLVED_BOUNDARY. Operational emits `NOTIFICATION_REQUESTED`/stores `notification_job_id`; sales/notification system owns delivery. |
+| Retry/backoff final policy | RESOLVED_FOR_FREEZE as configurable policy: exponential backoff with capped attempts per integration, dead-letter/review state visible; exact numeric tuning can change by config without schema/API change. |
+
+Production integration config must be deploy-time config or secret refs. No MISA credential, device shared secret, storage key, backup key or notification gateway secret is committed to repo.

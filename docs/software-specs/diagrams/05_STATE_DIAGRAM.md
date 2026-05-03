@@ -54,12 +54,12 @@ stateDiagram-v2
         IN_QC --> REJECTED: QC_REJECT
         ON_HOLD --> IN_QC: re-inspect
         ON_HOLD --> REJECTED: reject after investigation
-        READY_FOR_PRODUCTION --> RESERVED: allocate
-        RESERVED --> READY_FOR_PRODUCTION: release reservation
-        RESERVED --> CONSUMED: issue executed
+        READY_FOR_PRODUCTION --> CONSUMED: issue executed
+        READY_FOR_PRODUCTION --> ON_HOLD: operational hold
         READY_FOR_PRODUCTION --> EXPIRED: expiry check
-        READY_FOR_PRODUCTION --> QUARANTINED: safety hold
-        QUARANTINED --> READY_FOR_PRODUCTION: release safety hold
+        READY_FOR_PRODUCTION --> QUARANTINED: safety/legal quarantine
+        QUARANTINED --> READY_FOR_PRODUCTION: quarantine release + readiness still valid
+        QUARANTINED --> ON_HOLD: convert to investigation hold
     }
 
     state "QR Lifecycle" as QR {

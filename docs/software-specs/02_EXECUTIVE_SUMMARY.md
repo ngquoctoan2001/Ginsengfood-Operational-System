@@ -80,24 +80,24 @@ Operational chỉ giữ reference keys như `customer_id`, `order_id`, `order_it
 
 ## 5. Module Chuẩn
 
-| Module | Tên                    | Vai trò                                                           |
-| ------ | ---------------------- | ----------------------------------------------------------------- |
-| M01    | Foundation Core        | Audit, idempotency, error, event, outbox, base governance.        |
-| M02    | Auth Permission        | User, role, permission, approval gate, SSO mapping nếu có.        |
-| M03    | Master Data            | UOM, warehouse, supplier, source reference, reason/config chung.  |
-| M04    | SKU Ingredient Recipe  | SKU baseline, ingredient, recipe G1, versioning, snapshot source. |
-| M05    | Source Origin          | Source zone, source origin, evidence, verification.               |
-| M06    | Raw Material           | Intake, raw lot, incoming QC, raw ledger receipt.                 |
-| M07    | Production             | Production order, work order, production process, batch.          |
-| M08    | Material Issue Receipt | Material issue execution, receipt confirmation, variance.         |
-| M09    | QC Release             | QC inspection, disposition, batch release.                        |
-| M10    | Packaging Printing     | Packaging, print job, QR registry, trade item/GTIN handoff.       |
-| M11    | Warehouse Inventory    | Warehouse receipt, ledger, lot balance, allocation reference.     |
-| M12    | Traceability           | Internal trace, public trace, genealogy query.                    |
+| Module | Tên                    | Vai trò                                                                        |
+| ------ | ---------------------- | ------------------------------------------------------------------------------ |
+| M01    | Foundation Core        | Audit, idempotency, error, event, outbox, base governance.                     |
+| M02    | Auth Permission        | User, role, permission, approval gate, SSO mapping nếu có.                     |
+| M03    | Master Data            | UOM, warehouse, supplier, source reference, reason/config chung.               |
+| M04    | SKU Ingredient Recipe  | SKU baseline, ingredient, recipe G1, versioning, snapshot source.              |
+| M05    | Source Origin          | Source zone, source origin, evidence, verification.                            |
+| M06    | Raw Material           | Intake, raw lot, incoming QC, raw ledger receipt.                              |
+| M07    | Production             | Production order, work order, production process, batch.                       |
+| M08    | Material Issue Receipt | Material issue execution, receipt confirmation, variance.                      |
+| M09    | QC Release             | QC inspection, disposition, batch release.                                     |
+| M10    | Packaging Printing     | Packaging, print job, QR registry, trade item/GTIN handoff.                    |
+| M11    | Warehouse Inventory    | Warehouse receipt, ledger, lot balance, allocation reference.                  |
+| M12    | Traceability           | Internal trace, public trace, genealogy query.                                 |
 | M13    | Recall                 | Incident, hold, sale lock, recall, recovery, disposition, CAPA, CAPA evidence. |
-| M14    | MISA Integration       | Mapping, sync event/log, retry, reconcile.                        |
-| M15    | Reporting Dashboard    | Operational dashboard, alert, monitoring view.                    |
-| M16    | Admin UI               | Menu, screen registry, form/table/action UI, API client contract. |
+| M14    | MISA Integration       | Mapping, sync event/log, retry, reconcile.                                     |
+| M15    | Reporting Dashboard    | Operational dashboard, alert, monitoring view.                                 |
+| M16    | Admin UI               | Menu, screen registry, form/table/action UI, API client contract.              |
 
 ## 6. Phase Plan
 
@@ -123,17 +123,21 @@ Kế hoạch triển khai dùng CODE01-CODE17 từ `SRC-FILE04-1`, nhưng đư�
 | CODE16 | Data Retention + Archival + Restore / Archive Search Boundary                     |
 | CODE17 | Final Close-Out Gate + Integration Smoke + Release Readiness + Handover Checklist |
 
-## 7. Owner Decisions Còn Mở
+## 7. Owner Decisions Đã Production Freeze
 
-| OD    | Nội dung                                                  | Tác động                                              |
-| ----- | --------------------------------------------------------- | ----------------------------------------------------- |
-| OD-11 | Trace query technical SLA                                 | Chặn index/cache/SLO final cho trace.                 |
-| OD-12 | Backup/DR RPO/RTO                                         | Chặn CODE16 release hardening.                        |
-| OD-13 | Audit log retention duration                              | Chặn retention/archive/storage sizing.                |
-| OD-14 | Public trace multi-language policy                        | Ảnh hưởng public trace UI/API.                        |
-| OD-17 | Production printer model + driver                         | Ảnh hưởng CODE12 device/printer adapter.              |
-| OD-20 | MISA AMIS tenant/credential/endpoint thật cho production  | Ảnh hưởng CODE13/CODE17 real sync enablement.         |
-| OD-21 | PWA task taxonomy và endpoint inbox `/api/admin/tasks/my` | Ảnh hưởng CODE11 shopfloor PWA task routing.          |
-| OD-22 | UI mutation route taxonomy phụ                            | Ảnh hưởng CODE09/CODE10/CODE11 route contract freeze. |
+PF-02 ngày 2026-05-03 đã chốt production data/config closure cho các Owner Decision hạ tầng còn lại. Scaffold CODE00→CODE17 được phép tiến hành và tài liệu có thể vào `READY_FOR_PRODUCTION_FREEZE` theo các area đã freeze. Production printer/MISA/evidence/backup không dùng literal value trong repo; real mode được bật bằng config/secret/device refs có owner.
+
+| OD    | Trạng thái PF-01 | Production freeze impact |
+| ----- | ---------------- | ------------------------ |
+| OD-11 | RESOLVED_FINAL | Trace SLA production target accepted; metric vẫn được đo khi có dữ liệu thật. |
+| OD-12 | RESOLVED_FINAL | RPO/RTO default accepted; backup/restore qua adapter runtime. |
+| OD-13 | RESOLVED_FINAL | Retention 7 năm operational, 10 năm recall, 90 ngày outbox. |
+| OD-14 | RESOLVED_FINAL | Public trace MVP `vi`, schema i18n-ready. |
+| OD-17 | RESOLVED_FINAL_PF02_WITH_DEVICE_REFS | Build HTTP/ZPL-compatible printer adapter + HMAC callback; physical model/IP/driver là device registry/config refs. |
+| OD-20 | RESOLVED_FINAL_PF02_WITH_SECRET_REFS | Build MISA AMIS `DryRun`/`Production` mode; tenant/endpoint/credential qua `MisaSyncOptions.*` + secret refs. |
+| OD-21 | RESOLVED_FINAL | PWA task taxonomy baseline accepted. |
+| OD-22 | RESOLVED_FINAL | UI mutation route families accepted as canonical baseline. |
+
+**Batch 2 (2026-05-03)** — `CONFLICT-18`, `OD-M03-OWNERSHIP-001`, 15 OD Batch 2 và 3 OD business critical đã có sign-off. Group A đã chốt: `OD-EVIDENCE-STORAGE-001` production evidence lưu trên server công ty + dev/test local FS; `OD-NOTIFY-OWNERSHIP-001` Operational chỉ tạo notification job/outbox, hệ thống bán hàng chịu delivery; `OD-PACKET-TRACE-001` PACKET không QR và inherit trace từ BOX/CARTON. Chi tiết tại [`docs/v2-decisions/OD-DEFAULTS-2026-05-03.md`](../v2-decisions/OD-DEFAULTS-2026-05-03.md), [`docs/v2-decisions/OD-DEFAULTS-BATCH2-2026-05-03.md`](../v2-decisions/OD-DEFAULTS-BATCH2-2026-05-03.md), và [09_CONFLICT_AND_OWNER_DECISIONS.md §C.8](09_CONFLICT_AND_OWNER_DECISIONS.md).
 
 Chi tiết conflict/decision: [09_CONFLICT_AND_OWNER_DECISIONS.md](09_CONFLICT_AND_OWNER_DECISIONS.md).

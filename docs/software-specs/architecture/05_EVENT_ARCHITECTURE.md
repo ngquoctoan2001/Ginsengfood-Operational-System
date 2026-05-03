@@ -50,6 +50,7 @@
 | `TRACE_GAP_DETECTED`               | M12      | M13, M15                | object ref, missing link                                                                                                                                                 |
 | `RECALL_OPENED`                    | M13      | M11, M12, M14, M15      | recall_case_id, severity                                                                                                                                                 |
 | `RECALL_HOLD_APPLIED`              | M13      | M11, M15                | recall_case_id, affected lots/batches                                                                                                                                    |
+| `NOTIFICATION_REQUESTED`           | M13      | External sales/notification system, M15 | notification_job_id, recall_case_id, recipients_ref, sla_due_at, notification_type                                                                                       |
 | `CAPA_EVIDENCE_ADDED`              | M13      | M15                     | recall_case_id, capa_id, evidence_id, scan_status                                                                                                                        |
 | `EVIDENCE_SCAN_COMPLETED`          | M05/M13  | M15                     | object_type, object_id, evidence_id, scan_status, scanned_at                                                                                                             |
 | `RECALL_CLOSED`                    | M13      | M11, M12, M14, M15      | recall_case_id, close_reason, closed_at, clean_capa_evidence_count                                                                                                       |
@@ -80,3 +81,12 @@ stateDiagram-v2
 | `event_store`           | Optional durable event history/read model source.              |
 | `misa_sync_event`       | MISA-specific consumer state derived from outbox.              |
 | `audit_log`             | User/system action evidence, not replacement for outbox.       |
+
+## 6. PF-02 Notification Outbox Boundary
+
+| rule | detail |
+|---|---|
+| Producer | M13 writes `NOTIFICATION_REQUESTED` in the same durable transaction as recall state requiring notification where possible. |
+| Ownership | Operational owns durable job/outbox creation and `notification_job_id` reference only; sales/notification system owns channel delivery, retries and customer message content. |
+| SLA point | Operational recall notification SLA is measured at durable creation of `NOTIFICATION_REQUESTED`/`notification_job_id`, not at SMS/email/app-push delivery. |
+| Payload privacy | Payload carries references and approved recall metadata only; no customer master copy, no private trace fields, no MISA/cost/QC defect detail. |

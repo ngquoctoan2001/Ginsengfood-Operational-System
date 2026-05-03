@@ -62,7 +62,7 @@ Mục tiêu là bảo đảm mọi `ingredient_code` trong `g1_recipe_lines.csv`
 
 | owner_review_id | nội dung | trạng thái |
 |---|---|---|
-| ING-OD-001 | Owner/master-data steward xác nhận có dùng generated `ingredient_code` hay map sang mã kho/ERP hiện hữu. | OWNER DECISION NEEDED |
-| ING-OD-002 | Xác nhận toàn bộ ingredient có `is_qc_required = true` và `is_lot_tracked = true` trong phase go-live. | OWNER DECISION NEEDED |
-| ING-OD-003 | Xác nhận `ingredient_type` chỉ là phân loại vận hành nội bộ, không thay thế taxonomy kế toán/MISA nếu MISA có mã riêng. | OWNER DECISION NEEDED |
+| ING-OD-001 | Owner/master-data steward xác nhận có dùng generated `ingredient_code` hay map sang mã kho/ERP hiện hữu. | DATA_STEWARDSHIP_REVIEW_REQUIRED |
+| ING-OD-002 | Xác nhận toàn bộ ingredient có `is_qc_required = true` và `is_lot_tracked = true` trong phase go-live. | DATA_STEWARDSHIP_REVIEW_REQUIRED |
+| ING-OD-003 | Xác nhận `ingredient_type` chỉ là phân loại vận hành nội bộ, không thay thế taxonomy kế toán/MISA nếu MISA có mã riêng. | DATA_STEWARDSHIP_REVIEW_REQUIRED |
 

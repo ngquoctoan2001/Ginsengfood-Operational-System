@@ -150,7 +150,7 @@ Màn hình ghi nhận tiếp nhận nguyên liệu, liên kết supplier, source
 
 ### Header
 - Title: Raw Material Intakes
-- Primary status badge: count theo DRAFT/RECEIVED/CANCELLED
+- Primary status badge: count theo DRAFT/RECEIVED_PENDING_QC/CANCELLED
 - Primary action: Create Intake
 
 ### Main Table
@@ -167,7 +167,7 @@ Màn hình ghi nhận tiếp nhận nguyên liệu, liên kết supplier, source
 
 | Action | API | Method | Permission | State required | Idempotency-Key | Confirmation | Success result | Failure handling |
 |---|---|---|---|---|---|---|---|---|
-| Create Intake | /api/admin/raw-material/intakes | POST | raw_intake.write | none | Có | Không | DRAFT/RECEIVED theo API policy | Show field errors |
+| Create Intake | /api/admin/raw-material/intakes | POST | raw_intake.write | none | Có | Không | DRAFT/RECEIVED_PENDING_QC theo API policy | Show field errors |
 | Receive | /api/admin/raw-material/intakes/{id}/receive | POST | raw_intake.receive | DRAFT | Có | Có | Creates raw_material_lot | Show SOURCE_ORIGIN_NOT_VERIFIED/VALIDATION_ERROR |
 | Cancel | /api/admin/raw-material/intakes/{id}/cancel | POST | raw_intake.cancel | DRAFT | Có | Có | CANCELLED | Show stale state |
 

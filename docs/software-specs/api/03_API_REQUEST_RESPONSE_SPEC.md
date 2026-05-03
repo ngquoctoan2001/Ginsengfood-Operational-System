@@ -162,7 +162,7 @@ Rule: `isReadyForIssue` is derived from `lotStatus === "READY_FOR_PRODUCTION"` p
   "supplierId": "uuid",
   "createdByParty": "COMPANY",
   "supplierCollaborationStatus": "SUPPLIER_CONFIRMED",
-  "rawReceiptStatus": "PENDING_RECEIVE",
+  "rawReceiptStatus": "WAITING_DELIVERY",
   "receivedAt": null,
   "closedAt": null,
   "lines": [
@@ -176,7 +176,7 @@ Rule: `isReadyForIssue` is derived from `lotStatus === "READY_FOR_PRODUCTION"` p
       "returnedQuantity": null,
       "uomCode": "kg",
       "procurementType": "PURCHASED",
-      "lineStatus": "PENDING_RECEIVE"
+      "lineStatus": "WAITING_DELIVERY"
     }
   ],
   "evidenceCount": 3,
@@ -200,7 +200,7 @@ Rule: `isReadyForIssue` is derived from `lotStatus === "READY_FOR_PRODUCTION"` p
 
 Validation:
 
-- Yêu cầu `raw_receipt_status` thuộc `{PENDING_RECEIVE}`; ngoài ra trả `RECEIPT_LOCKED_AFTER_RECEIVE`.
+- Yêu cầu `raw_receipt_status` thuộc `{WAITING_DELIVERY}`; ngoài ra trả `RECEIPT_LOCKED_AFTER_RECEIVE`.
 - `receivedQuantity` ≥ 0; tổng theo line không được vượt `declaredQuantity` × hệ số dung sai cấu hình; vi phạm → `LOT_QUANTITY_EXCEEDS_RECEIVED`.
 - Nếu collaboration yêu cầu evidence (`HL-SUP-009`) mà `evidenceCount = 0` hoặc evidence chưa `CLEAN` → `SUPPLIER_EVIDENCE_REQUIRED`.
 
@@ -239,7 +239,7 @@ Validation: `rejectionType` ∈ `{QUALITY, QUANTITY, DOCUMENT, OTHER}`; reason b
 }
 ```
 
-Validation: `returnedQuantity` ≤ `acceptedQuantity + rejectedQuantity` chưa close; ghi đè đường EX-RECEIPT-RETURN.
+Validation: `returnedQuantity` ≤ `rejectedQuantity` (canonical invariant — only rejected goods can be returned); ghi đè đường EX-RECEIPT-RETURN.
 
 `CloseReceiptRequest`
 
@@ -270,13 +270,13 @@ Validation: dùng chung allowlist mime/size như Source Origin (mục 2). `captu
 
 ```json
 {
-  "feedbackType": "QUANTITY_DISCREPANCY",
+  "feedbackType": "QUANTITY_VARIANCE",
   "body": "Thiếu 1.5kg so với khai báo",
   "attachments": ["evidence-uri"]
 }
 ```
 
-Validation: `feedbackType` ∈ `{QUANTITY_DISCREPANCY, QUALITY_ISSUE, DOCUMENT_ISSUE, GENERAL_NOTE}`; body bắt buộc, ≤ 4000 ký tự.
+Validation: `feedbackType` ∈ `{QUALITY_ISSUE, DELIVERY_LATE, DELIVERY_EARLY, QUANTITY_VARIANCE, DOCUMENTATION_INCOMPLETE, PACKAGING_DAMAGE, TEMPERATURE_BREACH, OTHER}`; body bắt buộc, ≤ 4000 ký tự.
 
 ### 3.2 Supplier Portal (Supplier Self-Service)
 
@@ -288,8 +288,8 @@ Validation: `feedbackType` ∈ `{QUANTITY_DISCREPANCY, QUALITY_ISSUE, DOCUMENT_I
     {
       "rawMaterialReceiptId": "uuid",
       "createdByParty": "COMPANY",
-      "supplierCollaborationStatus": "PENDING_SUPPLIER_CONFIRM",
-      "rawReceiptStatus": "PENDING_SUPPLIER_CONFIRM",
+      "supplierCollaborationStatus": "PENDING_SUPPLIER_CONFIRMATION",
+      "rawReceiptStatus": "DRAFT",
       "declaredAt": "2026-04-26T10:00:00Z",
       "lineCount": 3
     }
@@ -320,7 +320,7 @@ Scope: chỉ trả receipt thuộc `supplier_id` của user; vi phạm → `SUPP
 
 Validation:
 
-- `ingredientId` phải nằm trong `op_supplier_ingredient_allowed` của supplier; vi phạm → `SUPPLIER_INGREDIENT_NOT_ALLOWED`.
+- `ingredientId` phải nằm trong `op_supplier_ingredient` của supplier; vi phạm → `SUPPLIER_INGREDIENT_NOT_ALLOWED`.
 - Supplier ở trạng thái `SUSPENDED` → `SUPPLIER_SUSPENDED`.
 - Bắt buộc evidence theo `HL-SUP-009`; thiếu → `SUPPLIER_EVIDENCE_REQUIRED`.
 
@@ -333,7 +333,7 @@ Validation:
 }
 ```
 
-Validation: chỉ cho phép khi `supplier_collaboration_status = PENDING_SUPPLIER_CONFIRM`; sau xác nhận lock chỉnh sửa supplier → `SUPPLIER_EDIT_LOCKED_AFTER_CONFIRMED`.
+Validation: chỉ cho phép khi `supplier_collaboration_status = PENDING_SUPPLIER_CONFIRMATION`; sau xác nhận lock chỉnh sửa supplier → `SUPPLIER_EDIT_LOCKED_AFTER_CONFIRMED`.
 
 `SupplierDeclineRequest`
 
@@ -415,7 +415,7 @@ Validation: trùng cặp `(supplierId, ingredientId)` còn hiệu lực → `DUP
 Validation:
 
 - `role` bắt buộc `R-SUPPLIER`; khác → `SUPPLIER_USER_INVALID_ROLE`.
-- Mật khẩu phải qua chính sách `HL-SUP-007` (≥ 12 ký tự, đa ký tự loại); vi phạm → `WEAK_PASSWORD`.
+- Mật khẩu phải qua chính sách `HL-SUP-008` (≥ 12 ký tự, đa ký tự loại); vi phạm → `WEAK_PASSWORD`.
 - User M03A bị ràng buộc scope `supplier_id` qua `op_supplier_user_link`; truy cập ngoài scope → `SUPPLIER_SCOPE_VIOLATION`.
 
 `SupplierUserResetPasswordRequest`
@@ -633,6 +633,45 @@ Response must include ledger reference:
 
 Rule: if `commercialPrint = true`, the service must validate active GTIN/trade-item mapping and must not fallback to SKU code.
 
+`QrGenerateResponse`
+
+```json
+{
+  "items": [
+    {
+      "qrId": "uuid",
+      "packagingUnitId": "uuid",
+      "qrCode": "QR-2026-000001",
+      "qrStatus": "GENERATED",
+      "publicTraceEnabled": true
+    }
+  ]
+}
+```
+
+`QrVoidRequest`
+
+```json
+{
+  "reasonCode": "PRINTING_ERROR",
+  "reasonText": "Void before replacement print",
+  "voidedAt": "2026-04-27T12:30:00Z"
+}
+```
+
+`QrResponse`
+
+```json
+{
+  "qrId": "uuid",
+  "packagingUnitId": "uuid",
+  "qrCode": "QR-2026-000001",
+  "qrStatus": "VOID",
+  "publicTraceEnabled": false,
+  "stateHistoryRef": "uuid"
+}
+```
+
 `ReprintRequest`
 
 ```json
@@ -651,6 +690,36 @@ Rule: if `commercialPrint = true`, the service must validate active GTIN/trade-i
   "tradeItemId": "uuid",
   "templateCode": "BOX_LEVEL_2",
   "commercialPrint": true
+}
+```
+
+`PrintJobCallbackRequest`
+
+```json
+{
+  "deviceId": "PRINTER-001",
+  "printJobId": "uuid",
+  "callbackStatus": "PRINTED",
+  "callbackAt": "2026-04-27T12:40:00Z",
+  "deviceSequenceNo": "000123",
+  "errorCode": null,
+  "errorMessage": null
+}
+```
+
+Device callback auth: endpoint `POST /api/admin/printing/jobs/{printJobId}/callback` must require `DEVICE_CALLBACK`, `X-Device-Id`, timestamp, nonce/idempotency key and HMAC-SHA256 signature over the canonical request body. Callback may update print/QR technical state only; it must not change QC, release, inventory, batch or trace business facts.
+
+`PrintJobResponse`
+
+```json
+{
+  "printJobId": "uuid",
+  "packagingUnitId": "uuid",
+  "qrId": "uuid",
+  "printStatus": "PRINTED",
+  "qrStatus": "PRINTED",
+  "deviceId": "PRINTER-001",
+  "stateHistoryRef": "uuid"
 }
 ```
 
@@ -728,24 +797,36 @@ Rule: if `commercialPrint = true`, the service must validate active GTIN/trade-i
 }
 ```
 
-`PublicTraceResponse`
+`PublicTracePublicResponse`
+
+Explicit public DTO for `GET /api/public/trace/{qrCode}` and `GET /api/admin/trace/public-preview/{qrCode}`. This schema is whitelist-only, must be generated in OpenAPI with `additionalProperties = false`, and must not reuse `InternalTraceResponse`, `GenealogyTraceResponse`, admin DTOs, or ORM/entity shapes.
 
 ```json
 {
-  "skuName": "Cháo Sâm - Diêm mạch & Hạt sen",
-  "batchPublicStatus": "RELEASED",
+  "schemaVersion": "public-trace.v1",
+  "traceStatus": "VALID",
+  "qr": {
+    "qrStatusPublic": "PRINTED"
+  },
+  "product": {
+    "productName": "Cháo Sâm - Diêm mạch & Hạt sen"
+  },
+  "batch": {
+    "batchPublicCode": "BATCH-PUBLIC-20260427-001",
+    "releasePublicStatus": "RELEASED"
+  },
   "source": {
     "sourceZoneName": "Vùng trồng Sâm Savigin Lâm Đồng",
     "province": "Lâm Đồng",
     "ward": "Xã ...",
     "addressDetail": "Thông tin public đã duyệt"
-  },
-  "producedAt": "2026-04-27",
-  "releasedAt": "2026-04-27"
+  }
 }
 ```
 
-Forbidden in public trace: `supplierId`, supplier name/internal detail, `actorUserId`, personnel names, costing, MISA ids, QC defect detail, loss/waste, raw ledger ids.
+Allowed public fields are only the active `is_public = true` rows in `docs/software-specs/data/csv/public_trace_policy.csv`: `product_name`, `batch_public_code`, `qr_status_public`, `source_zone_name`, `province`, `ward`, `address_detail`, `release_public_status`, plus non-DB envelope fields `schemaVersion` and `traceStatus`.
+
+Forbidden in public trace: `supplier_id`, `supplier_name`, supplier internal detail, `operator_user_id`, personnel names, costing, MISA ids, QC defect detail, loss/waste, raw ledger ids, `internal_batch_id`, `raw_material_lot_internal_code`, evidence URI/hash/original filename/storage path/scan payload, formula details, customer/order/shipment data. `producedAt` and `releasedAt` are not public fields until owner adds explicit whitelist rows to `public_trace_policy.csv`.
 
 `RecallImpactRequest`
 

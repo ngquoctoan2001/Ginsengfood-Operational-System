@@ -39,6 +39,8 @@
 | `PACKAGING_JOB_CREATE` | `R-PACK-OP` | `POST /api/admin/packaging/jobs` |
 | `QR_GENERATE` | `R-PRINT-OP`, `R-PACK-OP` by policy | `POST /api/admin/qr/generate` |
 | `QR_REPRINT` | `R-PRINT-OP`, approval by `R-OPS-MGR` if required | `POST /api/admin/printing/jobs/{id}/reprint` |
+| `QR_VOID` | `R-PRINT-OP`, `R-OPS-MGR` by policy | `POST /api/admin/qr/{id}/void` |
+| `DEVICE_CALLBACK` | Device credential / `R-DEVOPS` operational owner | `POST /api/admin/printing/jobs/{id}/callback` |
 | `QC_INSPECTION_SIGN` | `R-QC-PROD`, `R-QC-RAW` | `POST /api/admin/qc/inspections` |
 | `BATCH_RELEASE_APPROVE` | `R-QA-REL` | `POST /api/admin/qc/releases/{id}/approve` |
 | `WAREHOUSE_RECEIPT_CONFIRM` | `R-WH-FG` | `POST /api/admin/warehouse/receipts` |

@@ -55,8 +55,8 @@ API test plan kiểm tra endpoint contract trong [api/02_API_ENDPOINT_CATALOG.md
 | `INVALID_RECIPE_GROUP`           | `/api/admin/recipes/{id}/lines`                           | TC-API-M04-002                                                                      |
 | `ACTIVE_RECIPE_NOT_FOUND`        | `/api/admin/production/orders`                            | TC-API-M07-001                                                                      |
 | `OUTSIDE_SNAPSHOT_MATERIAL`      | `/api/admin/production/material-requests`, material issue | TC-API-M08-004                                                                      |
-| `LOT_NOT_READY_FOR_PRODUCTION`   | material issue execute                                    | TC-M06-RM-004, TC-M06-RM-005, TC-API-M06-LOT-READY, TC-API-M08-001 negative variant |
-| `LOT_NOT_QC_PASS`                | lot mark-ready                                            | TC-API-M06-LOT-READY wrong-state negative variant                                   |
+| `RAW_MATERIAL_LOT_NOT_READY`     | material issue execute                                    | TC-M06-RM-004, TC-M06-RM-005, TC-API-M06-LOT-READY, TC-API-M08-001 negative variant |
+| `RAW_MATERIAL_LOT_QC_NOT_PASSED` | lot mark-ready                                            | TC-API-M06-LOT-READY wrong-state negative variant                                   |
 | `BATCH_NOT_RELEASED`             | warehouse receipt                                         | TC-API-M11-001                                                                      |
 | `QR_INVALID`, `QR_NOT_PUBLIC`    | public trace                                              | TC-API-M12-003                                                                      |
 | `MISA_MAPPING_MISSING`           | MISA retry/sync                                           | TC-API-M14-002                                                                      |

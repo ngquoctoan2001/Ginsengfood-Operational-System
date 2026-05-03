@@ -107,7 +107,7 @@ Output: verdict, findings, commands, handoff, progress update.
 ```text
 Role: BA/SA + Tech Lead Audit Agent (Supplier Collaboration scope).
 Mission: Audit supplier collaboration extension target vs current implementation. Do not edit files.
-Read first: docs/v2-decisions/OD-M06-SUP-COLLAB.md (HL-SUP-001..017), modules/06_RAW_MATERIAL.md mục 11 (2-axis state machine), modules/03A_SUPPLIER_MANAGEMENT.md, database schema (op_raw_material_receipt mở rộng axis A + created_by_party, op_supplier_user_link, op_supplier_ingredient_allowed, op_supplier_collab_feedback), api/03_API_REQUEST_RESPONSE_SPEC.md (Sections 3.1, 3.2, 3A), ui/03_SCREEN_CATALOG.md (SCR-SUPPLIER-*, SCR-SUP-*, SCR-RAW-INTAKE-DETAIL/RECEIVE/LINE-QC), workflows/04 mục 4A, workflows/05 step 2A/3A, workflows/06 AP-SUP-*, workflows/07 EX-SUP-*, workflows/08 SMK-SUP-001..006 + SMK-N012..N015, testing/02 TC-M06-SUP-* + TC-M03A-* + TC-HL-SUP-*.
+Read first: docs/v2-decisions/OD-M06-SUP-COLLAB.md (HL-SUP-001..017), modules/06_RAW_MATERIAL.md mục 11 (2-axis state machine), modules/03A_SUPPLIER_MANAGEMENT.md, database schema (op_raw_material_receipt mở rộng axis A + created_by_party, op_supplier_user_link, op_supplier_ingredient, op_supplier_collab_feedback), api/03_API_REQUEST_RESPONSE_SPEC.md (Sections 3.1, 3.2, 3A), ui/03_SCREEN_CATALOG.md (SCR-SUPPLIER-*, SCR-SUP-*, SCR-RAW-INTAKE-DETAIL/RECEIVE/LINE-QC), workflows/04 mục 4A, workflows/05 step 2A/3A, workflows/06 AP-SUP-*, workflows/07 EX-SUP-*, workflows/08 SMK-SUP-001..006 + SMK-N012..N015, testing/02 TC-M06-SUP-* + TC-M03A-* + TC-HL-SUP-*.
 Workflow:
 1. Confirm single-source-of-truth: chỉ op_raw_material_receipt; KHÔNG tạo op_supplier_delivery song song (TC-HL-SUP-NO-PARALLEL-001).
 2. Map 2-axis status (axis A supplier_collaboration_status × axis B raw_receipt_status) qua DB/backend/API/UI/workflow/test.
@@ -125,7 +125,7 @@ Rules:
 - KHÔNG tạo bảng op_supplier_delivery song song. Mọi pre-receipt + post-receipt dùng cùng op_raw_material_receipt.
 - Migration thêm cột axis A enum, cột created_by_party (USER/SUPPLIER), check constraint procurement_type=PURCHASED khi created_by_party=SUPPLIER.
 - Transition chỉ chấp nhận theo bảng combined valid trong modules/06_RAW_MATERIAL.md mục 11.2.
-- SUPPLIER_DECLINED chặn axis B sang RECEIVED.
+- SUPPLIER_DECLINED chặn axis B sang RECEIVED_PENDING_QC.
 - Audit + state_transition_log cho mỗi axis.
 Workflow:
 1. Migration EF Core: thêm cột + index + check constraint + enum.
@@ -142,8 +142,8 @@ Mission: Implement /api/supplier/* routes (auth/login, intakes CRUD, evidence up
 Rules:
 - Route /api/supplier/* chỉ chấp nhận role R-SUPPLIER + audience claim supplier-portal (PR-009).
 - Backend resolve supplier_id từ op_supplier_user_link; mọi query/command scope theo supplier_id (PR-008).
-- Submit/confirm intake validate ingredient nằm trong op_supplier_ingredient_allowed (PR-010).
-- Password theo HL-SUP-007 (bcrypt/argon2, lockout, complexity); reset password ghi audit supplier.user.reset_password.
+- Submit/confirm intake validate ingredient nằm trong op_supplier_ingredient (PR-010).
+- Password theo HL-SUP-008 (bcrypt/argon2, lockout, complexity); reset password ghi audit supplier.user.reset_password.
 - Edit lock sau axis A SUPPLIER_CONFIRMED (UI-VAL-SUP-007).
 - Supplier SUSPENDED/INACTIVE block toàn bộ login + command (PR-012).
 Workflow:
@@ -161,10 +161,10 @@ Role: Admin Receipt Backend Agent.
 Mission: Implement /api/admin/raw-material/intakes/{id}/acknowledge|receive|lines/{lineId}/accept|reject|return|close|feedback cho gap {gap_id}.
 Rules:
 - Acknowledge yêu cầu axis A SUPPLIER_CONFIRMED.
-- Receive yêu cầu axis A COMPANY_ACKNOWLEDGED và sinh raw lot từ op_raw_material_receipt (single source).
+- Receive yêu cầu axis A SUPPLIER_CONFIRMED và sinh raw lot từ op_raw_material_receipt (single source).
 - Line accept/reject/return phải giữ sum invariant accepted+rejected+returned=received (UI-VAL-SUP-009).
 - Return + reject yêu cầu evidence (UI-VAL-SUP-010).
-- Close yêu cầu tất cả line đã quyết định và chuyển axis A sang COLLABORATION_CLOSED.
+- Close yêu cầu tất cả line đã quyết định và chuyển axis A sang SUPPLIER_CONFIRMED.
 Workflow:
 1. Implement command handlers + transition guard + idempotency.
 2. Tests TC-M06-SUP-005..008 + EX-RECEIPT-RETURN coverage.
@@ -180,7 +180,7 @@ Rules:
 - Supplier Portal route /supplier/* dùng supplierClient (sinh từ OpenAPI).
 - Hiển thị 2-axis status badge (axis A + axis B) ở SCR-RAW-INTAKE-DETAIL.
 - Allowlist dropdown ingredient ở SCR-SUP-PORTAL-INTAKES form (UI-VAL-SUP-006).
-- Edit lock sau SUPPLIER_CONFIRMED (UI-VAL-SUP-007); receive lock sau RECEIVED (UI-VAL-SUP-008).
+- Edit lock sau SUPPLIER_CONFIRMED (UI-VAL-SUP-007); receive lock sau RECEIVED_PENDING_QC (UI-VAL-SUP-008).
 - Sum invariant validate phía FE (UI-VAL-SUP-009) trước submit; backend luôn enforce.
 - Evidence required cho return/reject (UI-VAL-SUP-010).
 Workflow:

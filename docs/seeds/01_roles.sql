@@ -32,7 +32,8 @@ WITH seed(code, name, description, is_active, created_at) AS (
     ('material-handler', 'Material Handler', 'Material handling role', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
     ('operator', 'Operator', 'Operational execution role', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
     ('supervisor', 'Supervisor', 'Supervisory role across production areas', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
-    ('auditor', 'Auditor', 'Read-only audit access', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz)
+    ('auditor', 'Auditor', 'Read-only audit access', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
+    ('R-SUPPLIER', 'Supplier', 'External supplier portal scope (HL-SUP-007/008)', TRUE, '2026-05-03T00:00:00+07:00'::timestamptz)
 )
 UPDATE roles r
 SET name = s.name,
@@ -72,7 +73,8 @@ WITH seed(code, name, description, is_active, created_at) AS (
     ('material-handler', 'Material Handler', 'Material handling role', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
     ('operator', 'Operator', 'Operational execution role', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
     ('supervisor', 'Supervisor', 'Supervisory role across production areas', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
-    ('auditor', 'Auditor', 'Read-only audit access', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz)
+    ('auditor', 'Auditor', 'Read-only audit access', TRUE, '2026-04-11T14:54:24.543967+07:00'::timestamptz),
+    ('R-SUPPLIER', 'Supplier', 'External supplier portal scope (HL-SUP-007/008)', TRUE, '2026-05-03T00:00:00+07:00'::timestamptz)
 )
 INSERT INTO roles (code, name, description, is_active, created_at, is_deleted)
 SELECT s.code, s.name, s.description, s.is_active, s.created_at, FALSE

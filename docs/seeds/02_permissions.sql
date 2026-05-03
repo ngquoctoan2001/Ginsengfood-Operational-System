@@ -1434,4 +1434,64 @@ WHERE NOT EXISTS (
       AND rp.is_deleted = FALSE
 );
 
+-- =============================================================================
+-- PATCH 2026-05-03: greenfield risk #1 closure
+-- Source: docs/software-specs/business/05_ROLE_PERMISSION.md (R-SUPPLIER, RAW_LOT_MARK_READY,
+--         BATCH_RELEASE_REVOKE, QR_REPRINT) + docs/v2-decisions/OD-SEED-NAMING-001.md
+-- Mapping spec UPPER -> dotted module-prefix (per OD-SEED-NAMING-001):
+--   RAW_LOT_MARK_READY    -> raw-material.lot.mark-ready  (NEW, added below)
+--   BATCH_RELEASE_REVOKE  -> qc-release.batch-release.revoke (NEW, added below)
+--   QR_REPRINT            -> already covered by existing
+--                            traceability.qr-registry.reprint + packaging.print.reprint
+-- R-SUPPLIER role itself is seeded in 01_roles.sql; this block wires its permission scope.
+-- All operations are INSERT ... WHERE NOT EXISTS for full idempotency.
+-- =============================================================================
+
+-- 2 new permission codes (catalog)
+WITH seed(code, module, resource, action, description, is_active, created_at) AS (
+    VALUES
+    ('raw-material.lot.mark-ready', 'raw-material', 'lot', 'mark-ready', 'Mark raw lot as ready for production use after QC pass', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('qc-release.batch-release.revoke', 'qc-release', 'batch-release', 'revoke', 'Revoke a previously approved batch release decision with audit', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz)
+)
+INSERT INTO permissions (code, module, resource, action, description, is_active, created_at, is_deleted)
+SELECT s.code, s.module, s.resource, s.action, s.description, s.is_active, s.created_at, FALSE
+FROM seed s
+WHERE NOT EXISTS (
+    SELECT 1 FROM permissions p WHERE p.code = s.code AND p.is_deleted = FALSE
+);
+
+-- Wire new permissions + R-SUPPLIER scope into role_permissions
+WITH seed(role_code, permission_code, is_active, created_at) AS (
+    VALUES
+    -- raw-material.lot.mark-ready: granted to admin tier and raw material lifecycle owners
+    ('admin',                'raw-material.lot.mark-ready',     TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('system-admin',         'raw-material.lot.mark-ready',     TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('raw-material-manager', 'raw-material.lot.mark-ready',     TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('material-handler',     'raw-material.lot.mark-ready',     TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    -- qc-release.batch-release.revoke: granted to admin tier and senior QC approval roles only
+    ('admin',                   'qc-release.batch-release.revoke', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('system-admin',            'qc-release.batch-release.revoke', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('qc-approver',             'qc-release.batch-release.revoke', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('quality-control-manager', 'qc-release.batch-release.revoke', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('quality-lead',            'qc-release.batch-release.revoke', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    ('approval-authority',      'qc-release.batch-release.revoke', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz),
+    -- R-SUPPLIER: external supplier portal scope, read-only on its own supplier record
+    ('R-SUPPLIER', 'raw-material.supplier.read', TRUE, '2026-05-03T07:00:00+07:00'::timestamptz)
+), resolved AS (
+    SELECT r.id AS role_id, p.id AS permission_id, s.is_active, s.created_at
+    FROM seed s
+    JOIN roles r ON r.code = s.role_code AND r.is_deleted = FALSE
+    JOIN permissions p ON p.code = s.permission_code AND p.is_deleted = FALSE
+)
+INSERT INTO role_permissions (role_id, permission_id, is_active, created_at, is_deleted)
+SELECT r.role_id, r.permission_id, r.is_active, r.created_at, FALSE
+FROM resolved r
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM role_permissions rp
+    WHERE rp.role_id = r.role_id
+      AND rp.permission_id = r.permission_id
+      AND rp.is_deleted = FALSE
+);
+
 COMMIT;

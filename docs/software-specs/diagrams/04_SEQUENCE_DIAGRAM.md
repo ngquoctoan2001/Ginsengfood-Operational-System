@@ -75,7 +75,7 @@ sequenceDiagram
     AdminUI->>TraceAPI: GET /api/admin/trace/search
     TraceAPI-->>AdminUI: internal genealogy chain
     QA->>TraceAPI: GET /api/public/trace/{qrCode}
-    TraceAPI-->>QA: PublicTraceResponse whitelist-only
+    TraceAPI-->>QA: PublicTracePublicResponse whitelist-only
 
     opt Recall extension
         AdminUI->>RecallAPI: POST /api/admin/incidents

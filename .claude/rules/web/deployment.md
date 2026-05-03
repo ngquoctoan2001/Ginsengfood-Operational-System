@@ -1,16 +1,20 @@
 # Deployment Guidelines
 
 > Covers Docker builds, health checks, environment config, and CI/CD conventions.
-> Applies to: `apps/api/` (.NET 10), `apps/admin-web/` (React + Vite), `apps/website/` (Next.js 16), PostgreSQL 18.
+> Applies to: `apps/api/` (.NET 10), `apps/admin-web/` (React + Vite), `apps/public-trace/` (Next.js 16), `apps/shopfloor-pwa/` (Next.js 16 PWA), background workers, PostgreSQL 18.
 
 ## Deployment Targets
 
-| App               | Technology              | Container base                         |
-| ----------------- | ----------------------- | -------------------------------------- |
-| `apps/api/`       | .NET 10 / ASP.NET Core  | `mcr.microsoft.com/dotnet/aspnet:10.0` |
-| `apps/admin-web/` | React + Vite (SPA)      | `nginx:alpine`                         |
-| `apps/website/`   | Next.js 16 (standalone) | `node:20-alpine`                       |
-| Database          | PostgreSQL 18           | `postgres:18-alpine`                   |
+| App                   | Technology              | Container base                         |
+| --------------------- | ----------------------- | -------------------------------------- |
+| `apps/api/`           | .NET 10 / ASP.NET Core  | `mcr.microsoft.com/dotnet/aspnet:10.0` |
+| `apps/workers/`       | .NET 10 Worker Service  | `mcr.microsoft.com/dotnet/aspnet:10.0` |
+| `apps/admin-web/`     | React + Vite (SPA)      | `nginx:alpine`                         |
+| `apps/public-trace/`  | Next.js 16 (standalone) | `node:20-alpine`                       |
+| `apps/shopfloor-pwa/` | Next.js 16 PWA          | `node:20-alpine`                       |
+| Database              | PostgreSQL 18           | `postgres:18-alpine`                   |
+
+> Lưu ý: canonical spec `docs/software-specs/architecture/07_DEPLOYMENT_VIEW.md` liệt kê 3 frontend app (`admin-web`, `public-trace`, `shopfloor-pwa`) plus API/backend and workers. Toolchain rule này chỉ phản ánh top-level container topology; chi tiết build/runtime cho `public-trace` và `shopfloor-pwa` follow Next.js 16 standalone sections bên dưới.
 
 ## .NET Backend — Multi-stage Dockerfile
 
@@ -126,7 +130,7 @@ services:
     environment:
       POSTGRES_DB: ginsengfood_dev
       POSTGRES_USER: app
-      POSTGRES_PASSWORD: devpassword
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set-in-local-env}
     ports:
       - "5432:5432"
     volumes:
@@ -141,7 +145,7 @@ services:
     build:
       context: ./apps/api
     environment:
-      ConnectionStrings__DefaultConnection: "Host=db;Database=ginsengfood_dev;Username=app;Password=devpassword"
+      ConnectionStrings__DefaultConnection: "Host=db;Database=ginsengfood_dev;Username=app;Password=${POSTGRES_PASSWORD:?set-in-local-env}"
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "http://+:8080"
     ports:
@@ -183,13 +187,43 @@ JWT__Issuer=...
 JWT__Audience=...
 ```
 
+### PF-02 Production Config Refs
+
+```
+MisaSyncOptions__Mode=Production
+MisaSyncOptions__BaseUrl=...
+MisaSyncOptions__TenantId=...
+MisaSyncOptions__ClientId=...
+MisaSyncOptions__ClientSecretRef=...
+MisaSyncOptions__WebhookSecretRef=...
+
+PrinterOptions__Protocol=HTTP_ZPL
+PrinterOptions__CallbackAuth=HMAC_SHA256
+PrinterOptions__DeviceSecretRef=...
+
+EvidenceStorage__Provider=COMPANY_SERVER
+EvidenceStorage__BasePathOrBucket=...
+EvidenceStorage__EncryptionKeyRef=...
+EvidenceStorage__AccessLogSinkRef=...
+
+BackupOptions__DatabaseRpoMinutes=15
+BackupOptions__DatabaseRtoHours=4
+BackupOptions__EvidenceRpoMinutes=60
+BackupOptions__EvidenceRtoHours=8
+```
+
+These are refs/config keys, not literal secret values. Local/dev may use `DEV_TEST_ONLY` fixture values and local filesystem storage; production must use platform secret injection or an approved secret manager.
+
 ### Frontend Required Variables
 
 ```
 # admin-web (build-time)
 VITE_API_BASE_URL=https://api.example.com
 
-# website (Next.js — runtime)
+# public-trace (Next.js — runtime)
+NEXT_PUBLIC_TRACE_API_URL=https://api.example.com
+
+# shopfloor-pwa (Next.js — runtime)
 NEXT_PUBLIC_API_URL=https://api.example.com
 ```
 
@@ -206,6 +240,8 @@ NEXT_PUBLIC_API_URL=https://api.example.com
 
 - [ ] Non-root user in all Dockerfiles
 - [ ] No secrets in Dockerfiles or `docker-compose.yml` (use `.env` locally, platform secrets in CI)
+- [ ] PF-02 refs configured for MISA, printer/device, evidence storage, backup/DR, notification outbox consumer, and production user assignment source
+- [ ] Dev/test fixtures are marked `DEV_TEST_ONLY` and blocked from production print/sync paths
 - [ ] TLS terminated at load balancer / reverse proxy — not inside containers
 - [ ] Health check endpoints exposed and tested
 - [ ] `.dockerignore` in every app directory

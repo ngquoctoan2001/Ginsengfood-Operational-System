@@ -1,4 +1,4 @@
-﻿# Enum Reference
+# Enum Reference
 
 > Mục đích: chuẩn hóa enum/state values dùng trong DB/API/UI/workflow. Lưu dạng `text` + `CHECK` constraint, không dùng native enum để migration linh hoạt.
 
@@ -18,17 +18,21 @@ Rule: raw material `QC_PASS` không bằng `READY_FOR_PRODUCTION`; material issu
 
 ## 2. Recipe / SKU
 
-| enum_name                | Values                                                                               | Applies to                          |
-| ------------------------ | ------------------------------------------------------------------------------------ | ----------------------------------- |
-| `sku_status`             | `ACTIVE`, `INACTIVE`                                                                 | `ref_sku`                           |
-| `sku_type`               | `VEGAN`, `SAVORY`                                                                    | `ref_sku`, `op_production_recipe`   |
-| `recipe_line_group_code` | `SPECIAL_SKU_COMPONENT`, `NUTRITION_BASE`, `BROTH_EXTRACT`, `SEASONING_FLAVOR`       | recipe lines, PO snapshot           |
-| `formula_status`         | `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `ACTIVE_OPERATIONAL`, `RETIRED`, `REJECTED` | `op_production_recipe`              |
-| `formula_version`        | Extensible values such as `G1`, future `G2`, `G3`, ...                               | `op_production_recipe`, PO snapshot |
-| `formula_kind`           | `PILOT_PERCENT_BASED`, `FIXED_QUANTITY_BATCH`                                        | `op_production_recipe`, PO snapshot |
-| `snapshot_basis`         | `PILOT_RATIO_OF_ANCHOR`, `FIXED_PER_BATCH_N`                                         | `op_production_order_item`          |
+| enum_name                | Values                                                                                                         | Applies to                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `sku_status`             | `ACTIVE_BASELINE`, `ACTIVE`, `INACTIVE`                                                                        | `ref_sku`                           |
+| `sku_type`               | `VEGAN`, `SAVORY`                                                                                              | `ref_sku`, `op_production_recipe`   |
+| `recipe_line_group_code` | `SPECIAL_SKU_COMPONENT`, `NUTRITION_BASE`, `BROTH_EXTRACT`, `SEASONING_FLAVOR`                                 | recipe lines, PO snapshot           |
+| `formula_status`         | `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `APPROVED_SEED_BASELINE`, `ACTIVE_OPERATIONAL`, `RETIRED`, `REJECTED` | `op_production_recipe`              |
+| `formula_version`        | Extensible values such as `G1`, future `G2`, `G3`, ...                                                         | `op_production_recipe`, PO snapshot |
+| `formula_kind`           | `PILOT_PERCENT_BASED`, `FIXED_QUANTITY_BATCH`                                                                  | `op_production_recipe`, PO snapshot |
+| `snapshot_basis`         | `PILOT_RATIO_OF_ANCHOR`, `FIXED_PER_BATCH_N`                                                                   | `op_production_order_item`          |
 
-Rule: `formula_version` không phải CHECK-constrained enum cố định; DB chỉ chặn G0/research baseline khỏi `APPROVED` và `ACTIVE_OPERATIONAL`, còn version hợp lệ được validate bằng approved recipe version registry.
+Rule: `formula_version` không phải CHECK-constrained enum cố định; DB chỉ chặn G0/research baseline khỏi `APPROVED`, `APPROVED_SEED_BASELINE` và `ACTIVE_OPERATIONAL`, còn version hợp lệ được validate bằng approved recipe version registry.
+
+Rule: `sku_status = ACTIVE_BASELINE` là trạng thái canonical seed/bootstrap (20 SKU baseline post-bootstrap); `ACTIVE` dùng cho SKU phát sinh sau go-live qua quy trình approval thông thường; `INACTIVE` ngừng kinh doanh/sản xuất. Seed validation (xem `data/04_SEED_VALIDATION_QUERIES.md` SV-001) đếm `ACTIVE_BASELINE` = 20.
+
+Rule: `formula_status = APPROVED_SEED_BASELINE` là trạng thái pre-go-live của recipe được seed canonical (G1 PILOT) chờ activation; `ACTIVE_OPERATIONAL` là trạng thái post-activation thực sự dùng cho production. Seed có thể tạo recipe ở `APPROVED_SEED_BASELINE` HOẶC `ACTIVE_OPERATIONAL`; ràng buộc unique-active per `(sku_id, formula_kind)` chỉ áp cho `ACTIVE_OPERATIONAL` (xem `database/05_INDEX_CONSTRAINT_REFERENCE.md` UQ-RECIPE-ACTIVE-KIND). Cả hai đều bị chặn khỏi `formula_version = G0`.
 
 Rule: G0 research/baseline formula version không được dùng trong operational seed/PO/material issue/trace/recall.
 
@@ -49,14 +53,16 @@ Rule: `snapshot_basis` của mỗi `op_production_order_item` phải khớp `for
 | `supplier_collaboration_status` | `NOT_REQUIRED`, `PENDING_SUPPLIER_CONFIRMATION`, `EVIDENCE_REQUIRED`, `SUPPLIER_SUBMITTED`, `SUPPLIER_CONFIRMED`, `SUPPLIER_DECLINED`, `SUPPLIER_CANCELLED`                        | `op_raw_material_receipt`                                                                         |
 | `lot_qc_status`                 | `PENDING_QC`, `IN_QC`, `QC_PASS`, `QC_HOLD`, `QC_REJECT`                                                                                                                           | `op_raw_material_lot` (khởi tạo `PENDING_QC` khi action `receive`)                                |
 | `created_by_party`              | `COMPANY`, `SUPPLIER`                                                                                                                                                              | `op_raw_material_receipt`, `op_raw_material_receipt_evidence`, `op_raw_material_receipt_feedback` |
-| `feedback_type`                 | `COMPANY_NOTE`, `QC_REJECT_REASON`, `RETURN_NOTE`, `DAMAGE_EVIDENCE`                                                                                                               | `op_raw_material_receipt_feedback`                                                                |
-| `user_type`                     | `INTERNAL_USER`, `SUPPLIER_USER`                                                                                                                                                   | `auth_user` (extension); `SUPPLIER_USER` bắt buộc gắn `supplier_id`, dùng role `R_SUPPLIER`       |
+| `feedback_type`                 | `QUALITY_ISSUE`, `DELIVERY_LATE`, `DELIVERY_EARLY`, `QUANTITY_VARIANCE`, `DOCUMENTATION_INCOMPLETE`, `PACKAGING_DAMAGE`, `TEMPERATURE_BREACH`, `OTHER`                             | `op_raw_material_receipt_feedback`                                                                |
+| `user_type`                     | `INTERNAL_USER`, `SUPPLIER_USER`                                                                                                                                                   | `auth_user` (extension); `SUPPLIER_USER` bắt buộc gắn `supplier_id`, dùng role `R-SUPPLIER`       |
 | `material_request_status`       | `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `REJECTED`, `CANCELLED`                                                                                                                   | `op_material_request`                                                                             |
 | `material_issue_status`         | `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `EXECUTED`, `ON_HOLD`, `CANCELLED`, `REVERSED`                                                                                            | `op_material_issue`                                                                               |
 
 Rule: `raw_receipt_status` × `supplier_collaboration_status` là 2 trục độc lập trên cùng `op_raw_material_receipt`. `SELF_GROWN` luôn `supplier_collaboration_status = NOT_REQUIRED`.
 
 Rule: `lot_qc_status` là trục QC của raw material lot, tách khỏi `lot_status` (lifecycle). Lot được tạo khi `op_raw_material_receipt.raw_receipt_status` chuyển sang `RECEIVED_PENDING_QC` với khởi tạo `lot_status = CREATED` + `lot_qc_status = PENDING_QC`. `QC_PASS` chưa usable; phải qua `RAW_LOT_MARK_READY` để chuyển `lot_status = READY_FOR_PRODUCTION`.
+
+Rule: `ON_HOLD` và `QUARANTINED` không đồng nghĩa. `ON_HOLD` là operational/investigation hold nội bộ, có thể release sau review/audit. `QUARANTINED` là safety/legal isolation mạnh hơn, mặc định block material issue và cần disposition hoặc quarantine-release approval riêng trước khi quay về trạng thái usable.
 
 Rule: `created_by_party = SUPPLIER` chỉ hợp lệ khi `procurement_type = PURCHASED` và `supplier_id` khớp account của user; supplier không được set `procurement_type = SELF_GROWN`.
 
@@ -71,7 +77,7 @@ Rule: raw inventory ledger debit chỉ ghi khi `op_material_issue.issue_status` 
 | `process_step`            | `PREPROCESSING`, `FREEZING`, `FREEZE_DRYING`                                              | `op_production_process_event`                                        |
 | `process_status`          | `NOT_STARTED`, `IN_PROGRESS`, `DONE`, `HALTED`, `REJECTED`, `CORRECTED`                   | process events                                                       |
 | `packaging_level`         | `PACKET`, `BOX`, `CARTON`                                                                 | trade item, packaging unit, packaging job, packaging config          |
-| `identifier_type`         | `GTIN_13`, `GTIN_14`, `SSCC`, `INTERNAL_BARCODE`, `TEST_FIXTURE`                          | `op_trade_item_gtin` (recommended rename `op_trade_item_identifier`) |
+| `identifier_type`         | `GTIN_13`, `GTIN_14`, `SSCC`, `INTERNAL_BARCODE`                                          | `op_trade_item_gtin` (recommended rename `op_trade_item_identifier`) |
 | `packaging_status`        | `DRAFT`, `READY`, `IN_PROGRESS`, `COMPLETED`, `HALTED`, `CANCELLED`                       | `op_packaging_job`                                                   |
 | `print_status`            | `DRAFT`, `QUEUED`, `PRINTING`, `PRINTED`, `FAILED`, `VOID`, `REPRINTED`                   | `op_print_job`                                                       |
 | `qr_status`               | `GENERATED`, `QUEUED`, `PRINTED`, `FAILED`, `VOID`, `REPRINTED`                           | `op_qr_registry`, `op_qr_state_history`                              |
@@ -93,7 +99,9 @@ Rule: `process_step` mô tả công đoạn; `process_status` mô tả trạng t
 | enum_name              | Values                                                                                                                                                                   | Applies to                                                                                 |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
 | `trace_link_type`      | `SOURCE_TO_RAW_LOT`, `RAW_LOT_TO_ISSUE`, `ISSUE_TO_BATCH`, `BATCH_TO_PACKAGING`, `PACKAGING_TO_QR`, `BATCH_TO_WAREHOUSE`, `WAREHOUSE_TO_SHIPMENT`, `BATCH_TO_RECALL`     | `op_trace_link`                                                                            |
-| `recall_status`        | `OPEN`, `IMPACT_ANALYSIS`, `HOLD_ACTIVE`, `SALE_LOCK_ACTIVE`, `NOTIFICATION_SENT`, `RECOVERY`, `DISPOSITION`, `CAPA`, `CLOSED`, `CLOSED_WITH_RESIDUAL_RISK`, `CANCELLED` | `op_recall_case`                                                                           |
+| `recall_status`        | `OPEN`, `IMPACT_ANALYSIS`, `HOLD_ACTIVE`, `SALE_LOCK_ACTIVE`, `NOTIFICATION_REQUESTED`, `RECOVERY`, `DISPOSITION`, `CAPA`, `CLOSED`, `CLOSED_WITH_RESIDUAL_RISK`, `CANCELLED` | `op_recall_case`                                                                           |
+| `capa_status`          | `OPEN`, `IN_PROGRESS`, `EVIDENCE_PENDING`, `REVIEW_PENDING`, `CLOSED`, `REJECTED`                                                                                       | `op_recall_capa`                                                                           |
+| `capa_close_gate`      | `EVIDENCE_REVIEWED`, `QC_SIGNED`, `QA_MANAGER_APPROVED`                                                                                                                  | `op_recall_capa`                                                                           |
 | `hold_status`          | `ACTIVE`, `RELEASED`, `CANCELLED`                                                                                                                                        | `op_batch_hold_registry`                                                                   |
 | `sale_lock_status`     | `ACTIVE`, `RELEASED`, `CANCELLED`                                                                                                                                        | `op_sale_lock_registry`                                                                    |
 | `misa_sync_status`     | `PENDING`, `MAPPED`, `SYNCING`, `SYNCED`, `FAILED_RETRYABLE`, `FAILED_NEEDS_REVIEW`, `RECONCILED`                                                                        | MISA tables                                                                                |

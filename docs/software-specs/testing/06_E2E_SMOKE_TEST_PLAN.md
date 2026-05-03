@@ -10,7 +10,7 @@ E2E smoke kiểm tra chuỗi vận hành tối thiểu từ source origin đến
 | --------------------- | ---------------------------------------- | ----------------------------------------------- |
 | `source_zone_code`    | `SZ_SMOKE_001`                           | Source zone test                                |
 | `source_origin_code`  | `SO_SMOKE_001`                           | Phải verify trước raw intake nếu policy yêu cầu |
-| `supplier_code`       | `SUP_SMOKE_001`                          | Dùng cho purchased flow                         |
+| `supplier_code`       | `SUP_DEV_001`                          | Dùng cho purchased flow                         |
 | `sku_code`            | Một SKU baseline active                  | Thuộc 20 SKU seed                               |
 | `formula_version`     | `G1`                                     | Initial operational baseline                    |
 | `raw_lot_code`        | `RL_SMOKE_001`                           | Tạo từ intake                                   |
@@ -59,10 +59,45 @@ E2E smoke kiểm tra chuỗi vận hành tối thiểu từ source origin đến
 | TC-E2E-NEG-003B | M06/M08 | Raw lot `QC_PASS` not marked ready is blocked | Raw lot `QC_PASS` but not `READY_FOR_PRODUCTION`     | Attempt material issue/allocation                | Reject `LOT_NOT_READY_FOR_PRODUCTION`; no ledger debit/usage link                 | Raw lot QC_PASS not-ready          | P0       | REQ-M06-004, REQ-M08-001 |
 | TC-E2E-NEG-004  | M09/M11 | QC_PASS is not RELEASED                       | Batch QC_PASS only                                   | Try warehouse receipt                            | Reject `BATCH_NOT_RELEASED`                                                       | QC_PASS batch                      | P0       | REQ-M09-002, REQ-M11-001 |
 | TC-E2E-NEG-005  | M12     | Public trace denylist                         | Public-valid QR                                      | Assert public response keys                      | No supplier/personnel/cost/QC defect/loss/MISA/private fields                     | QR trace                           | P0       | REQ-M12-002              |
-| TC-E2E-NEG-006  | M10/M12 | QR VOID/FAILED not public traceable           | QR void/failed                                       | GET public trace                                 | Public-safe invalid/not public response                                           | QR invalid states                  | P0       | REQ-M12-003              |
+| TC-E2E-NEG-006  | M10/M12 | QR VOID/FAILED not public traceable           | QR void/failed                                       | Void QR through `/api/admin/qr/{id}/void`; GET public trace | Public-safe invalid/not public response; QR void audit exists                     | QR invalid states                  | P0       | REQ-M12-003              |
 | TC-E2E-NEG-007  | M14     | MISA missing mapping review flow              | Event without mapping                                | Dispatch/retry                                   | Error log + reconcile pending; event retained                                     | Missing mapping                    | P0       | REQ-M14-002              |
+| TC-E2E-NEG-008  | M03A/M06 | Supplier scope isolation                      | Two supplier users and two purchased receipts        | Supplier A attempts to read/update Supplier B receipt/evidence | Reject `403 SUPPLIER_SCOPE_VIOLATION`; no audit/action against Supplier B object | Supplier portal fixture            | P0       | REQ-M03A-003, REQ-M06-002 |
+| TC-E2E-NEG-009  | M10/M11/M14 | Production fixture block                    | Production-mode config with dev fixture GTIN/MISA/device refs | Attempt production print/sync using `DEV_TEST_ONLY` fixture | Block release/sync/print path; clear configuration error and no external side effect | Production-mode config             | P0       | REQ-M10-003, REQ-M14-001 |
 
-## 6. E2E Automation Guidance
+## 6. PF-04 Production Freeze Smoke
+
+PF-04 smoke verifies operational readiness around the same E2E path. These checks run after migration/seed rehearsal and before production cutover approval.
+
+### 6.1 Deployment And Runtime Smoke
+
+| test_id | area | scenario | steps | expected result | priority |
+|---|---|---|---|---|---|
+| TC-PF04-OPS-001 | Deployment | All runtime apps are deployable | Build/release artifacts for `apps/admin-web`, `apps/public-trace`, `apps/shopfloor-pwa`, Operational API/backend and workers | Artifacts exist, versioned by release/git SHA, and point to the same frozen API contract | P0 |
+| TC-PF04-OPS-002 | Environment | Required env/config refs resolve | Validate API, worker and frontend config refs without printing secret values | Required refs present; no literal secret emitted to log/artifact | P0 |
+| TC-PF04-OPS-003 | Health | Runtime health endpoints | Call live/ready health endpoints for API and configured worker dependencies | API, DB, outbox/queue, MISA adapter, printer/device registry, evidence storage and scan worker health are visible | P0 |
+| TC-PF04-OPS-004 | Storage | Evidence storage adapter | Upload dev/test evidence, scan it, read it back, then verify production mode requires company storage refs | Dev/test local path works; production without storage refs blocks startup or write path safely | P0 |
+| TC-PF04-OPS-005 | Printer/device | Device callback boundary | Send callback with missing/invalid signature, then valid HMAC callback in test mode | Invalid callback rejected; valid callback updates only QR/print technical state through API/worker | P0 |
+
+### 6.2 Runbook Smoke
+
+| test_id | area | scenario | steps | expected result | priority |
+|---|---|---|---|---|---|
+| TC-PF04-RUN-001 | Clean DB | Clean database bootstrap | Apply baseline migration; run sorted seed; run validation; rerun seed | Migration applies; seed counts pass; second seed run has no duplicates | P0 |
+| TC-PF04-RUN-002 | Migration | Forward-fix decision rehearsal | Simulate a failed migration after data-write in non-production rehearsal | Runbook selects freeze writes plus forward-fix or owner-approved repair, not destructive rollback | P0 |
+| TC-PF04-RUN-003 | Restore | Restore drill rehearsal | Restore DB and evidence storage backup into isolated environment | Schema, seed, ledger, QR/print, trace, recall/CAPA, public trace and MISA/outbox continuity validate | P0 |
+| TC-PF04-RUN-004 | MISA | Dry-run/prod switch guard | Run MISA event in `DryRun`; switch config to production-like refs in staging | Dry-run cannot be counted as production `SYNCED`; production mode requires tenant/endpoint/secret refs | P0 |
+| TC-PF04-RUN-005 | Outbox | Retry and dead-letter visibility | Force transient failure, retry exhaustion, then replay/reconcile command | Retry/backoff visible; failed/dead-letter visible; replay is permissioned and idempotent | P0 |
+| TC-PF04-RUN-006 | Evidence scan | Scan failure and malware handling | Force `SCAN_FAILED` and `INFECTED` evidence results | Verification/CAPA close is blocked; alert appears; retry/reupload path is documented | P0 |
+
+### 6.3 Monitoring Smoke
+
+| test_id | area | scenario | steps | expected result | priority |
+|---|---|---|---|---|---|
+| TC-PF04-MON-001 | Alerts | Integration and device failures | Trigger MISA missing mapping, printer failure, storage unavailable and scan failed in test environment | Alerts/dashboards show owner, severity, object id and correlation id | P0 |
+| TC-PF04-MON-002 | Public trace | Leakage alert | Run public leakage negative test with forbidden fields in internal source payload | Public response remains safe and leakage alert/test evidence is recorded | P0 |
+| TC-PF04-MON-003 | Recall SLA | Notification handoff measurement | Open recall and reach notification request point | Operational records `NOTIFICATION_REQUESTED`/`notification_job_id`; external delivery is not claimed by Operational | P0 |
+
+## 7. E2E Automation Guidance
 
 | guideline | Nội dung                                                                                                         |
 | --------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -72,8 +107,9 @@ E2E smoke kiểm tra chuỗi vận hành tối thiểu từ source origin đến
 | Evidence  | Lưu API response, audit id, ledger id, trace snapshot id, screenshot public trace.                               |
 | Browser   | Tối thiểu desktop admin + public trace anonymous; mobile/PWA là P1 nếu chưa chốt MVP.                            |
 
-## 7. Done Gate
+## 8. Done Gate
 
 - TC-E2E-SMK-001..015, bao gồm bước chèn `TC-E2E-SMK-002B`, pass hoặc có accepted risk do owner ký.
-- TC-E2E-NEG-001..007, bao gồm bước chèn `TC-E2E-NEG-003B`, pass tuyệt đối cho release P0.
+- TC-E2E-NEG-001..009, bao gồm bước chèn `TC-E2E-NEG-003B`, pass tuyệt đối cho release P0.
+- TC-PF04-OPS-001..005, TC-PF04-RUN-001..006 và TC-PF04-MON-001..003 pass trước production freeze.
 - Smoke output map được về RTM qua `requirement_id`.

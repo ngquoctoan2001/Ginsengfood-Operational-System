@@ -9,7 +9,7 @@ Thư mục này chứa test strategy, test matrix và test plan cho bộ đặc 
 - Chỉ dùng prompt gốc, `docs-software/`, `.tmp-docx-extract/`, các file đã chuẩn hóa trong `docs/software-specs/`, kiến thức chuyên môn có đánh dấu và phê duyệt owner.
 - Không dùng source code, current database, `AGENTS.md`, hoặc `docs/ginsengfood_*` làm source-of-truth cho testing pack này.
 - Mọi test case quan trọng phải map được về `REQ-*` trong [../08_REQUIREMENTS_TRACEABILITY_MATRIX.md](../08_REQUIREMENTS_TRACEABILITY_MATRIX.md).
-- Nếu thiếu thông tin môi trường, command runner, MISA sandbox, printer, backup/SLA hoặc retention, ghi `OWNER DECISION NEEDED`.
+- Nếu thiếu thông tin môi trường hoặc command runner sau PF-03, ghi rõ `DEFERRED_WITH_ACCEPTED_RISK` hoặc blocker môi trường trong handoff; không dùng lại nhãn owner-pending cũ.
 
 ## 3. File Index Chính Thức
 

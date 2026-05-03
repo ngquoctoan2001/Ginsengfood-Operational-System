@@ -1,0 +1,3 @@
+supplier_code,username,display_name,email,role_code,user_type,password_hash_ref,reset_required,is_dev_fixture,source_document,notes
+SUP_DEV_001,sup_dev_001_user,Dev Supplier 001 User,sup-dev-001-user@example.invalid,R-SUPPLIER,SUPPLIER_USER,DEV_HASH_REF_SUP_DEV_001_USER,true,true,database/07_SEED_DATA_SPECIFICATION.md,DEV_TEST_ONLY; seed loader must use a hashed temp password or create reset-required account; no plaintext password in seed
+SUP_DEV_002,sup_dev_002_user,Dev Supplier 002 User,sup-dev-002-user@example.invalid,R-SUPPLIER,SUPPLIER_USER,DEV_HASH_REF_SUP_DEV_002_USER,true,true,database/07_SEED_DATA_SPECIFICATION.md,DEV_TEST_ONLY; seed loader must use a hashed temp password or create reset-required account; no plaintext password in seed

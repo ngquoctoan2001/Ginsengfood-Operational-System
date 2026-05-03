@@ -35,6 +35,7 @@ Neu bat dau tu repo rong/greenfield, chay prompt theo dung thu tu nay:
 | 05 | `02_AGENT_PROMPT_SEQUENCE.md` - Prompt 00 | Bootstrap implementation queue. | First bounded gap duoc chon va progress report cap nhat. |
 | 06 | `05_DETAILED_PHASE_PROMPTS/00_README.md` | Hieu cach dung prompt chi tiet. | San sang chay CODE/MX prompts. |
 | 07 | `05_DETAILED_PHASE_PROMPTS/01_CODE01_FOUNDATION_SOURCE_ORIGIN_PROMPTS.md` | CODE01 Foundation + Source Origin. | CODE01 done gate hoac blocker ro rang. |
+| 07A | `05_DETAILED_PHASE_PROMPTS/01A_CODE01A_M03A_SUPPLIER_MANAGEMENT_PROMPTS.md` | CODE01A M03A Supplier Management + Supplier Portal auth/scope baseline. | CODE01A done gate hoac blocker ro rang; handoff cho CODE02-SUP. |
 | 08 | `05_DETAILED_PHASE_PROMPTS/02_CODE02_RAW_MATERIAL_PROMPTS.md` | CODE02 Raw Material Intake + Lot + Incoming QC. | CODE02 done gate hoac blocker ro rang. |
 | 09 | `05_DETAILED_PHASE_PROMPTS/03_MX_GATE_G1_MASTER_DATA_RECIPE_PROMPTS.md` | MX-GATE-G1 truoc CODE03. | G1/SKU/ingredient/recipe readiness pass. |
 | 10 | `05_DETAILED_PHASE_PROMPTS/04_CODE03_PRODUCTION_MATERIAL_BATCH_PROMPTS.md` | CODE03 Manufacturing + Material + Batch. | CODE03 done gate hoac blocker ro rang. |
@@ -73,7 +74,7 @@ Neu bat dau tu zero hoac can dua den production:
 1. Doc `04_PROJECT_LIFECYCLE_PROMPTS/00_README.md`.
 2. Chay lifecycle prompt `01_...`, `02_...`, `03_...` truoc.
 3. Chay `02_AGENT_PROMPT_SEQUENCE.md` Prompt 00 de bootstrap queue.
-4. Dung `05_DETAILED_PHASE_PROMPTS/` theo thu tu `01_CODE01` -> `02_CODE02` -> `03_MX_GATE_G1` -> `04_CODE03` -> ... -> `18_CODE17`.
+4. Dung `05_DETAILED_PHASE_PROMPTS/` theo thu tu `01_CODE01` -> `01A_CODE01A` -> `02_CODE02` -> `03_MX_GATE_G1` -> `04_CODE03` -> ... -> `18_CODE17`.
 5. Trong tung CODE/MX phase, dung them lifecycle prompt `04_...` va `05_...` khi can kickoff implementation hoac DB/seed.
 6. Sau CODE17, dung lifecycle prompt `06_...` den `10_...` cho UAT, CI/CD, go-live, post-go-live va management reporting.
 

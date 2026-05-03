@@ -1,3 +1,3 @@
-fixture_code,procurement_type,source_zone_code,source_zone_name,source_origin_code,supplier_code,supplier_name,verification_status,status,is_test_fixture,source_document,notes
-SRC_FIX_SELF_GROWN,SELF_GROWN,SRC_ZONE_SMOKE_001,Smoke source zone,SRC_ORIGIN_SMOKE_001,,,VERIFIED,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,SELF_GROWN fixture must block intake unless source origin is VERIFIED
-SRC_FIX_PURCHASED,PURCHASED,,,,SUP_SMOKE_001,Smoke supplier,N/A,ACTIVE,true,database/07_SEED_DATA_SPECIFICATION.md,PURCHASED fixture requires supplier/COA and must not require source zone
+"fixture_code","procurement_type","source_zone_code","source_zone_name","source_origin_code","supplier_code","supplier_name","verification_status","status","is_test_fixture","source_document","notes"
+"SRC_FIX_SELF_GROWN","SELF_GROWN","SRC_ZONE_SMOKE_001","Smoke source zone","SRC_ORIGIN_SMOKE_001","","","VERIFIED","ACTIVE","true","database/07_SEED_DATA_SPECIFICATION.md","DEV_TEST_ONLY; SELF_GROWN fixture must block intake unless source origin is VERIFIED"
+"SRC_FIX_PURCHASED","PURCHASED","","","","SUP_DEV_001","Dev Supplier 001","N/A","ACTIVE","true","database/07_SEED_DATA_SPECIFICATION.md","DEV_TEST_ONLY; PURCHASED fixture requires supplier/COA and must not require source zone"

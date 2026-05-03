@@ -1,0 +1,4 @@
+mapping_code,supplier_code,ingredient_code,default_uom_code,status,requires_photo,requires_video,requires_coa,requires_lab_report,min_photo_count,min_video_count,effective_from,effective_to,is_dev_fixture,source_document,owner_review_required,notes
+SUPDEV001-ING-MI-CHINH,SUP_DEV_001,ING_MI_CHINH,kg,ACTIVE,true,false,false,false,1,0,2026-04-27T00:00:00+07:00,,true,database/07_SEED_DATA_SPECIFICATION.md,true,DEV_TEST_ONLY; allowlist fixture for purchased ingredient
+SUPDEV001-ING-THIT-HEO-NAC,SUP_DEV_001,ING_THIT_HEO_NAC,kg,ACTIVE,true,false,true,false,2,0,2026-04-27T00:00:00+07:00,,true,database/07_SEED_DATA_SPECIFICATION.md,true,DEV_TEST_ONLY; allowlist fixture requiring COA
+SUPDEV002-HRB-SAM-SAVIGIN,SUP_DEV_002,HRB_SAM_SAVIGIN,kg,ACTIVE,true,true,true,true,2,1,2026-04-27T00:00:00+07:00,,true,database/07_SEED_DATA_SPECIFICATION.md,true,DEV_TEST_ONLY; allowlist fixture with strict evidence policy

@@ -27,7 +27,7 @@ Workflow này hướng dẫn AI coding agent nhận một phase/module/gap và t
 | 4. Implement | Minimal patch, no unrelated cleanup |
 | 5. Validate | Lệnh và kết quả build/test/migration/seed/smoke |
 | 6. Review | Security, public trace, MISA, inventory, audit, API/FE sync |
-| 7. Handoff | Tóm tắt, file đã sửa, evidence, rủi ro còn lại, gap tiếp theo |
+| 7. Handoff | Tóm tắt, file đã sửa, evidence, cập nhật Markdown/handoff, rủi ro còn lại, gap tiếp theo |
 
 ## 4. Evidence bắt buộc
 
@@ -66,6 +66,7 @@ Mỗi implementation handoff phải dùng heading tiếng Việt và gồm:
 - Kết quả backend build.
 - Kết quả frontend build.
 - Kết quả cleanup process.
+- Cập nhật Markdown.
 - Kết quả database migration/update khi áp dụng.
 - Kết quả seed validation khi áp dụng.
 - Rủi ro còn lại.

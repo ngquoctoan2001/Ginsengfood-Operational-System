@@ -60,7 +60,7 @@ PublicTrace
 - operationId format: camelCase verb-first, e.g. `createRawMaterialIntake`, `markRawLotReady`, `executeMaterialIssue`.
 - Every protected operation must declare required permission/action in `x-permission`.
 - Every idempotent command must declare `X-Idempotency-Key` header.
-- Public trace schemas must not reference internal trace/admin schemas.
+- Public trace schemas must use `PublicTracePublicResponse` with `additionalProperties: false` and must not reference internal trace/admin schemas.
 - Error responses must include shared `ErrorResponse`.
 - Enum values must match `database/04_ENUM_REFERENCE.md`.
 

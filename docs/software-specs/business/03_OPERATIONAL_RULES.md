@@ -30,8 +30,8 @@ Source Origin Verification
 | object | Required states | Rule | Blocked transition | Test case |
 | --- | --- | --- | --- | --- |
 | `op_source_origin` | `DRAFT`, `SUBMITTED`, `VERIFIED`, `REJECTED`, `SUSPENDED` | `SELF_GROWN` lot chỉ nhận source origin `VERIFIED`. | `DRAFT/SUBMITTED/REJECTED/SUSPENDED -> intake SELF_GROWN` | TC-OP-SRC-001 |
-| `op_raw_material_lot` | `CREATED`, `IN_QC`, `QC_PASSED_WAITING_READY`, `READY_FOR_PRODUCTION`, `RESERVED`, `CONSUMED`, `ON_HOLD`, `REJECTED`, `EXPIRED`, `QUARANTINED` | QC result `QC_PASS` chỉ đưa lot vào trạng thái chờ mark-ready; chỉ `READY_FOR_PRODUCTION` mới được material issue. | `QC_PASSED_WAITING_READY/ON_HOLD/REJECTED/QUARANTINED -> material issue` | TC-OP-RM-001, TC-OP-RM-READY-001 |
-| `op_production_recipe` | `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `ACTIVE`, `RETIRED`, `REJECTED` | Production order chỉ dùng active approved G1 hoặc version active tương lai. | `DRAFT/PENDING/REJECTED/RETIRED -> production order` | TC-OP-REC-001 |
+| `op_raw_material_lot` | `CREATED`, `IN_QC`, `ON_HOLD`, `REJECTED`, `READY_FOR_PRODUCTION`, `CONSUMED`, `EXPIRED`, `QUARANTINED` | QC result `QC_PASS` chỉ là `lot_qc_status`; trạng thái chờ mark-ready được derive từ `lot_status = IN_QC` + `lot_qc_status = QC_PASS`. Chỉ `READY_FOR_PRODUCTION` mới được material issue. | `IN_QC/ON_HOLD/REJECTED/EXPIRED/QUARANTINED -> material issue` | TC-OP-RM-001, TC-OP-RM-READY-001 |
+| `op_production_recipe` | `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `APPROVED_SEED_BASELINE`, `ACTIVE_OPERATIONAL`, `RETIRED`, `REJECTED` | Production order chỉ dùng recipe `ACTIVE_OPERATIONAL`; active uniqueness là per `(sku_id, formula_kind)` để G1 PILOT và G2 FIXED coexist được. | `DRAFT/PENDING_APPROVAL/APPROVED/APPROVED_SEED_BASELINE/REJECTED/RETIRED -> production order`; G0 luôn bị chặn | TC-OP-REC-001 |
 | `op_production_order` | `DRAFT`, `OPEN`, `APPROVED`, `IN_PROGRESS`, `ON_HOLD`, `CANCELLED`, `COMPLETED`, `CLOSED` | Snapshot tạo khi mở/approve; không mutate sau khi bắt đầu issue. | `IN_PROGRESS -> edit snapshot` | TC-OP-PO-001 |
 | `op_batch` | `CREATED`, `IN_PROCESS`, `PACKAGED`, `QC_PENDING`, `QC_PASS`, `QC_HOLD`, `QC_REJECT`, `RELEASED`, `BLOCKED`, `CLOSED` | Batch là genealogy root; `QC_PASS` không tự release, `RELEASED` chỉ sau release action. | `QC_PASS -> warehouse receipt` khi chưa release record; `BLOCKED -> release/warehouse` | TC-OP-BATCH-001 |
 | `op_material_issue` | `DRAFT`, `PENDING_APPROVAL`, `APPROVED`, `EXECUTED`, `ON_HOLD`, `CANCELLED`, `REVERSED` | `EXECUTED` tạo ledger decrement. | `EXECUTED -> delete/update line` | TC-OP-MI-001 |
@@ -43,7 +43,7 @@ Source Origin Verification
 | `op_qr_registry` | `GENERATED`, `QUEUED`, `PRINTED`, `FAILED`, `VOID`, `REPRINTED` | `VOID`/`FAILED` không public trace hợp lệ. | Public resolve QR void/failed | TC-OP-QR-001 |
 | `op_warehouse_receipt` | `DRAFT`, `CONFIRMED`, `CANCELLED`, `CORRECTED` | Confirm receipt tạo finished-goods ledger credit. | Confirm receipt batch chưa release | TC-OP-WH-001 |
 | `op_inventory_ledger` | `POSTED`, `REVERSAL_POSTED`, `ADJUSTMENT_POSTED` | Ledger append-only, không update/delete. | Direct update posted ledger | TC-OP-INV-001 |
-| `op_recall_case` | `OPEN`, `IMPACT_ANALYSIS`, `HOLD_ACTIVATED`, `SALE_LOCK_ACTIVATED`, `NOTIFICATION_SENT`, `RECOVERY`, `DISPOSITION`, `CAPA`, `CLOSED`, `CLOSED_WITH_RESIDUAL_RISK`, `CANCELLED` | Close chỉ khi impact/hold/recovery/disposition/CAPA đạt policy; close residual risk cần explicit residual note và approver. | Close recall còn recovery open; close residual risk thiếu note | TC-OP-RECALL-001, TC-OP-RECALL-RESIDUAL-001 |
+| `op_recall_case` | `OPEN`, `IMPACT_ANALYSIS`, `HOLD_ACTIVE`, `SALE_LOCK_ACTIVE`, `NOTIFICATION_REQUESTED`, `RECOVERY`, `DISPOSITION`, `CAPA`, `CLOSED`, `CLOSED_WITH_RESIDUAL_RISK`, `CANCELLED` | Close chỉ khi impact/hold/recovery/disposition/CAPA đạt policy; close residual risk cần explicit residual note và approver. | Close recall còn recovery open; close residual risk thiếu note | TC-OP-RECALL-001, TC-OP-RECALL-RESIDUAL-001 |
 | `misa_sync_event` | `PENDING`, `MAPPED`, `SYNCING`, `SYNCED`, `FAILED_RETRYABLE`, `FAILED_NEEDS_REVIEW`, `RECONCILED` | Module nghiệp vụ không sync trực tiếp; event đi qua layer. | Drop event khi mapping missing | TC-OP-MISA-001 |
 
 ## 3. Exception Flow Rules
@@ -74,6 +74,7 @@ Source Origin Verification
 | INV-010 | Inventory available không âm trong luồng thường. | Issue/allocation/balance | Reject với `INSUFFICIENT_BALANCE`, không post ledger debit. |
 | INV-011 | Hold khác sale lock. | Recall, warehouse, commerce reference | Không dùng một flag chung thay thế hai registry. |
 | INV-012 | Scan bắt buộc cho operation có rủi ro nhầm batch/lot. | Issue, receipt, warehouse, recall | Thiếu scan trả `BATCH_SCAN_REQUIRED`. |
+| INV-013 | `ON_HOLD` khác `QUARANTINED`. | Raw lot, inventory, issue, recall | `ON_HOLD` là operational/investigation hold nội bộ có thể release sau review; `QUARANTINED` là safety/legal isolation mạnh hơn, mặc định block issue và cần disposition hoặc quarantine-release approval riêng. |
 
 ## 5. Operational Validation Points
 
@@ -82,7 +83,7 @@ Source Origin Verification
 | Source origin verification | `SELF_GROWN` source origin = `VERIFIED` | Có | Đã chốt |
 | Raw lot QC | QC result `QC_PASS` là prerequisite để mark-ready, không phải điều kiện issue cuối cùng | Có | Đã chốt |
 | Raw lot readiness | Lot `READY_FOR_PRODUCTION` trước material issue | Có | Đã chốt |
-| Recipe readiness | 20 SKU, G1 active, 4 groups, required ingredients | Có | Đã chốt |
+| Recipe readiness | 20 SKU, G1 PILOT active for go-live, G2 FIXED may coexist per `(sku_id, formula_kind)`, 4 groups, required ingredients | Có | Đã chốt |
 | PO snapshot | Snapshot đủ fields và chỉ dùng operational baseline hợp lệ | Có | Đã chốt |
 | Material issue | Lot `READY_FOR_PRODUCTION`, balance đủ, line thuộc snapshot, scan nếu operation yêu cầu | Có | Đã chốt |
 | Process chain | Đúng thứ tự sơ chế/cấp đông/sấy thăng hoa | Có | Đã chốt |

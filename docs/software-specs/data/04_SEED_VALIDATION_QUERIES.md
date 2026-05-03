@@ -1,5 +1,7 @@
 # 04 - Seed Validation Queries
 
+PF-02 marker: file này kiểm tra seed/fixture phục vụ dev/test; mọi fixture được xem là `DEV_TEST_ONLY` và không được promote thành production truth.
+
 ## Mục Lục
 
 - [1. Mục đích](#1-mục-đích)
@@ -412,11 +414,75 @@ BEGIN
 
   SELECT count(*) INTO v_purchased
   FROM op_supplier
-  WHERE supplier_code = 'SUP_SMOKE_001'
+  WHERE supplier_code = 'SUP_DEV_001'
     AND status = 'ACTIVE';
 
   IF v_self_grown <> 1 OR v_purchased <> 1 THEN
     RAISE EXCEPTION 'SV-015 failed: source/procurement fixture must cover one VERIFIED SELF_GROWN origin and one PURCHASED supplier';
+  END IF;
+END $$;
+```
+
+### SV-SUP-001 - Supplier portal fixture and scoped permissions
+
+```sql
+DO $$
+DECLARE v_supplier int;
+DECLARE v_user int;
+DECLARE v_mapping int;
+DECLARE v_supplier_permissions int;
+DECLARE v_forbidden_permissions int;
+BEGIN
+  SELECT count(*) INTO v_supplier
+  FROM op_supplier
+  WHERE supplier_code IN ('SUP_DEV_001', 'SUP_DEV_002')
+    AND status = 'ACTIVE';
+
+  SELECT count(*) INTO v_user
+  FROM op_supplier_user_link sul
+  JOIN op_supplier s ON s.supplier_id = sul.supplier_id
+  JOIN auth_user u ON u.user_id = sul.user_id
+  WHERE s.supplier_code IN ('SUP_DEV_001', 'SUP_DEV_002')
+    AND u.user_type = 'SUPPLIER_USER';
+
+  SELECT count(*) INTO v_mapping
+  FROM op_supplier_ingredient si
+  JOIN op_supplier s ON s.supplier_id = si.supplier_id
+  WHERE s.supplier_code IN ('SUP_DEV_001', 'SUP_DEV_002')
+    AND si.status = 'ACTIVE'
+    AND si.effective_from <= now()
+    AND (si.effective_to IS NULL OR si.effective_to > now());
+
+  SELECT count(*) INTO v_supplier_permissions
+  FROM role_action_permission
+  WHERE role_code = 'R-SUPPLIER'
+    AND action_code IN (
+      'supplier.self.read',
+      'supplier.receipt.read',
+      'supplier.receipt.create',
+      'supplier.receipt.submit',
+      'supplier.receipt.confirm',
+      'supplier.receipt.decline',
+      'supplier.receipt.evidence.upload',
+      'supplier.receipt.cancel-draft',
+      'supplier.receipt.feedback.write'
+    )
+    AND is_allowed = true;
+
+  SELECT count(*) INTO v_forbidden_permissions
+  FROM role_action_permission
+  WHERE role_code = 'R-SUPPLIER'
+    AND (
+      action_code LIKE 'raw_intake.%'
+      OR action_code LIKE 'inventory.%'
+      OR action_code LIKE 'recipe.%'
+      OR action_code LIKE 'misa.%'
+      OR action_code LIKE 'trace.internal.%'
+    )
+    AND is_allowed = true;
+
+  IF v_supplier <> 2 OR v_user < 2 OR v_mapping < 3 OR v_supplier_permissions <> 9 OR v_forbidden_permissions <> 0 THEN
+    RAISE EXCEPTION 'SV-SUP-001 failed: supplier fixtures, mapping or scoped permissions invalid';
   END IF;
 END $$;
 ```
@@ -499,6 +565,41 @@ BEGIN
 
   IF v_count < 1 THEN
     RAISE EXCEPTION 'SV-018 failed: M06 UI registry must expose RAW_LOT_MARK_READY';
+  END IF;
+END $$;
+```
+
+### SV-AUTH-001 - Critical permission action codes exist
+
+```sql
+DO $$
+DECLARE v_missing text;
+BEGIN
+  WITH required(action_code) AS (
+    VALUES
+      ('RAW_LOT_MARK_READY'),
+      ('BATCH_RELEASE_REVOKE'),
+      ('QR_GENERATE'),
+      ('QR_REPRINT'),
+      ('QR_VOID'),
+      ('DEVICE_CALLBACK'),
+      ('supplier.read'),
+      ('supplier.write'),
+      ('supplier.create'),
+      ('supplier.update'),
+      ('supplier.suspend'),
+      ('supplier.reactivate'),
+      ('supplier.user.manage')
+  )
+  SELECT string_agg(required.action_code, ', ') INTO v_missing
+  FROM required
+  LEFT JOIN auth_permission p
+    ON p.action_code = required.action_code
+   AND p.status = 'ACTIVE'
+  WHERE p.permission_id IS NULL;
+
+  IF v_missing IS NOT NULL THEN
+    RAISE EXCEPTION 'SV-AUTH-001 failed: missing critical permission action codes: %', v_missing;
   END IF;
 END $$;
 ```
@@ -590,12 +691,12 @@ Nếu seed loader đọc CSV trước khi insert DB, phải check:
 | CSV-012  | `event_schema_registry.csv`                  | required event baseline present, including `RAW_LOT_READY_FOR_PRODUCTION`                                       |
 | CSV-013  | `ui_registry_fixture.csv`                    | cover đủ module `M01` đến `M16`; M06 includes `RAW_LOT_MARK_READY`                                              |
 | CSV-014  | all CSV                                      | đọc bằng `UTF-8`, không mojibake tên tiếng Việt                                                                 |
-| CSV-015  | `roles_permissions.csv`                      | `RAW_LOT_MARK_READY` allowed for `R-QA-REL` and `R-OPS-MGR`                                                     |
+| CSV-015  | `roles_permissions.csv`                      | 101 rows; includes `RAW_LOT_MARK_READY`, `BATCH_RELEASE_REVOKE`, `QR_GENERATE`, `QR_REPRINT`, `QR_VOID`, `DEVICE_CALLBACK`, M03A supplier admin permissions and `R-SUPPLIER` scoped permissions |
 
 ## 5. Done Gate
 
 - Seed chạy lần 1 thành công.
 - Seed chạy lần 2 không tạo duplicate.
-- Tất cả SV-001 đến SV-020 pass.
+- Tất cả SV-001 đến SV-020 và SV-AUTH-001 pass.
 - CSV pre-import checks pass.
 - Seed validation output được lưu trong handoff khi bắt đầu coding phase seed/migration.
